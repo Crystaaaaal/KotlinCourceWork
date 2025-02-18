@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="light_main_color">#FFFFFF</color>>
+    <color name="light_second_color">#61CFDD</color>>
+    <color name="light_third_color">#308E9A</color>>
+    <color name="light_text_color">#000000</color>>
+
+    <color name="dark_main_color">#252525</color>>
+    <color name="dark_second_color">#282828</color>>
+    <color name="dark_third_color">#5D5D5D</color>>
+    <color name="dark_text_color">#FFFFFF</color>>
+</resources>
