@@ -1,4 +1,4 @@
-package com.example.kotlincoursework
+package com.example.kotlincoursework.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,10 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable
-fun settingScreen(
+fun SettingScreen(
     navController: NavHostController,
     mainColor: Color,
     secondColor: Color,
@@ -161,7 +162,7 @@ fun settingScreen(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = mainColor
                     ),
-                    onClick = {logOut(navController)}) {
+                    onClick = { LogOut(navController) }) {
                     Text(
                         text = "Выйти из аккаунта",
                         color = Color.Red
@@ -172,7 +173,8 @@ fun settingScreen(
         }
     }
 }
-fun logOut(navController: NavHostController){
+
+fun LogOut(navController: NavHostController){
     navController.navigate("ToEnter")
 }
 
@@ -192,7 +194,7 @@ fun SettingPreview() {
 //        val textColor = colorResource(R.color.dark_text_color)
 
 
-        settingScreen(navController,mainColor,secondColor,thirdColor,textColor)
+        SettingScreen(navController,mainColor,secondColor,thirdColor,textColor)
 
     }
 }

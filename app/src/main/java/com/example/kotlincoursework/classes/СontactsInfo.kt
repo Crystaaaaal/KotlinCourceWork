@@ -1,4 +1,4 @@
-package com.example.kotlincoursework
+package com.example.kotlincoursework.classes
 
 class СontactsInfo (
     val name:String,
