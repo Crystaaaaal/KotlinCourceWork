@@ -141,14 +141,8 @@ fun AppStart() {
     )
     val currentRoute = navController.currentBackStackEntry?.destination?.route
     Scaffold(
-        topBar = {
-            when (currentRoute){
-            "ToEnter" -> null
-            else -> MainScreenTopBar(viewModel)} },
-        bottomBar = {
-            when (currentRoute){
-                "ToEnter" -> null
-                else -> MainScreenBottomBar(navController,viewModel)}},
+        topBar = { MainScreenTopBar(navController,viewModel) },
+        bottomBar = { MainScreenBottomBar(navController,viewModel)},
         content = { paddingValues ->
             MainScreenMainContent(navController,paddingValues)}
     )
@@ -195,21 +189,28 @@ fun MainScreenNavHost(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreenTopBar(
+    navController: NavHostController,
     viewModel: MainScreenViewModel
 ) {
-    CenterAlignedTopAppBar(
-        modifier = Modifier.height(40.dp),
-        title = {
-            Text(
-                text =viewModel.topBarText,
-                textAlign = TextAlign.Center,
-                color = textColor
+
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    when (currentRoute) {
+        "ToEnter" -> {}
+        else->
+            CenterAlignedTopAppBar(
+                modifier = Modifier.height(40.dp),
+                title = {
+                    Text(
+                        text = viewModel.topBarText,
+                        textAlign = TextAlign.Center,
+                        color = textColor
+                    )
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = secondColor
+                )
             )
-        },
-        colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = secondColor
-        )
-    )
+    }
 }
 
 
