@@ -64,7 +64,9 @@ fun chatScreen(
                 Row(
                     modifier = Modifier
                         .height(70.dp)
+                        .padding(10.dp)
                         .fillMaxWidth(),
+
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
                     TextField(
@@ -76,6 +78,7 @@ fun chatScreen(
                                 text = "Поиск",
                                 color = textColor)},
                         shape = RoundedCornerShape(30.dp),
+                        textStyle = androidx.compose.ui.text.TextStyle(color = textColor),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = mainColor,
                             unfocusedContainerColor = mainColor,
@@ -86,8 +89,7 @@ fun chatScreen(
                             .background(mainColor)
                             .clip(RoundedCornerShape(30.dp))
                             .height(50.dp)
-                            .width(300.dp)
-                            .fillMaxWidth()
+
                             .border(
                                 width = 4.dp,
                                 color = secondColor,

@@ -59,12 +59,7 @@ fun AppStart() {
 
     //Отрисовываем панели
     BarDrawing(navController,viewModel)
-    SetSystemBarsColor(
-        statusBarColor = secondColor.toArgb(), // Цвет статус-бара
-        navigationBarColor = secondColor.toArgb(), // Цвет навигационной панели
-        lightStatusBar = true, // Светлый текст на статус-баре
-        lightNavigationBar = true // Светлый текст на навигационной панели
-    )
+
 }
 
 

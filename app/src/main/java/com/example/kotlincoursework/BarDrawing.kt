@@ -32,8 +32,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
@@ -68,6 +70,23 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
         },
 
         content = { paddingValues ->
+            when (currentRoute){
+                "ToEnter"->{
+                    SetSystemBarsColor(
+                    statusBarColor = mainColor.toArgb(), // Цвет статус-бара
+                    navigationBarColor = mainColor.toArgb(), // Цвет навигационной панели
+                    lightStatusBar = true, // Светлый текст на статус-баре
+                    lightNavigationBar = true // Светлый текст на навигационной панели
+                )}
+                else -> {
+                    SetSystemBarsColor(
+                        statusBarColor = secondColor.toArgb(), // Цвет статус-бара
+                        navigationBarColor = secondColor.toArgb(), // Цвет навигационной панели
+                        lightStatusBar = true, // Светлый текст на статус-баре
+                        lightNavigationBar = true // Светлый текст на навигационной панели
+                    )
+                }
+            }
             ScreenMainContent(navController, paddingValues)
         }
     )
@@ -180,9 +199,6 @@ fun ScreenMainContent(
 }
 
 
-fun StartSetSystemBarsColor() {
-
-}
 
 @Composable
 fun SetSystemBarsColor(
