@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
+import com.example.kotlincoursework.components.NameAppTextWithExtra
+import com.example.kotlincoursework.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable
@@ -53,159 +55,93 @@ fun enterScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(mainColor)
-    ) {
+    )
+    {
+        NameAppTextWithExtra(
+            secondColor = secondColor,
+            thirdColor = thirdColor,
+            extraText = "Вход в аккаунт"
+        )
+    }
+
+    Spacer(modifier = Modifier.height(300.dp))
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    )
+    {
         Column(
-            modifier = Modifier
-                .padding(vertical = 50.dp)
-                .fillMaxWidth()
-                .padding(16.dp)
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
+
+            var textForPhoneNumber by rememberSaveable { mutableStateOf("") }
+            RegisterAndAuntificationTextFieldsWithText(
+                mainColor = mainColor,
+                secondColor = secondColor,
+                textColor = textColor,
+                textForValue = textForPhoneNumber,
+                onValueChange = { textForPhoneNumber = it },
+                titleText = "Номер телефона"
+
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            var textForPassword by rememberSaveable { mutableStateOf("") }
+            RegisterAndAuntificationTextFieldsWithText(
+                mainColor = mainColor,
+                secondColor = secondColor,
+                textColor = textColor,
+                textForValue = textForPassword,
+                onValueChange = { textForPassword = it },
+                titleText = "Пароль"
+
+            )
+
+            Spacer(modifier = Modifier.height(100.dp))
+
+            val buttonColors = ButtonDefaults.buttonColors(
+                backgroundColor = thirdColor,
+                contentColor = textColor)
+            androidx.compose.material.Button(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
+                    .size(120.dp, 50.dp),
+                colors = buttonColors,
+                shape = RoundedCornerShape(20.dp),
+                onClick = { navController.navigate("ToChat") }) {
                 Text(
-                    text = "Мессенджер",
-                    modifier = Modifier
-                        .padding(end = 100.dp),
-                    fontSize = 30.sp,
-                    color = thirdColor
-                )
-            }
-
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Вход в аккаунт",
-                    modifier = Modifier
-                        .padding(start = 100.dp),
-                    fontSize = 24.sp,
-                    color = secondColor
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(300.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                var textForPhoneNumber by rememberSaveable { mutableStateOf("") }
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(horizontal = 10.dp, vertical = 5.dp),
-                    text = "Номер телефона",
-                    color = textColor,
-
-                )
-                TextField(
-                    value = textForPhoneNumber,
-                    onValueChange = { textForPhoneNumber = it },
-                    shape = RoundedCornerShape(20.dp),
-                    textStyle = androidx.compose.ui.text.TextStyle(color = textColor),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = mainColor,
-                        unfocusedContainerColor = mainColor
-//                        focusedIndicatorColor = Color.Transparent,
-//                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .background(mainColor)
-                        .clip(RoundedCornerShape(20.dp))
-                        .height(50.dp)
-                        .width(300.dp)
-                        .fillMaxWidth()
-                        .border(
-                            width = 4.dp,
-                            color = secondColor,
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                var textForPassword by rememberSaveable { mutableStateOf("") }
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(horizontal = 10.dp, vertical = 5.dp),
-                    text = "Пароль",
+                    text = "Войти",
+                    fontSize = 18.sp,
                     color = textColor
                 )
-                TextField(
-                    value = textForPassword,
-                    onValueChange = { textForPassword = it },
-                    shape = RoundedCornerShape(20.dp),
-                    textStyle = androidx.compose.ui.text.TextStyle(color = textColor),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = mainColor,
-                        unfocusedContainerColor = mainColor
-//                        focusedIndicatorColor = Color.Transparent,
-//                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .background(mainColor)
-                        .clip(RoundedCornerShape(20.dp))
-                        .height(50.dp)
-                        .width(300.dp)
-                        .fillMaxWidth()
-                        .border(
-                            width = 4.dp,
-                            color = secondColor,
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                )
-                Spacer(modifier = Modifier.height(100.dp))
-
-
-                val buttonColors = ButtonDefaults.buttonColors(
-                        backgroundColor = thirdColor,
-                        contentColor = textColor)
-                androidx.compose.material.Button(
-                    modifier = Modifier
-                        .size(120.dp, 50.dp),
-                    colors = buttonColors,
-                    shape = RoundedCornerShape(20.dp),
-                        onClick = {navController.navigate("ToChat")}) {
-                    Text(
-                        text = "Войти",
-                        fontSize = 18.sp,
-                        color = textColor
-                    )
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    modifier = Modifier
-                    .clickable {},
-                    text = "Регистрация",
-                    fontSize = 20.sp,
-                    color = secondColor,
-                    textDecoration = Underline
-                )
             }
-        }
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                modifier = Modifier
+                    .clickable {},
+                text = "Регистрация",
+                fontSize = 20.sp,
+                color = secondColor,
+                textDecoration = Underline
+            )
+        }
     }
 }
 
 
-    @Preview(showBackground = true)
-    @Composable
-    fun EnterPreview() {
-        KotlinCourseWorkTheme {
-            val mainColor = colorResource(R.color.light_main_color)
-            val secondColor = colorResource(R.color.light_second_color)
-            val thirdColor = colorResource(R.color.light_third_color)
-            val textColor = colorResource(R.color.light_text_color)
-            val navController = rememberNavController()
+@Preview(showBackground = true)
+@Composable
+fun EnterPreview() {
+    KotlinCourseWorkTheme {
+        val mainColor = colorResource(R.color.light_main_color)
+        val secondColor = colorResource(R.color.light_second_color)
+        val thirdColor = colorResource(R.color.light_third_color)
+        val textColor = colorResource(R.color.light_text_color)
+        val navController = rememberNavController()
 
 //        val mainColor = colorResource(R.color.dark_main_color)
 //        val secondColor = colorResource(R.color.dark_second_color)
@@ -213,7 +149,7 @@ fun enterScreen(
 //        val textColor = colorResource(R.color.dark_text_color)
 
 
-            enterScreen(navController, mainColor, secondColor, thirdColor, textColor)
+        enterScreen(navController, mainColor, secondColor, thirdColor, textColor)
 
-        }
     }
+}

@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
+import com.example.kotlincoursework.components.SettingsButton
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable
@@ -104,71 +105,38 @@ fun SettingScreen(
             item {
                 Spacer(modifier = Modifier.height(40.dp))
             }
-            val modifier:Modifier = Modifier
-                .background(
-                    color = mainColor,
-                    shape = RoundedCornerShape(30.dp))
-            .fillMaxWidth()
-            .height(50.dp)
-                .border(
-                    width = 4.dp,
-                    color = secondColor,
-                    shape = RoundedCornerShape(30.dp))
 
             item{
-                Button(
-                    modifier = modifier,
-                    colors = buttonColors,
-                    shape = RoundedCornerShape(30.dp),
-                    onClick = {}) {
-                    Text(
-                        text = "Изменить фото",
-                        color = textColor
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
+                SettingsButton(
+                    mainColor = mainColor,
+                    secondColor = secondColor,
+                    textColor = textColor,
+                    buttonText = "Изменить фото"
+                )
             }
             item {
-                Button(
-                    modifier = modifier,
-                    colors = buttonColors,
-                    shape = RoundedCornerShape(30.dp),
-                    onClick = {}) {
-                    Text(
-                        text = "Оформление",
-                        color = textColor
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
+                SettingsButton(
+                    mainColor = mainColor,
+                    secondColor = secondColor,
+                    textColor = textColor,
+                    buttonText = "Оформление"
+                )
             }
             item {
-                Button(
-                    modifier = modifier,
-                    colors = buttonColors,
-                    shape = RoundedCornerShape(30.dp),
-                    onClick = {}) {
-                    Text(
-                        text = "Уведомление",
-                        color = textColor
-                    )
-                }
-                Spacer(modifier = Modifier.height(10.dp))
-
+                SettingsButton(
+                    mainColor = mainColor,
+                    secondColor = secondColor,
+                    textColor = textColor,
+                    buttonText = "Уведомления"
+                )
             }
             item {
-                Button(
-                    modifier = modifier,
-                    shape = RoundedCornerShape(30.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = mainColor
-                    ),
-                    onClick = { LogOut(navController) }) {
-                    Text(
-                        text = "Выйти из аккаунта",
-                        color = Color.Red
-                    )
-                }
-                Spacer(modifier = Modifier.height(40.dp))
+                SettingsButton(
+                    mainColor = mainColor,
+                    secondColor = secondColor,
+                    textColor = Color.Red,
+                    buttonText = "Выйти из аккаунтаа"
+                )
             }
         }
     }
