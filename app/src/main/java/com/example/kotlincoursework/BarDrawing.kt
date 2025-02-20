@@ -57,27 +57,39 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
 
         topBar = {
             when (currentRoute) {
-                "ToEnter"-> {}
+                "ToEnter",
+                "ToRegister",
+                "ToSecondRegister" -> {
+                }
+
                 else -> ScreenTopBar(navController, viewModel)
             }
         },
 
         bottomBar = {
             when (currentRoute) {
-                "ToEnter"-> {}
+                "ToEnter",
+                "ToRegister",
+                "ToSecondRegister" -> {
+                }
+
                 else -> ScreenBottomBar(navController, viewModel)
             }
         },
 
         content = { paddingValues ->
-            when (currentRoute){
-                "ToEnter"->{
+            when (currentRoute) {
+                "ToEnter",
+                "ToRegister",
+                "ToSecondRegister" -> {
                     SetSystemBarsColor(
-                    statusBarColor = mainColor.toArgb(), // Цвет статус-бара
-                    navigationBarColor = mainColor.toArgb(), // Цвет навигационной панели
-                    lightStatusBar = true, // Светлый текст на статус-баре
-                    lightNavigationBar = true // Светлый текст на навигационной панели
-                )}
+                        statusBarColor = mainColor.toArgb(), // Цвет статус-бара
+                        navigationBarColor = mainColor.toArgb(), // Цвет навигационной панели
+                        lightStatusBar = true, // Светлый текст на статус-баре
+                        lightNavigationBar = true // Светлый текст на навигационной панели
+                    )
+                }
+
                 else -> {
                     SetSystemBarsColor(
                         statusBarColor = secondColor.toArgb(), // Цвет статус-бара
@@ -197,7 +209,6 @@ fun ScreenMainContent(
         ScreenNavHost(navController)
     }
 }
-
 
 
 @Composable

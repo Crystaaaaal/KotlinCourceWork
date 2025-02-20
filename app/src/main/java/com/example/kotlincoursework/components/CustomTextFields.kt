@@ -2,9 +2,7 @@ package com.example.kotlincoursework.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -26,9 +23,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.screens.enterScreen
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable
@@ -46,6 +43,7 @@ fun RegisterAndAuntificationTextFieldsWithText(
                 .padding(horizontal = 10.dp, vertical = 5.dp),
             text = titleText,
             color = textColor,
+            fontSize = 18.sp,
             textAlign = TextAlign.Start
         )
 
@@ -61,8 +59,8 @@ fun RegisterAndAuntificationTextFieldsWithText(
             colors = TextFieldDefaults.colors
                 (
                 focusedContainerColor = mainColor,
-                unfocusedContainerColor = mainColor)
-            ,
+                unfocusedContainerColor = mainColor
+            ),
             modifier = Modifier
                 .background(mainColor)
                 .clip(RoundedCornerShape(20.dp))
@@ -74,7 +72,7 @@ fun RegisterAndAuntificationTextFieldsWithText(
                     width = 4.dp,
                     color = secondColor,
                     shape = RoundedCornerShape(20.dp)
-                    )
+                )
         )
     }
 }

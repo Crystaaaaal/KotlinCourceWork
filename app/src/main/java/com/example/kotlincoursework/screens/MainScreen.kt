@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
@@ -17,7 +16,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.kotlincoursework.BarDrawing
 import com.example.kotlincoursework.viewModel.MainScreenViewModel
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.SetSystemBarsColor
 
 
 var mainColor: Color = Color.Black
@@ -58,7 +56,7 @@ fun AppStart() {
 
 
     //Отрисовываем панели
-    BarDrawing(navController,viewModel)
+    BarDrawing(navController, viewModel)
 
 }
 

@@ -15,12 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.screens.enterScreen
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable
-fun NameAppTextWithExtra(secondColor:Color,thirdColor: Color,extraText:String)
-{
+fun NameAppTextWithExtra(secondColor: Color, thirdColor: Color, extraText: String) {
     Column(
         modifier = Modifier
             .padding(vertical = 50.dp)

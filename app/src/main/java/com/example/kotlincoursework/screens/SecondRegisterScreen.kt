@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
@@ -23,9 +24,10 @@ import com.example.kotlincoursework.components.ButtonThirdColor
 import com.example.kotlincoursework.components.NameAppTextWithExtra
 import com.example.kotlincoursework.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.viewModel.MainScreenViewModel
 
 @Composable
-fun FirstRegisterScreen(
+fun SecondRegisterScreen(
     navController: NavHostController,
     mainColor: Color,
     secondColor: Color,
@@ -41,7 +43,7 @@ fun FirstRegisterScreen(
         NameAppTextWithExtra(
             secondColor = secondColor,
             thirdColor = thirdColor,
-            extraText = "Регистрация"
+            extraText = "Личные данные"
         )
 
         Spacer(modifier = Modifier.height(100.dp))
@@ -53,7 +55,7 @@ fun FirstRegisterScreen(
             textColor = textColor,
             textForValue = textForRegisterPhoneNumber,
             onValueChange = { textForRegisterPhoneNumber = it },
-            titleText = "Номер телефона"
+            titleText = "Фамилия"
         )
         var textForRegisterLogin by rememberSaveable { mutableStateOf("") }
         RegisterAndAuntificationTextFieldsWithText(
@@ -62,7 +64,7 @@ fun FirstRegisterScreen(
             textColor = textColor,
             textForValue = textForRegisterLogin,
             onValueChange = { textForRegisterLogin = it },
-            titleText = "Логин"
+            titleText = "Имя"
         )
 
         var textForRegisterPassword by rememberSaveable { mutableStateOf("") }
@@ -72,7 +74,7 @@ fun FirstRegisterScreen(
             textColor = textColor,
             textForValue = textForRegisterPassword,
             onValueChange = { textForRegisterPassword = it },
-            titleText = "Пароль"
+            titleText = "Отчество"
         )
 
         Spacer(modifier = Modifier.height(130.dp))
@@ -81,16 +83,22 @@ fun FirstRegisterScreen(
             thirdColor = thirdColor,
             textColor = textColor,
             navController = navController,
-            navControllerRoute = "ToSecondRegister",
-            buttonText = "Далее"
+            navControllerRoute = "ToChat",
+            buttonText = "Закончить"
         )
 
     }
 }
 
+@Composable
+fun UserEnter(){
+    val viewModel: MainScreenViewModel = viewModel()
+    viewModel.updateTopBarText("Мессенджер")
+}
+
 @Preview(showBackground = true)
 @Composable
-fun firstRegisterPreview() {
+fun secondRegisterPreview() {
     KotlinCourseWorkTheme {
         val mainColor = colorResource(R.color.light_main_color)
         val secondColor = colorResource(R.color.light_second_color)
@@ -104,7 +112,7 @@ fun firstRegisterPreview() {
 //        val textColor = colorResource(R.color.dark_text_color)
 
 
-        FirstRegisterScreen(navController, mainColor, secondColor, thirdColor, textColor)
+        SecondRegisterScreen(navController, mainColor, secondColor, thirdColor, textColor)
 
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +42,7 @@ fun SettingScreen(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-){
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -53,11 +52,14 @@ fun SettingScreen(
     ) {
         val buttonColors = ButtonDefaults.buttonColors(
             backgroundColor = mainColor,
-            contentColor = textColor)
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 10.dp)
-            .align(Alignment.Center))
+            contentColor = textColor
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp)
+                .align(Alignment.Center)
+        )
         {
             item {
                 Spacer(modifier = Modifier.height(20.dp))
@@ -106,12 +108,14 @@ fun SettingScreen(
                 Spacer(modifier = Modifier.height(40.dp))
             }
 
-            item{
+            item {
                 SettingsButton(
                     mainColor = mainColor,
                     secondColor = secondColor,
                     textColor = textColor,
-                    buttonText = "Изменить фото"
+                    buttonText = "Изменить фото",
+                    navController = navController,
+                    navControllerRoute = "ToSetting"
                 )
             }
             item {
@@ -119,7 +123,9 @@ fun SettingScreen(
                     mainColor = mainColor,
                     secondColor = secondColor,
                     textColor = textColor,
-                    buttonText = "Оформление"
+                    buttonText = "Оформление",
+                    navController = navController,
+                    navControllerRoute = "ToSetting"
                 )
             }
             item {
@@ -127,7 +133,9 @@ fun SettingScreen(
                     mainColor = mainColor,
                     secondColor = secondColor,
                     textColor = textColor,
-                    buttonText = "Уведомления"
+                    buttonText = "Уведомления",
+                    navController = navController,
+                    navControllerRoute = "ToSetting"
                 )
             }
             item {
@@ -135,16 +143,15 @@ fun SettingScreen(
                     mainColor = mainColor,
                     secondColor = secondColor,
                     textColor = Color.Red,
-                    buttonText = "Выйти из аккаунтаа"
+                    buttonText = "Выйти из аккаунта",
+                    navController = navController,
+                    navControllerRoute = "ToEnter"
                 )
             }
         }
     }
 }
 
-fun LogOut(navController: NavHostController){
-    navController.navigate("ToEnter")
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -162,7 +169,7 @@ fun SettingPreview() {
 //        val textColor = colorResource(R.color.dark_text_color)
 
 
-        SettingScreen(navController,mainColor,secondColor,thirdColor,textColor)
+        SettingScreen(navController, mainColor, secondColor, thirdColor, textColor)
 
     }
 }
