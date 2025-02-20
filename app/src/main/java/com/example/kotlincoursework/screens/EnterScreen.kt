@@ -52,7 +52,7 @@ fun enterScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(mainColor),
+            .background(mainColor)
     ) {
         Column(
             modifier = Modifier
