@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
@@ -27,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -61,8 +64,25 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
                 "ToRegister",
                 "ToSecondRegister" -> {
                 }
+                "ToNotification"->{
+                    viewModel.updateTopBarText("Уведомления")
+                    SettingsTopBar(viewModel, navController)
+                }
 
-                else -> ScreenTopBar(navController, viewModel)
+                "ToAppearance" -> {
+                    viewModel.updateTopBarText("Оформление")
+                    SettingsTopBar(viewModel, navController)
+                }
+
+                "ToSetting" -> {
+                    viewModel.updateTopBarText("Настройки")
+                    ScreenTopBar(viewModel)
+                }
+
+                "ToChat" -> {
+                    viewModel.updateTopBarText("Чат")
+                    ScreenTopBar(viewModel)
+                }
             }
         },
 
@@ -104,32 +124,68 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsTopBar(
+    viewModel: MainScreenViewModel,
+    navController: NavController
+) {
+    TopAppBar(
+        title = {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center // Выравниваем текст по центру
+            ) {
+                Text(
+                    text = viewModel.topBarText,
+                    textAlign = TextAlign.Center,
+                    color = textColor,
+                    modifier = Modifier.offset(x = (-24).dp) // Компенсируем смещение от кнопки
+                )
+            }
+        },
+        navigationIcon = {
+            IconButton(
+                modifier = Modifier.size(50.dp, 30.dp),
+                onClick = {navController.popBackStack()}
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(30.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Назад",
+                        tint = textColor,
+                        modifier = Modifier.background(thirdColor)
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = secondColor
+        )
+    )
+}
 // Метод для создания TopBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenTopBar(
-    navController: NavHostController,
     viewModel: MainScreenViewModel
 ) {
-
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
-    when (currentRoute) {
-        "ToEnter" -> {}
-        else ->
-            CenterAlignedTopAppBar(
-                modifier = Modifier.height(40.dp),
-                title = {
-                    Text(
-                        text = viewModel.topBarText,
-                        textAlign = TextAlign.Center,
-                        color = textColor
-                    )
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = secondColor
-                )
+    CenterAlignedTopAppBar(
+        modifier = Modifier.height(40.dp),
+        title = {
+            Text(
+                text = viewModel.topBarText,
+                textAlign = TextAlign.Center,
+                color = textColor
             )
-    }
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = secondColor
+        )
+    )
 }
 
 
@@ -152,7 +208,6 @@ fun ScreenBottomBar(
                 modifier = Modifier.size(100.dp, 30.dp),
                 onClick = {
                     navController.navigate("ToChat");
-                    viewModel.updateTopBarText("Мессенджер")
                 },
             ) {
                 Surface(
@@ -174,7 +229,7 @@ fun ScreenBottomBar(
                 modifier = Modifier.size(100.dp, 30.dp),
                 onClick = {
                     navController.navigate("ToSetting")
-                    viewModel.updateTopBarText("Настройки")
+
                 }
             ) {
                 Surface(

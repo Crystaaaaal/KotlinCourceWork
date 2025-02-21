@@ -1,4 +1,4 @@
-package com.example.kotlincoursework.screens
+package com.example.kotlincoursework.screens.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

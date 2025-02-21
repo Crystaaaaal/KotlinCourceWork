@@ -1,4 +1,4 @@
-package com.example.kotlincoursework.screens
+package com.example.kotlincoursework.screens.settings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -125,7 +125,7 @@ fun SettingScreen(
                     textColor = textColor,
                     buttonText = "Оформление",
                     navController = navController,
-                    navControllerRoute = "ToSetting"
+                    navControllerRoute = "ToAppearance"
                 )
             }
             item {
@@ -135,7 +135,7 @@ fun SettingScreen(
                     textColor = textColor,
                     buttonText = "Уведомления",
                     navController = navController,
-                    navControllerRoute = "ToSetting"
+                    navControllerRoute = "ToNotification"
                 )
             }
             item {
