@@ -3,7 +3,9 @@ package com.example.kotlincoursework
 import android.app.Activity
 import android.os.Build
 import android.view.View
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,9 +18,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
@@ -35,10 +40,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
@@ -49,6 +56,18 @@ import com.example.kotlincoursework.screens.secondColor
 import com.example.kotlincoursework.screens.textColor
 import com.example.kotlincoursework.screens.thirdColor
 import com.example.kotlincoursework.viewModel.MainScreenViewModel
+
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.kotlincoursework.components.SearchAndInputTextWithPlaceholder
+import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 
 @Composable
@@ -64,7 +83,8 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
                 "ToRegister",
                 "ToSecondRegister" -> {
                 }
-                "ToNotification"->{
+
+                "ToNotification" -> {
                     viewModel.updateTopBarText("Уведомления")
                     SettingsTopBar(viewModel, navController)
                 }
@@ -80,8 +100,13 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
                 }
 
                 "ToChat" -> {
-                    viewModel.updateTopBarText("Чат")
+                    viewModel.updateTopBarText("Мессенджер")
                     ScreenTopBar(viewModel)
+                }
+
+                "ToUserChat" -> {
+                    viewModel.updateTopBarText("Антон Скугарев")
+                    ChatWithUserTopBar(viewModel, navController)
                 }
             }
         },
@@ -91,6 +116,10 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
                 "ToEnter",
                 "ToRegister",
                 "ToSecondRegister" -> {
+                }
+
+                "ToUserChat" -> {
+                    ChatWithUserBottomBar(viewModel)
                 }
 
                 else -> ScreenBottomBar(navController, viewModel)
@@ -119,11 +148,12 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
                     )
                 }
             }
-            ScreenMainContent(navController, paddingValues)
+            ScreenMainContent(navController, paddingValues, viewModel)
         }
     )
 }
 
+//метод создания topBar для настроек
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsTopBar(
@@ -131,6 +161,7 @@ fun SettingsTopBar(
     navController: NavController
 ) {
     TopAppBar(
+        modifier = Modifier.height(40.dp),
         title = {
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -147,7 +178,7 @@ fun SettingsTopBar(
         navigationIcon = {
             IconButton(
                 modifier = Modifier.size(50.dp, 30.dp),
-                onClick = {navController.popBackStack()}
+                onClick = { navController.popBackStack() }
             ) {
                 Surface(
                     shape = RoundedCornerShape(30.dp),
@@ -167,7 +198,164 @@ fun SettingsTopBar(
         )
     )
 }
-// Метод для создания TopBar
+
+//метод создания topBar для чата с пользователем
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChatWithUserTopBar(
+    viewModel: MainScreenViewModel,
+    navController: NavController
+) {
+    TopAppBar(
+        modifier = Modifier.height(40.dp),
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                // Кнопка "Назад" (слева)
+                IconButton(
+                    modifier = Modifier.size(50.dp, 30.dp),
+                    onClick = { navController.popBackStack() }
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(30.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Назад",
+                            tint = textColor,
+                            modifier = Modifier.background(thirdColor)
+                        )
+                    }
+                }
+
+                // Текст (по центру)
+                Text(
+                    text = viewModel.topBarText,
+                    textAlign = TextAlign.Center,
+                    color = textColor,
+                    modifier = Modifier
+                        .weight(1f) // Занимает все доступное пространство между кнопкой и аватаром
+                        .padding(horizontal = 8.dp) // Добавляем отступы, чтобы текст не прилипал к краям
+                )
+
+                // Аватар пользователя (справа)
+                Box(
+                    modifier = Modifier
+                        .padding(end = 20.dp)
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(thirdColor)
+                        .border(
+                            width = 2.dp,
+                            color = thirdColor,
+                            shape = RoundedCornerShape(1.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(30.dp),
+                        painter = painterResource(id = R.drawable.picture),
+                        contentDescription = "User Avatar",
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = secondColor
+        )
+    )
+}
+
+//метод создания bottomBar для чата с пользователем
+@Composable
+fun ChatWithUserBottomBar(
+    viewModel: MainScreenViewModel
+) {
+    val mainColor = colorResource(R.color.light_main_color)
+    val secondColor = colorResource(R.color.light_second_color)
+    val thirdColor = colorResource(R.color.light_third_color)
+    val textColor = colorResource(R.color.light_text_color)
+    BottomAppBar(
+        modifier = Modifier.height(60.dp),
+        containerColor = secondColor
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(modifier = Modifier
+                .padding(start = 10.dp)
+                .size(50.dp),
+                onClick = {}) {
+                Surface(
+                    shape = RoundedCornerShape(30.dp),
+                    modifier = Modifier
+                        .height(80.dp)
+                        .width(80.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Добавить",
+                        tint = textColor,
+                        modifier = Modifier
+                            .size(3.dp)
+                            .background(thirdColor)
+                    )
+                }
+            }
+
+            var textForMessage by rememberSaveable { mutableStateOf("") }
+            SearchAndInputTextWithPlaceholder(
+                mainColor = mainColor,
+                secondColor = secondColor,
+                textColor = textColor,
+                textForValue = textForMessage,
+                onValueChange = { textForMessage = it },
+                placeholderText = "Сообщение",
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(250.dp)
+            )
+
+            IconButton(modifier = Modifier
+                .padding(end = 10.dp)
+                .size(50.dp),
+                onClick = {
+                    ShowMessage(viewModel, textForMessage)
+                    textForMessage = ""
+                }
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(30.dp),
+                    modifier = Modifier
+                        .height(80.dp)
+                        .width(300.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Отправить",
+                        tint = textColor,
+                        modifier = Modifier
+                            .size(3.dp)
+                            .background(thirdColor)
+                    )
+                }
+            }
+        }
+
+    }
+}
+
+
+// Метод для создания TopBar для основного экрана
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenTopBar(
@@ -189,7 +377,7 @@ fun ScreenTopBar(
 }
 
 
-// Метод для создания BottomBar
+// Метод для создания BottomBar для основного экрана
 @Composable
 fun ScreenBottomBar(
     navController: NavController,
@@ -252,7 +440,8 @@ fun ScreenBottomBar(
 @Composable
 fun ScreenMainContent(
     navController: NavHostController,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    viewModel: MainScreenViewModel
 ) {
     Box(
         modifier = Modifier
@@ -261,7 +450,7 @@ fun ScreenMainContent(
             .padding(paddingValues),
         contentAlignment = Alignment.Center
     ) {
-        ScreenNavHost(navController)
+        ScreenNavHost(navController, viewModel = viewModel)
     }
 }
 
@@ -309,5 +498,25 @@ fun SetSystemBarsColor(
 
         onDispose {
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun barPreview() {
+    KotlinCourseWorkTheme {
+        val mainColor = colorResource(R.color.light_main_color)
+        val secondColor = colorResource(R.color.light_second_color)
+        val thirdColor = colorResource(R.color.light_third_color)
+        val textColor = colorResource(R.color.light_text_color)
+        val navController = rememberNavController()
+
+//        val mainColor = colorResource(R.color.dark_main_color)
+//        val secondColor = colorResource(R.color.dark_second_color)
+//        val thirdColor = colorResource(R.color.dark_third_color)
+//        val textColor = colorResource(R.color.dark_text_color)
+        val viewModel: MainScreenViewModel = viewModel()
+        //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
+        ChatWithUserBottomBar(viewModel)
     }
 }

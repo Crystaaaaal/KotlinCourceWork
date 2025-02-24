@@ -46,12 +46,12 @@ fun CustomToggleSwitch(
             .width(150.dp) // Ширина переключателя
             .height(50.dp) // Высота переключателя
             .background(
-                color = if (SwitchValue) Color.Green else thirdColor,
+                color = if (SwitchValue) secondColor else mainColor,
                 shape = RoundedCornerShape(15.dp) // Закруглённые углы
             )
             .border(
                 width = 4.dp, // Окантовка
-                color = secondColor,
+                color = thirdColor,
                 shape = RoundedCornerShape(15.dp) // Закруглённые углы окантовки
             )
             .clickable { onValueChange(!SwitchValue) } // Обработка клика
@@ -62,7 +62,7 @@ fun CustomToggleSwitch(
                 .offset(x = thumbOffset) // Анимация перемещения
                 .size(30.dp) // Размер ползунка
                 .clip(CircleShape)
-                .background(mainColor) // Закруглённые углы ползунка
+                .background(thirdColor) // Закруглённые углы ползунка
 
         )
     }

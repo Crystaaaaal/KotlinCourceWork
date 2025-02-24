@@ -77,6 +77,42 @@ fun RegisterAndAuntificationTextFieldsWithText(
     }
 }
 
+@Composable
+fun SearchAndInputTextWithPlaceholder(
+    mainColor: Color,
+    secondColor: Color,
+    textColor: Color,
+    textForValue: String,
+    onValueChange: (String) -> Unit,
+    placeholderText: String,
+    modifier: Modifier
+){
+    TextField(
+
+        value = textForValue,
+        onValueChange = onValueChange,
+        placeholder = {
+            Text(
+                text = placeholderText,
+                color = textColor
+            )
+        },
+        shape = RoundedCornerShape(30.dp),
+        textStyle = androidx.compose.ui.text.TextStyle(color = textColor),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = mainColor,
+            unfocusedContainerColor = mainColor,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent
+        ),
+        modifier = modifier
+            .background(
+                secondColor,
+                shape = RoundedCornerShape(30.dp))
+            .clip(RoundedCornerShape(30.dp))
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable
@@ -94,14 +130,23 @@ fun TextFieldPreview() {
 //        val textColor = colorResource(R.color.dark_text_color)
 
         var textForPhoneNumber by rememberSaveable { mutableStateOf("") }
-        RegisterAndAuntificationTextFieldsWithText(
+//        RegisterAndAuntificationTextFieldsWithText(
+//            mainColor = mainColor,
+//            secondColor = secondColor,
+//            textColor = textColor,
+//            textForValue = textForPhoneNumber,
+//            onValueChange = { textForPhoneNumber = it },
+//            titleText = "Номер телефона"
+//        )
+
+        SearchAndInputTextWithPlaceholder(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
             textForValue = textForPhoneNumber,
             onValueChange = { textForPhoneNumber = it },
-            titleText = "Номер телефона"
-
+            placeholderText = "Сообщение",
+            modifier = Modifier
         )
 
     }

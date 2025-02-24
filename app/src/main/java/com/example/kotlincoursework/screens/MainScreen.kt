@@ -46,10 +46,10 @@ fun AppStart() {
     thirdColor = colorResource(R.color.light_third_color)
     textColor = colorResource(R.color.light_text_color)
 
-    // mainColor = colorResource(R.color.dark_main_color)
-    //secondColor = colorResource(R.color.dark_second_color)
-    //thirdColor = colorResource(R.color.dark_third_color)
-    //textColor = colorResource(R.color.dark_text_color)
+//    mainColor = colorResource(R.color.dark_main_color)
+//    secondColor = colorResource(R.color.dark_second_color)
+//    thirdColor = colorResource(R.color.dark_third_color)
+//    textColor = colorResource(R.color.dark_text_color)
 
     val viewModel: MainScreenViewModel = viewModel()
     val navController = rememberNavController()

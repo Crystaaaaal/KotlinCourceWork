@@ -1,8 +1,9 @@
-package com.example.kotlincoursework.screens
+package com.example.kotlincoursework.screens.chat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
+import com.example.kotlincoursework.components.SearchAndInputTextWithPlaceholder
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable
@@ -53,7 +55,6 @@ fun chatScreen(
     textColor: Color
     //items: List<String>
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
 
     LazyColumn(
         modifier = Modifier
@@ -71,36 +72,23 @@ fun chatScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                TextField(
-
-                    value = text,
+                var text by rememberSaveable { mutableStateOf("") }
+                SearchAndInputTextWithPlaceholder(
+                    mainColor = mainColor,
+                    secondColor = secondColor,
+                    textColor = textColor,
+                    textForValue = text,
                     onValueChange = { text = it },
-                    placeholder = {
-                        Text(
-                            text = "Поиск",
-                            color = textColor
-                        )
-                    },
-                    shape = RoundedCornerShape(30.dp),
-                    textStyle = androidx.compose.ui.text.TextStyle(color = textColor),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = mainColor,
-                        unfocusedContainerColor = mainColor,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .background(mainColor)
-                        .clip(RoundedCornerShape(30.dp))
-                        .height(50.dp)
-
-                        .border(
-                            width = 4.dp,
-                            color = secondColor,
-                            shape = RoundedCornerShape(30.dp)
-                        )
+                    placeholderText = "Поиск",
+                    modifier = Modifier.border(
+                        width = 4.dp,
+                        color = secondColor,
+                        shape = RoundedCornerShape(30.dp)
+                    )
                 )
+
                 Spacer(modifier = Modifier.width(20.dp))
+
                 IconButton(modifier = Modifier
                     .size(50.dp)
                     .background(thirdColor, CircleShape),
@@ -130,6 +118,7 @@ fun chatScreen(
                     .height(120.dp)
                     .padding(horizontal = 10.dp, vertical = 5.dp)
                     .fillMaxWidth()
+                    .clickable { navController.navigate("ToUserChat") }
                     .border(
                         width = 4.dp,
                         shape = RoundedCornerShape(15.dp),
@@ -155,7 +144,6 @@ fun chatScreen(
                     // Изображение из drawable
                     Image(
                         modifier = Modifier
-
                             .clip(CircleShape)
                             .size(70.dp),
                         painter = painterResource(id = R.drawable.picture), // Загружаем изображение из ресурсов
