@@ -80,7 +80,10 @@ fun chatScreen(
                     textForValue = text,
                     onValueChange = { text = it },
                     placeholderText = "Поиск",
-                    modifier = Modifier.border(
+                    singleline = true,
+                    modifier = Modifier
+                        .width(250.dp)
+                        .border(
                         width = 4.dp,
                         color = secondColor,
                         shape = RoundedCornerShape(30.dp)

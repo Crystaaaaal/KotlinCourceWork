@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
@@ -32,7 +33,7 @@ import com.example.kotlincoursework.viewModel.MainScreenViewModel
 
 @Composable
 fun ChatWithUserScreen(
-    navController: NavHostController,
+    navController: NavController,
     mainColor: Color,
     secondColor: Color,
     thirdColor: Color,
@@ -63,7 +64,7 @@ fun ChatWithUserScreen(
                     modifier = Modifier
                         .padding(20.dp)
                         .widthIn(max = 300.dp),
-                    text = viewModel.items[item],
+                    text = viewModel.items[viewModel.items.size - 1 - item],
                     color = textColor,
                     softWrap = true,
                     fontSize = 18.sp

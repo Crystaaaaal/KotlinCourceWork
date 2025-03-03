@@ -14,10 +14,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -283,11 +287,18 @@ fun ChatWithUserBottomBar(
     val thirdColor = colorResource(R.color.light_third_color)
     val textColor = colorResource(R.color.light_text_color)
     BottomAppBar(
-        modifier = Modifier.height(60.dp),
+        modifier = Modifier
+            .heightIn(min = 60.dp, max = 600.dp)
+            .wrapContentHeight(),
         containerColor = secondColor
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+            Modifier
+                .padding(vertical = 10.dp)
+                .heightIn(min = 60.dp, max = 600.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -311,6 +322,7 @@ fun ChatWithUserBottomBar(
                     )
                 }
             }
+            Spacer(modifier = Modifier.width(10.dp))
 
             var textForMessage by rememberSaveable { mutableStateOf("") }
             SearchAndInputTextWithPlaceholder(
@@ -320,10 +332,16 @@ fun ChatWithUserBottomBar(
                 textForValue = textForMessage,
                 onValueChange = { textForMessage = it },
                 placeholderText = "Сообщение",
+                singleline = false,
                 modifier = Modifier
-                    .height(50.dp)
-                    .width(250.dp)
+                    .width(225.dp)
+                    .wrapContentHeight()
+                    .heightIn(min = 50.dp, max = 590.dp)
+                  //  .widthIn(min= 200.dp,max = 250.dp)
+
             )
+
+            Spacer(modifier = Modifier.width(10.dp))
 
             IconButton(modifier = Modifier
                 .padding(end = 10.dp)

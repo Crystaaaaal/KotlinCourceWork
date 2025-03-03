@@ -85,20 +85,22 @@ fun SearchAndInputTextWithPlaceholder(
     textForValue: String,
     onValueChange: (String) -> Unit,
     placeholderText: String,
+    singleline:Boolean,
     modifier: Modifier
 ){
     TextField(
-
+        singleLine = singleline,
         value = textForValue,
         onValueChange = onValueChange,
         placeholder = {
             Text(
                 text = placeholderText,
-                color = textColor
+                color = textColor,
+                fontSize = 18.sp
             )
         },
         shape = RoundedCornerShape(30.dp),
-        textStyle = androidx.compose.ui.text.TextStyle(color = textColor),
+        textStyle = androidx.compose.ui.text.TextStyle(color = textColor, fontSize = 18.sp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = mainColor,
             unfocusedContainerColor = mainColor,
@@ -146,6 +148,7 @@ fun TextFieldPreview() {
             textForValue = textForPhoneNumber,
             onValueChange = { textForPhoneNumber = it },
             placeholderText = "Сообщение",
+            singleline = true,
             modifier = Modifier
         )
 

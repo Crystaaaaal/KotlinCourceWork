@@ -83,7 +83,7 @@ fun SecondRegisterScreen(
             thirdColor = thirdColor,
             textColor = textColor,
             navController = navController,
-            navControllerRoute = "ToChat",
+            navControllerRoute = "ToEnter",
             buttonText = "Закончить"
         )
 
