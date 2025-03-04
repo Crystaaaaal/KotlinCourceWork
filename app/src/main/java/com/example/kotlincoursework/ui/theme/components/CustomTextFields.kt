@@ -1,4 +1,4 @@
-package com.example.kotlincoursework.components
+package com.example.kotlincoursework.ui.theme.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

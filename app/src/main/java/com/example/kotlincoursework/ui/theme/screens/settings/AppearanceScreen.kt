@@ -1,4 +1,4 @@
-package com.example.kotlincoursework.screens.settings
+package com.example.kotlincoursework.ui.theme.screens.settings
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.components.CustomToggleSwitch
+import com.example.kotlincoursework.ui.theme.components.CustomToggleSwitch
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable

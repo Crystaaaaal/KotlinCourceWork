@@ -1,4 +1,4 @@
-package com.example.kotlincoursework.screens.chat
+package com.example.kotlincoursework.ui.theme.screens.chat
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.components.SearchAndInputTextWithPlaceholder
+import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable

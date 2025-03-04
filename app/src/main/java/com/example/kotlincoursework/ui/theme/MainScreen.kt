@@ -1,4 +1,4 @@
-package com.example.kotlincoursework.screens
+package com.example.kotlincoursework.ui.theme
 
 
 import android.annotation.SuppressLint
@@ -10,10 +10,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.kotlincoursework.BarDrawing
 import com.example.kotlincoursework.viewModel.MainScreenViewModel
 import com.example.kotlincoursework.R
 
@@ -41,15 +39,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppStart() {
 
-//    mainColor = colorResource(R.color.light_main_color)
-//    secondColor = colorResource(R.color.light_second_color)
-//    thirdColor = colorResource(R.color.light_third_color)
-//    textColor = colorResource(R.color.light_text_color)
+    mainColor = colorResource(R.color.light_main_color)
+    secondColor = colorResource(R.color.light_second_color)
+    thirdColor = colorResource(R.color.light_third_color)
+    textColor = colorResource(R.color.light_text_color)
 
-    mainColor = colorResource(R.color.dark_main_color)
-    secondColor = colorResource(R.color.dark_second_color)
-    thirdColor = colorResource(R.color.dark_third_color)
-    textColor = colorResource(R.color.dark_text_color)
+//    mainColor = colorResource(R.color.dark_main_color)
+//    secondColor = colorResource(R.color.dark_second_color)
+//    thirdColor = colorResource(R.color.dark_third_color)
+//    textColor = colorResource(R.color.dark_text_color)
 
     val viewModel: MainScreenViewModel = viewModel()
     val navController = rememberNavController()

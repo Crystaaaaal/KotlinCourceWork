@@ -1,21 +1,17 @@
-package com.example.kotlincoursework
+package com.example.kotlincoursework.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.kotlincoursework.screens.settings.SettingScreen
-import com.example.kotlincoursework.screens.chat.chatScreen
-import com.example.kotlincoursework.screens.auth.EnterScreen
-import com.example.kotlincoursework.screens.auth.FirstRegisterScreen
-import com.example.kotlincoursework.screens.auth.SecondRegisterScreen
-import com.example.kotlincoursework.screens.chat.ChatWithUserScreen
-import com.example.kotlincoursework.screens.mainColor
-import com.example.kotlincoursework.screens.secondColor
-import com.example.kotlincoursework.screens.settings.AppearanceScreen
-import com.example.kotlincoursework.screens.settings.NotificationScreen
-import com.example.kotlincoursework.screens.textColor
-import com.example.kotlincoursework.screens.thirdColor
+import com.example.kotlincoursework.ui.theme.screens.settings.SettingScreen
+import com.example.kotlincoursework.ui.theme.screens.chat.chatScreen
+import com.example.kotlincoursework.ui.theme.screens.auth.EnterScreen
+import com.example.kotlincoursework.ui.theme.screens.auth.FirstRegisterScreen
+import com.example.kotlincoursework.ui.theme.screens.auth.SecondRegisterScreen
+import com.example.kotlincoursework.ui.theme.screens.chat.ChatWithUserScreen
+import com.example.kotlincoursework.ui.theme.screens.settings.AppearanceScreen
+import com.example.kotlincoursework.ui.theme.screens.settings.NotificationScreen
 import com.example.kotlincoursework.viewModel.MainScreenViewModel
 
 // Метод навигации

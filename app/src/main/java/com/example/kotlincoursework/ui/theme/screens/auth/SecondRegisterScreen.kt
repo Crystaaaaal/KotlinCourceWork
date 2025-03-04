@@ -1,4 +1,4 @@
-package com.example.kotlincoursework.screens.auth
+package com.example.kotlincoursework.ui.theme.screens.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -20,9 +20,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.components.ButtonThirdColor
-import com.example.kotlincoursework.components.NameAppTextWithExtra
-import com.example.kotlincoursework.components.RegisterAndAuntificationTextFieldsWithText
+import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
+import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
+import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.MainScreenViewModel
 

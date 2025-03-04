@@ -1,4 +1,4 @@
-package com.example.kotlincoursework.components
+package com.example.kotlincoursework.ui.theme.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween

@@ -1,4 +1,4 @@
-package com.example.kotlincoursework
+package com.example.kotlincoursework.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -19,9 +19,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -55,13 +53,8 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.kotlincoursework.screens.mainColor
-import com.example.kotlincoursework.screens.secondColor
-import com.example.kotlincoursework.screens.textColor
-import com.example.kotlincoursework.screens.thirdColor
 import com.example.kotlincoursework.viewModel.MainScreenViewModel
 
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -70,8 +63,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.example.kotlincoursework.components.SearchAndInputTextWithPlaceholder
-import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.R
+import com.example.kotlincoursework.ShowMessage
+import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
 
 
 @Composable
