@@ -65,6 +65,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ShowMessage
+import com.example.kotlincoursework.mainColor
+import com.example.kotlincoursework.secondColor
+import com.example.kotlincoursework.textColor
+import com.example.kotlincoursework.thirdColor
 import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
 
 

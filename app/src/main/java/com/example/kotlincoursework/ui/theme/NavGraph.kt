@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.kotlincoursework.mainColor
+import com.example.kotlincoursework.secondColor
+import com.example.kotlincoursework.textColor
+import com.example.kotlincoursework.thirdColor
 import com.example.kotlincoursework.ui.theme.screens.settings.SettingScreen
 import com.example.kotlincoursework.ui.theme.screens.chat.chatScreen
 import com.example.kotlincoursework.ui.theme.screens.auth.EnterScreen
