@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,6 +28,7 @@ import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.viewModel.LoginAndRegisterViewModel
 
 @Composable
 fun EnterScreen(
@@ -34,6 +37,7 @@ fun EnterScreen(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
+    loginAndRegisterViewModel: LoginAndRegisterViewModel
 ) {
     Column(
         Modifier.fillMaxSize(),
@@ -48,14 +52,15 @@ fun EnterScreen(
         Spacer(modifier = Modifier.height(100.dp))
 
 
-        var textForPhoneNumber by rememberSaveable { mutableStateOf("") }
+        var LoginTextForPhoneNumber by rememberSaveable { mutableStateOf("") }
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
-            textForValue = textForPhoneNumber,
-            onValueChange = { textForPhoneNumber = it },
-            titleText = "Номер телефона"
+            textForValue = LoginTextForPhoneNumber,
+            onValueChange = { LoginTextForPhoneNumber = it },
+            titleText = "Номер телефона",
+            keyboardType = KeyboardType.Phone
 
         )
 
@@ -66,7 +71,9 @@ fun EnterScreen(
             textColor = textColor,
             textForValue = textForPassword,
             onValueChange = { textForPassword = it },
-            titleText = "Пароль"
+            titleText = "Пароль",
+            keyboardType = KeyboardType.Password,
+            visualTransformation = PasswordVisualTransformation()
 
         )
 

@@ -33,9 +33,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Пример вызова репозитория
-        val server = CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val isServerOnline = async {  ServerRepository().checkServerStatus()}.await()
-            //delay(100)
             withContext(Dispatchers.Main) {
                 if (isServerOnline) {
                     Log.d("ServerStatus", "Сервер онлайн!")
@@ -44,11 +43,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-//        if (isServerOnline) {
-//            Log.d("ServerStatus", "Сервер онлайн!")
-//        } else {
-//            Log.e("ServerStatus", "Сервер оффлайн!")
-//        }
         setContent {
             KotlinCourseWorkTheme {
                 mainColor = colorResource(R.color.light_main_color)
@@ -63,6 +57,7 @@ class MainActivity : ComponentActivity() {
                 BarDrawing(navController, viewModel)
             }
         }
+
     }
 
 

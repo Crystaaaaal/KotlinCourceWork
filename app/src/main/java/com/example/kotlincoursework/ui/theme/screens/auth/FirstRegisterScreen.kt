@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -62,7 +63,8 @@ fun FirstRegisterScreen(
             textColor = textColor,
             textForValue = textForRegisterLogin,
             onValueChange = { textForRegisterLogin = it },
-            titleText = "Логин"
+            titleText = "Логин",
+            keyboardType = KeyboardType.Phone
         )
 
         var textForRegisterPassword by rememberSaveable { mutableStateOf("") }
