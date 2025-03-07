@@ -16,11 +16,13 @@ import com.example.kotlincoursework.ui.theme.screens.auth.SecondRegisterScreen
 import com.example.kotlincoursework.ui.theme.screens.chat.ChatWithUserScreen
 import com.example.kotlincoursework.ui.theme.screens.settings.AppearanceScreen
 import com.example.kotlincoursework.ui.theme.screens.settings.NotificationScreen
-import com.example.kotlincoursework.viewModel.MainScreenViewModel
+import com.example.kotlincoursework.viewModel.viewModel
 
 // Метод навигации
 @Composable
-fun ScreenNavHost(navController: NavHostController,viewModel: MainScreenViewModel) {
+fun ScreenNavHost(
+    navController: NavHostController,
+    viewModel: viewModel) {
     NavHost(
         navController = navController,
         startDestination = "ToChat"
@@ -49,7 +51,8 @@ fun ScreenNavHost(navController: NavHostController,viewModel: MainScreenViewMode
                 mainColor,
                 secondColor,
                 thirdColor,
-                textColor
+                textColor,
+                viewModel
             )
         }
         composable("ToRegister") {
@@ -58,7 +61,8 @@ fun ScreenNavHost(navController: NavHostController,viewModel: MainScreenViewMode
                 mainColor,
                 secondColor,
                 thirdColor,
-                textColor
+                textColor,
+                viewModel
             )
         }
         composable("ToSecondRegister") {
@@ -67,7 +71,8 @@ fun ScreenNavHost(navController: NavHostController,viewModel: MainScreenViewMode
                 mainColor,
                 secondColor,
                 thirdColor,
-                textColor
+                textColor,
+                viewModel
             )
         }
         composable("ToAppearance") {

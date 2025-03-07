@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,7 +25,8 @@ import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
-import com.example.kotlincoursework.viewModel.LoginAndRegisterViewModel
+import androidx.compose.runtime.collectAsState
+import com.example.kotlincoursework.viewModel.viewModel
 
 @Composable
 fun EnterScreen(
@@ -37,7 +35,7 @@ fun EnterScreen(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    loginAndRegisterViewModel: LoginAndRegisterViewModel
+    viewModel: viewModel
 ) {
     Column(
         Modifier.fillMaxSize(),
@@ -52,25 +50,25 @@ fun EnterScreen(
         Spacer(modifier = Modifier.height(100.dp))
 
 
-        var LoginTextForPhoneNumber by rememberSaveable { mutableStateOf("") }
+        val loginText by viewModel.loginTextForPhoneNumber.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
-            textForValue = LoginTextForPhoneNumber,
-            onValueChange = { LoginTextForPhoneNumber = it },
+            textForValue = loginText,
+            onValueChange = { viewModel.updateLoginTextForPhoneNumber(it) },
             titleText = "Номер телефона",
             keyboardType = KeyboardType.Phone
 
         )
 
-        var textForPassword by rememberSaveable { mutableStateOf("") }
+        val passwordText by viewModel.loginTextForPassword.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
-            textForValue = textForPassword,
-            onValueChange = { textForPassword = it },
+            textForValue = passwordText,
+            onValueChange = { viewModel.updateTextForPassword(it) },
             titleText = "Пароль",
             keyboardType = KeyboardType.Password,
             visualTransformation = PasswordVisualTransformation()
@@ -84,6 +82,10 @@ fun EnterScreen(
             textColor = textColor,
             navController = navController,
             navControllerRoute = "ToChat",
+            onClick = {
+                viewModel.updateTextForPassword("")
+                viewModel.updateLoginTextForPhoneNumber("+7")
+            },
             buttonText = "Войти"
         )
 
@@ -91,14 +93,18 @@ fun EnterScreen(
 
         Text(
             modifier = Modifier
-                .clickable {navController.navigate("ToRegister")},
+                .clickable {
+                    navController.navigate("ToRegister")
+                    viewModel.updateTextForPassword("")
+                    viewModel.updateLoginTextForPhoneNumber("+7")
+                },
             text = "Регистрация",
             fontSize = 20.sp,
             color = secondColor,
             textDecoration = Underline
         )
-
     }
+
 }
 
 
@@ -118,7 +124,7 @@ fun EnterPreview() {
 //        val textColor = colorResource(R.color.dark_text_color)
 
 
-        EnterScreen(navController, mainColor, secondColor, thirdColor, textColor)
+        //EnterScreen(navController, mainColor, secondColor, thirdColor, textColor)
 
     }
 }

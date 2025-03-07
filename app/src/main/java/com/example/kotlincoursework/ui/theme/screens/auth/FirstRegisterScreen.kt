@@ -1,11 +1,14 @@
 package com.example.kotlincoursework.ui.theme.screens.auth
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -15,8 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
@@ -24,6 +30,7 @@ import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.viewModel.viewModel
 
 @Composable
 fun FirstRegisterScreen(
@@ -32,6 +39,7 @@ fun FirstRegisterScreen(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
+    viewModel: viewModel
 ) {
     Column(
         modifier = Modifier
@@ -47,33 +55,36 @@ fun FirstRegisterScreen(
 
         Spacer(modifier = Modifier.height(100.dp))
 
-        var textForRegisterPhoneNumber by rememberSaveable { mutableStateOf("") }
+        val textForRegisterPhoneNumber by viewModel.textForRegisterPhoneNumber.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
             textForValue = textForRegisterPhoneNumber,
-            onValueChange = { textForRegisterPhoneNumber = it },
+            keyboardType = KeyboardType.Phone,
+            onValueChange = { viewModel.updateTextForRegisterPhoneNumber(it) },
             titleText = "Номер телефона"
         )
-        var textForRegisterLogin by rememberSaveable { mutableStateOf("") }
+
+        val textForRegisterLogin by viewModel.textForRegisterLogin.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
             textForValue = textForRegisterLogin,
-            onValueChange = { textForRegisterLogin = it },
+            onValueChange = { viewModel.updateTextForRegisterLogin(it) },
             titleText = "Логин",
-            keyboardType = KeyboardType.Phone
         )
 
-        var textForRegisterPassword by rememberSaveable { mutableStateOf("") }
+        val textForRegisterPassword by viewModel.textForRegisterPassword.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
             textForValue = textForRegisterPassword,
-            onValueChange = { textForRegisterPassword = it },
+            keyboardType = KeyboardType.Password,
+            onValueChange = { viewModel.updateTextForRegisterPassword(it) },
+            visualTransformation = PasswordVisualTransformation(),
             titleText = "Пароль"
         )
 
@@ -85,6 +96,18 @@ fun FirstRegisterScreen(
             navController = navController,
             navControllerRoute = "ToSecondRegister",
             buttonText = "Далее"
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            modifier = Modifier
+                .clickable {
+                    navController.navigate("ToEnter")
+                },
+            text = "Назад",
+            fontSize = 20.sp,
+            color = secondColor,
+            textDecoration = Underline
         )
 
     }
@@ -106,7 +129,7 @@ fun firstRegisterPreview() {
 //        val textColor = colorResource(R.color.dark_text_color)
 
 
-        FirstRegisterScreen(navController, mainColor, secondColor, thirdColor, textColor)
+        //FirstRegisterScreen(navController, mainColor, secondColor, thirdColor, textColor)
 
     }
 }

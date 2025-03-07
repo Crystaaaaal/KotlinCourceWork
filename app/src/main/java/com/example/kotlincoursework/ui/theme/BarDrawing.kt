@@ -53,7 +53,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.kotlincoursework.viewModel.MainScreenViewModel
+import com.example.kotlincoursework.viewModel.viewModel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +61,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ShowMessage
@@ -72,8 +71,10 @@ import com.example.kotlincoursework.thirdColor
 import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
 
 
+
 @Composable
-fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel) {
+fun BarDrawing(navController: NavHostController,
+               viewModel: viewModel) {
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
@@ -150,7 +151,10 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
                     )
                 }
             }
-            ScreenMainContent(navController, paddingValues, viewModel)
+            ScreenMainContent(
+                navController = navController,
+                paddingValues =  paddingValues,
+                viewModel = viewModel)
         }
     )
 }
@@ -159,7 +163,7 @@ fun BarDrawing(navController: NavHostController, viewModel: MainScreenViewModel)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsTopBar(
-    viewModel: MainScreenViewModel,
+    viewModel: viewModel,
     navController: NavController
 ) {
     TopAppBar(
@@ -205,7 +209,7 @@ fun SettingsTopBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatWithUserTopBar(
-    viewModel: MainScreenViewModel,
+    viewModel: viewModel,
     navController: NavController
 ) {
     TopAppBar(
@@ -278,7 +282,7 @@ fun ChatWithUserTopBar(
 //метод создания bottomBar для чата с пользователем
 @Composable
 fun ChatWithUserBottomBar(
-    viewModel: MainScreenViewModel
+    viewModel: viewModel
 ) {
     val mainColor = colorResource(R.color.light_main_color)
     val secondColor = colorResource(R.color.light_second_color)
@@ -335,7 +339,7 @@ fun ChatWithUserBottomBar(
                     .width(225.dp)
                     .wrapContentHeight()
                     .heightIn(min = 50.dp, max = 590.dp)
-                  //  .widthIn(min= 200.dp,max = 250.dp)
+                //  .widthIn(min= 200.dp,max = 250.dp)
 
             )
 
@@ -375,7 +379,7 @@ fun ChatWithUserBottomBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenTopBar(
-    viewModel: MainScreenViewModel
+    viewModel: viewModel
 ) {
     CenterAlignedTopAppBar(
         modifier = Modifier.height(40.dp),
@@ -397,7 +401,7 @@ fun ScreenTopBar(
 @Composable
 fun ScreenBottomBar(
     navController: NavController,
-    viewModel: MainScreenViewModel
+    viewModel: viewModel
 ) {
     BottomAppBar(
         modifier = Modifier.height(40.dp),
@@ -457,7 +461,7 @@ fun ScreenBottomBar(
 fun ScreenMainContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    viewModel: MainScreenViewModel
+    viewModel: viewModel
 ) {
     Box(
         modifier = Modifier
@@ -466,7 +470,10 @@ fun ScreenMainContent(
             .padding(paddingValues),
         contentAlignment = Alignment.Center
     ) {
-        ScreenNavHost(navController, viewModel = viewModel)
+        ScreenNavHost(
+            navController,
+            viewModel = viewModel,
+        )
     }
 }
 
@@ -531,7 +538,7 @@ fun barPreview() {
 //        val secondColor = colorResource(R.color.dark_second_color)
 //        val thirdColor = colorResource(R.color.dark_third_color)
 //        val textColor = colorResource(R.color.dark_text_color)
-        val viewModel: MainScreenViewModel = viewModel()
+        val viewModel: viewModel = viewModel()
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
         ChatWithUserBottomBar(viewModel)
     }

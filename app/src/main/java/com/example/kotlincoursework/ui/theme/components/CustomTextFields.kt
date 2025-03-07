@@ -14,6 +14,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
@@ -21,6 +23,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -40,6 +43,59 @@ import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
+//@Composable
+//fun RegisterAndAuntificationTextFieldsWithText(
+//    mainColor: Color,
+//    secondColor: Color,
+//    textColor: Color,
+//    textForValue: String,
+//    onValueChange: (String) -> Unit,
+//    titleText: String,
+//    keyboardType: KeyboardType = KeyboardType.Text,
+//    visualTransformation: VisualTransformation = VisualTransformation.None
+//) {
+//    Column() {
+//        Text(
+//            modifier = Modifier
+//                .padding(horizontal = 10.dp, vertical = 5.dp),
+//            text = titleText,
+//            color = textColor,
+//            fontSize = 18.sp,
+//            textAlign = TextAlign.Start
+//        )
+//
+//        TextField(
+//            singleLine = true,
+//            value = textForValue,
+//            onValueChange = onValueChange,
+//            shape = RoundedCornerShape(20.dp),
+//            textStyle = androidx.compose.ui.text.TextStyle(
+//                color = textColor,
+//                textAlign = TextAlign.Start
+//            ),
+//            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+//            visualTransformation = visualTransformation,
+//            colors = TextFieldDefaults.colors
+//                (
+//                focusedContainerColor = mainColor,
+//                unfocusedContainerColor = mainColor
+//            ),
+//            modifier = Modifier
+//                .background(mainColor)
+//                .clip(RoundedCornerShape(20.dp))
+//                .height(50.dp)
+//                .width(300.dp)
+//                .fillMaxWidth()
+//                .border
+//                    (
+//                    width = 4.dp,
+//                    color = secondColor,
+//                    shape = RoundedCornerShape(20.dp)
+//                )
+//        )
+//    }
+//}
+
 @Composable
 fun RegisterAndAuntificationTextFieldsWithText(
     mainColor: Color,
@@ -51,7 +107,10 @@ fun RegisterAndAuntificationTextFieldsWithText(
     keyboardType: KeyboardType = KeyboardType.Text,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
-    Column() {
+    // Состояние для управления видимостью пароля
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
+    Column {
         Text(
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 5.dp),
@@ -62,28 +121,57 @@ fun RegisterAndAuntificationTextFieldsWithText(
         )
 
         TextField(
+            singleLine = true,
             value = textForValue,
             onValueChange = onValueChange,
             shape = RoundedCornerShape(20.dp),
             textStyle = androidx.compose.ui.text.TextStyle(
                 color = textColor,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                fontSize = 16.sp
             ),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            visualTransformation = visualTransformation,
-            colors = TextFieldDefaults.colors
-                (
+
+            visualTransformation = if (isPasswordVisible && visualTransformation is PasswordVisualTransformation) {
+                VisualTransformation.None // Показываем текст, если пароль видим
+            } else {
+                visualTransformation // Используем переданное значение (например, PasswordVisualTransformation)
+            },
+            colors = TextFieldDefaults.colors(
                 focusedContainerColor = mainColor,
                 unfocusedContainerColor = mainColor
             ),
+            trailingIcon = {
+                // Показываем кнопку только если visualTransformation = PasswordVisualTransformation
+                if (visualTransformation is PasswordVisualTransformation) {
+                    IconButton(
+                        onClick = {
+                            isPasswordVisible = !isPasswordVisible // Переключаем состояние
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isPasswordVisible) {
+                                Icons.Default.Visibility // Иконка "глаз открыт"
+                            } else {
+                                Icons.Default.VisibilityOff // Иконка "глаз закрыт"
+                            },
+                            contentDescription = if (isPasswordVisible) {
+                                "Скрыть пароль"
+                            } else {
+                                "Показать пароль"
+                            },
+                            tint = textColor
+                        )
+                    }
+                }
+            },
             modifier = Modifier
                 .background(mainColor)
                 .clip(RoundedCornerShape(20.dp))
                 .height(50.dp)
                 .width(300.dp)
                 .fillMaxWidth()
-                .border
-                    (
+                .border(
                     width = 4.dp,
                     color = secondColor,
                     shape = RoundedCornerShape(20.dp)
@@ -111,11 +199,11 @@ fun SearchAndInputTextWithPlaceholder(
             Text(
                 text = placeholderText,
                 color = textColor.copy(alpha = 0.5f), // Полупрозрачный цвет для плейсхолдера
-                fontSize = 18.sp
+                fontSize = 16.sp
             )
         },
         shape = RoundedCornerShape(30.dp),
-        textStyle = androidx.compose.ui.text.TextStyle(color = textColor, fontSize = 18.sp),
+        textStyle = androidx.compose.ui.text.TextStyle(color = textColor, fontSize = 16.sp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = mainColor,
             unfocusedContainerColor = mainColor,

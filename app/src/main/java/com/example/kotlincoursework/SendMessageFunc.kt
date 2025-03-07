@@ -1,11 +1,10 @@
 package com.example.kotlincoursework
 
-import androidx.compose.runtime.Composable
-import com.example.kotlincoursework.viewModel.MainScreenViewModel
+import com.example.kotlincoursework.viewModel.viewModel
 
 
 fun ShowMessage(
-    viewModel: MainScreenViewModel,
+    viewModel: viewModel,
     messageText: String
 ){
     viewModel.addItem(messageText)

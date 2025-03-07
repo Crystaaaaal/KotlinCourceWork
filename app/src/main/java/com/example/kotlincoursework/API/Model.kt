@@ -10,6 +10,15 @@ import java.time.format.DateTimeFormatter
 data class ServerResponse(
     val success: Boolean
 )
+@Serializable
+data class RegistrationUserInfo(
+    val phoneNumber: String,
+    val login: String,
+    val password: String,
+    val secondName: String,
+    val firstName:String,
+    val fatherName:String
+)
 
 @Serializable
 data class User(
