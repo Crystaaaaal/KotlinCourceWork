@@ -61,9 +61,7 @@ fun SettingsButton(
 fun ButtonThirdColor(
     thirdColor: Color,
     textColor: Color,
-    navController: NavController,
     onClick: () -> Unit = {},
-    navControllerRoute: String,
     buttonText: String
 ) {
     val buttonColors = ButtonDefaults.buttonColors(
@@ -75,8 +73,7 @@ fun ButtonThirdColor(
             .size(150.dp, 50.dp),
         colors = buttonColors,
         shape = RoundedCornerShape(20.dp),
-        onClick = { onClick()
-            navController.navigate(navControllerRoute) }) {
+        onClick = { onClick() }) {
         Text(
             text = buttonText,
             fontSize = 18.sp,

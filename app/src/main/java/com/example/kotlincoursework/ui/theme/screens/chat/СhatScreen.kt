@@ -23,8 +23,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
 
 @Composable
 fun chatScreen(

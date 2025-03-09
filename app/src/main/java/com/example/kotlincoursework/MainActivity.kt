@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.API.ServerRepository
-import com.example.kotlincoursework.viewModel.viewModel
 import com.example.kotlincoursework.ui.theme.BarDrawing
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.viewModel.viewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

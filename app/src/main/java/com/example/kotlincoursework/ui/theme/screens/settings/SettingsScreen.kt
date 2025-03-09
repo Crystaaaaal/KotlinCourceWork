@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.ui.theme.components.SettingsButton
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.ui.theme.components.SettingsButton
 
 @Composable
 fun SettingScreen(

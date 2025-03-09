@@ -7,13 +7,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.kotlincoursework.API.ServerRepository
+import dataBase.LoginUser
 import dataBase.RegistrationUserInfo
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
@@ -106,23 +109,63 @@ class viewModel : ViewModel() {
             textForRegisterPassword.value,
             textForRegisterSecondName.value,
             textForRegisterName.value,
-            textForRegisterFatherName.value)
+            textForRegisterFatherName.value
+        )
         Log.d("viewModel: buildUser", "Пользователь: $user")
         return user
     }
-    fun registerUser(){
+
+    fun registerUser(): Boolean {
         Log.i("viewModel: registerUser", "Регистрация: начало")
-        val user = buildUser()
+        val result = CompletableDeferred<Boolean>() // Создаем CompletableDeferred для хранения результата
+
         CoroutineScope(Dispatchers.IO).launch {
-            val isServerOnline = async { ServerRepository().registrationUser(user)}.await()
-            withContext(Dispatchers.Main) {
-                if (isServerOnline) {
+            val user = buildUser()
+            val isUserRegister = async { ServerRepository().registrationUser(user) }.await()
+
+            withContext(Dispatchers.IO) {
+                if (isUserRegister) {
                     Log.i("viewModel: registerUser", "Регистрация прошла успешно: конец")
+                    result.complete(true) // Успешная регистрация
                 } else {
-                    Log.e("viewModel: registerUser", "Регистрацияч прошла не успешно: конец")
+                    Log.e("viewModel: registerUser", "Регистрация прошла не успешно: конец")
+                    result.complete(false) // Неуспешная регистрация
                 }
             }
         }
 
+        // Блокируем текущий поток и ждем завершения CompletableDeferred
+        return runBlocking { result.await() }
+    }
+
+    private fun buildlLoginUser(): LoginUser {
+        val user = LoginUser(
+            phoneNumber = loginTextForPhoneNumber.value,
+            password = loginTextForPassword.value
+        )
+        return user
+
+    }
+
+    fun loginUser(): Boolean {
+        Log.i("viewModel: loginUser", "Авторизация: начало")
+        val result = CompletableDeferred<Boolean>()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val user = buildlLoginUser()
+            val token = async { ServerRepository().loginUser(user) }.await()
+
+            withContext(Dispatchers.IO) {
+                if (token.token != "") {
+                    Log.i("viewModel: loginUser", "Авторизация прошла успешно: конец")
+                    result.complete(true)
+                } else {
+                    Log.e("viewModel: loginUser", "Авторизация прошла не успешно: конец")
+                    result.complete(false)
+                }
+            }
+        }
+
+        return runBlocking { result.await() }
     }
 }

@@ -21,10 +21,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
+import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
-import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.viewModel
 
 @Composable
@@ -86,9 +86,16 @@ fun SecondRegisterScreen(
         ButtonThirdColor(
             thirdColor = thirdColor,
             textColor = textColor,
-            navController = navController,
-            navControllerRoute = "ToEnter",
-            onClick = {viewModel.registerUser()},
+            onClick = {
+                if (viewModel.registerUser()){
+                    navController.navigate("ToEnter")
+                    viewModel.updateTextForRegisterPhoneNumber("+7")
+                    viewModel.updateTextForRegisterLogin("")
+                    viewModel.updateTextForRegisterPassword("")
+                    viewModel.updateTextForRegisterSecondName("")
+                    viewModel.updateTextForRegisterName("")
+                    viewModel.updateTextForRegisterFatherName("")
+                }},
             buttonText = "Закончить"
         )
 

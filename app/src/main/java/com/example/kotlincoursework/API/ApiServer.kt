@@ -1,11 +1,10 @@
 package com.example.kotlincoursework.API
 
 
+import dataBase.LoginUser
 import dataBase.RegistrationUserInfo
 import dataBase.ServerResponse
 import dataBase.Token
-import dataBase.User
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -17,5 +16,9 @@ interface ApiServer {
 
     @POST("/registration")
     suspend fun registrationUser(@Body user: RegistrationUserInfo): Response<ServerResponse>
+
+    @POST("/login")
+    suspend fun loginUser(@Body user: LoginUser): Response<Token>
+
 
 }

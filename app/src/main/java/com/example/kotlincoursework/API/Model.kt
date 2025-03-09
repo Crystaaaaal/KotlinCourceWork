@@ -21,6 +21,12 @@ data class RegistrationUserInfo(
 )
 
 @Serializable
+data class LoginUser(
+    val phoneNumber: String,
+    val password: String
+)
+
+@Serializable
 data class User(
     val phoneNumber: String,
     val hashPassword:String,
@@ -31,8 +37,6 @@ data class User(
 
 @Serializable
 data class Token(
-    val id: Int,
-    val userId: String,
     val token: String
 )
 

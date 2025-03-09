@@ -8,14 +8,14 @@ import com.example.kotlincoursework.mainColor
 import com.example.kotlincoursework.secondColor
 import com.example.kotlincoursework.textColor
 import com.example.kotlincoursework.thirdColor
-import com.example.kotlincoursework.ui.theme.screens.settings.SettingScreen
-import com.example.kotlincoursework.ui.theme.screens.chat.chatScreen
 import com.example.kotlincoursework.ui.theme.screens.auth.EnterScreen
 import com.example.kotlincoursework.ui.theme.screens.auth.FirstRegisterScreen
 import com.example.kotlincoursework.ui.theme.screens.auth.SecondRegisterScreen
 import com.example.kotlincoursework.ui.theme.screens.chat.ChatWithUserScreen
+import com.example.kotlincoursework.ui.theme.screens.chat.chatScreen
 import com.example.kotlincoursework.ui.theme.screens.settings.AppearanceScreen
 import com.example.kotlincoursework.ui.theme.screens.settings.NotificationScreen
+import com.example.kotlincoursework.ui.theme.screens.settings.SettingScreen
 import com.example.kotlincoursework.viewModel.viewModel
 
 // Метод навигации

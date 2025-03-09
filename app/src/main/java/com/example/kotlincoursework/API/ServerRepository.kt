@@ -1,11 +1,10 @@
 package com.example.kotlincoursework.API
 
 import android.util.Log
+import dataBase.LoginUser
 import dataBase.RegistrationUserInfo
 import dataBase.ServerResponse
 import dataBase.Token
-import dataBase.User
-import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -54,16 +53,25 @@ class ServerRepository {
                 // Обработка ошибок
                 when (response.code()) {
                     409 -> {
-                        Log.w("ServerRepository: registrationUser", "Пользователь уже зарегистрирован")
+                        Log.w(
+                            "ServerRepository: registrationUser",
+                            "Пользователь уже зарегистрирован"
+                        )
                     }
+
                     400 -> {
                         Log.w("ServerRepository: registrationUser", "Некорректный запрос")
                     }
+
                     500 -> {
                         Log.e("ServerRepository: registrationUser", "Ошибка сервера")
                     }
+
                     else -> {
-                        Log.e("ServerRepository: registrationUser", "Неизвестная ошибка: ${response.code()}")
+                        Log.e(
+                            "ServerRepository: registrationUser",
+                            "Неизвестная ошибка: ${response.code()}"
+                        )
                     }
                 }
                 return false
@@ -79,4 +87,66 @@ class ServerRepository {
             return false
         }
     }
+
+
+    suspend fun loginUser(user: LoginUser): Token {
+        // Создаем пустой токен по умолчанию
+        var token = Token("")
+
+        // Проверяем доступность сервера
+        if (!checkServerStatus()) {
+            Log.w("ServerRepository: loginUser", "Сервер недоступен")
+            return token
+        }
+
+        return try {
+            Log.d("ServerRepository: loginUser", "Отправление запроса")
+            val response: Response<Token> = apiService.loginUser(user)
+            Log.d("ServerRepository: loginUser", "Запрос отправлен")
+
+            // Проверяем, успешен ли запрос и есть ли тело ответа
+            if (response.isSuccessful && response.body() != null) {
+                token = response.body()!!
+                Log.i("ServerRepository: loginUser", "Пользователь успешно авторизован")
+            } else {
+                // Обработка ошибок на основе кода ответа
+                when (response.code()) {
+                    400 -> {
+                        Log.w("ServerRepository: loginUser", "Некорректный запрос")
+                    }
+
+                    401 -> {
+                        Log.w("ServerRepository: loginUser", "Неверные учетные данные")
+                    }
+
+                    409 -> {
+                        Log.w("ServerRepository: loginUser", "Пользователь не зарегистрирован")
+                    }
+
+                    500 -> {
+                        Log.e("ServerRepository: loginUser", "Ошибка сервера")
+                    }
+
+                    else -> {
+                        Log.e(
+                            "ServerRepository: loginUser",
+                            "Неизвестная ошибка: ${response.code()}"
+                        )
+                    }
+                }
+            }
+            return token
+        } catch (e: IOException) {
+            Log.e("ServerRepository: loginUser", "Ошибка сети: ${e.message}")
+            return token
+        } catch (e: HttpException) {
+            Log.e("ServerRepository: loginUser", "HTTP ошибка: ${e.message}")
+            return token
+        } catch (e: Exception) {
+            Log.e("ServerRepository: loginUser", "Неизвестная ошибка: ${e.message}")
+            return token
+        }
+
+    }
 }
+
