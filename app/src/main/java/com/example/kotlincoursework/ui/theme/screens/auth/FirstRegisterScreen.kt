@@ -10,6 +10,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,10 +55,40 @@ fun FirstRegisterScreen(
 
         Spacer(modifier = Modifier.height(100.dp))
 
+        var colorForRegisterPhoneNumber by remember { mutableStateOf(secondColor) }
+        var colorForRegisterLogin by remember { mutableStateOf(secondColor) }
+        var colorForRegisterPassword by remember { mutableStateOf(secondColor) }
+
         val textForRegisterPhoneNumber by viewModel.textForRegisterPhoneNumber.collectAsState()
+        val textForRegisterLogin by viewModel.textForRegisterLogin.collectAsState()
+        val textForRegisterPassword by viewModel.textForRegisterPassword.collectAsState()
+
+        if (textForRegisterPhoneNumber != "+7" && !viewModel.isRegisterPhoneNumberValid){
+            colorForRegisterPhoneNumber = Color.Red
+        }
+        else{
+            colorForRegisterPhoneNumber = secondColor
+        }
+
+        if (textForRegisterLogin != "" && !viewModel.isRegisterLoginValid){
+            colorForRegisterLogin = Color.Red
+        }
+        else {
+            colorForRegisterLogin = secondColor
+        }
+
+        if (textForRegisterPassword != "" && !viewModel.isRegisterPasswordValid){
+            colorForRegisterPassword = Color.Red
+        }
+        else {
+            colorForRegisterPassword = secondColor
+        }
+
+
+
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
-            secondColor = secondColor,
+            secondColor = colorForRegisterPhoneNumber,
             textColor = textColor,
             textForValue = textForRegisterPhoneNumber,
             keyboardType = KeyboardType.Phone,
@@ -63,20 +96,19 @@ fun FirstRegisterScreen(
             titleText = "Номер телефона"
         )
 
-        val textForRegisterLogin by viewModel.textForRegisterLogin.collectAsState()
+
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
-            secondColor = secondColor,
+            secondColor = colorForRegisterLogin,
             textColor = textColor,
             textForValue = textForRegisterLogin,
             onValueChange = { viewModel.updateTextForRegisterLogin(it) },
             titleText = "Логин",
         )
 
-        val textForRegisterPassword by viewModel.textForRegisterPassword.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
-            secondColor = secondColor,
+            secondColor = colorForRegisterPassword,
             textColor = textColor,
             textForValue = textForRegisterPassword,
             keyboardType = KeyboardType.Password,

@@ -11,28 +11,27 @@ import java.io.IOException
 
 class ServerRepository {
     private val apiService = ApiClient.apiService
-
+    var isSuccses = false
     suspend fun checkServerStatus(): Boolean {
-        return try {
+        try {
             Log.d("ServerRepository: checkServerStatus", "Отправление запроса")
             val response = apiService.checkServerStatus()
             Log.d("ServerRepository: checkServerStatus", "Запрос отправлен")
             if (response.isSuccessful) {
                 Log.i("ServerRepository: checkServerStatus", "Сервер онлайн!")
-                return true
-            } else {
-                return false
+                isSuccses = true
             }
         } catch (e: IOException) {
             Log.e("ServerRepository: checkServerStatus", "\"Ошибка сети: ${e.message}\"")
-            return false
+            isSuccses = false
         } catch (e: HttpException) {
             Log.e("ServerRepository: checkServerStatus", "HTTP ошибка: ${e.message}")
-            return false
+            isSuccses = false
         } catch (e: Exception) {
             Log.e("ServerRepository: checkServerStatus", "Неизвестная ошибка: ${e.message}")
-            return false
+            isSuccses = false
         }
+        return isSuccses
     }
 
     suspend fun registrationUser(user: RegistrationUserInfo): Boolean {

@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +29,9 @@ import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
+import com.example.kotlincoursework.ui.theme.components.Toast
 import com.example.kotlincoursework.viewModel.viewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun SecondRegisterScreen(
@@ -36,6 +42,8 @@ fun SecondRegisterScreen(
     textColor: Color,
     viewModel: viewModel
 ) {
+    var message by remember { mutableStateOf("") }
+    var showToast by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,36 +56,66 @@ fun SecondRegisterScreen(
             extraText = "Личные данные"
         )
 
-        Spacer(modifier = Modifier.height(100.dp))
+
+        var colorForRegisterSecondName by remember { mutableStateOf(secondColor) }
+        var colorForRegisterName by remember { mutableStateOf(secondColor) }
+        var colorForRegisterFatherName by remember { mutableStateOf(secondColor) }
 
         val textForRegisterSecondName by viewModel.textForRegisterSecondName.collectAsState()
+        val textForRegisterName by viewModel.textForRegisterName.collectAsState()
+        val textForRegisterFatherName by viewModel.textForRegisterFatherName.collectAsState()
+
+
+
+
+
+        if (textForRegisterSecondName != "" && !viewModel.isRegisterSecondNameValid) {
+            colorForRegisterSecondName = Color.Red
+        } else {
+            colorForRegisterSecondName = secondColor
+        }
+
+        if (textForRegisterName != "" && !viewModel.isRegisterNameValid) {
+            colorForRegisterName = Color.Red
+        } else {
+            colorForRegisterName = secondColor
+        }
+
+        if (textForRegisterFatherName != "" && !viewModel.isRegisterFatherNameValid) {
+            colorForRegisterFatherName = Color.Red
+        } else {
+            colorForRegisterFatherName = secondColor
+        }
+
+
+
+        Spacer(modifier = Modifier.height(100.dp))
+
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
-            secondColor = secondColor,
+            secondColor = colorForRegisterSecondName,
             textColor = textColor,
             textForValue = textForRegisterSecondName,
             onValueChange = { viewModel.updateTextForRegisterSecondName(it) },
             titleText = "Фамилия"
         )
 
-        val textForRegisterName by viewModel.textForRegisterName.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
-            secondColor = secondColor,
+            secondColor = colorForRegisterName,
             textColor = textColor,
             textForValue = textForRegisterName,
-            onValueChange = {  viewModel.updateTextForRegisterName(it) },
+            onValueChange = { viewModel.updateTextForRegisterName(it) },
             titleText = "Имя"
         )
 
-        val textForRegisterFatherName by viewModel.textForRegisterFatherName.collectAsState()
 
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
-            secondColor = secondColor,
+            secondColor = colorForRegisterFatherName,
             textColor = textColor,
             textForValue = textForRegisterFatherName,
-            onValueChange = {  viewModel.updateTextForRegisterFatherName(it)},
+            onValueChange = { viewModel.updateTextForRegisterFatherName(it) },
             titleText = "Отчество"
         )
 
@@ -87,7 +125,7 @@ fun SecondRegisterScreen(
             thirdColor = thirdColor,
             textColor = textColor,
             onClick = {
-                if (viewModel.registerUser()){
+                if (viewModel.registerUser()) {
                     navController.navigate("ToEnter")
                     viewModel.updateTextForRegisterPhoneNumber("+7")
                     viewModel.updateTextForRegisterLogin("")
@@ -95,7 +133,11 @@ fun SecondRegisterScreen(
                     viewModel.updateTextForRegisterSecondName("")
                     viewModel.updateTextForRegisterName("")
                     viewModel.updateTextForRegisterFatherName("")
-                }},
+                } else {
+                    message = "Неверное заполнение полей"
+                    showToast = true
+                }
+            },
             buttonText = "Закончить"
         )
 
@@ -112,6 +154,19 @@ fun SecondRegisterScreen(
             textDecoration = Underline
         )
 
+    }
+    Toast(
+        message = message,
+        visible = showToast,
+        mainColor = mainColor,
+        secondColor = secondColor,
+        textColor = textColor
+    )
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            delay(3000)
+            showToast = false
+        }
     }
 }
 

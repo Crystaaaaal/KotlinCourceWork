@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +30,9 @@ import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
+import com.example.kotlincoursework.ui.theme.components.Toast
 import com.example.kotlincoursework.viewModel.viewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun EnterScreen(
@@ -37,6 +43,8 @@ fun EnterScreen(
     textColor: Color,
     viewModel: viewModel
 ) {
+    var message by remember { mutableStateOf("") }
+    var showToast by remember { mutableStateOf(false) }
     Column(
         Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -81,6 +89,10 @@ fun EnterScreen(
             thirdColor = thirdColor,
             textColor = textColor,
             onClick = {
+                if (!viewModel.isLoginPhoneNumberValid.value){
+                   message = "Неправильно набран номер"
+                    showToast = true
+                }
                 if (viewModel.loginUser()) {
                     navController.navigate("ToChat")
                     viewModel.updateTextForPassword("")
@@ -104,6 +116,19 @@ fun EnterScreen(
             color = secondColor,
             textDecoration = Underline
         )
+
+    }
+    Toast(
+        message = message,
+        visible = showToast,
+        mainColor = mainColor,
+        secondColor = secondColor,
+        textColor = textColor)
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            delay(3000)
+            showToast = false
+        }
     }
 
 }
