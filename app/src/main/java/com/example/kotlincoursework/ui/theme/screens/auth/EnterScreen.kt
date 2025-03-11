@@ -93,10 +93,12 @@ fun EnterScreen(
                    message = "Неправильно набран номер"
                     showToast = true
                 }
-                if (viewModel.loginUser()) {
-                    navController.navigate("ToChat")
-                    viewModel.updateTextForPassword("")
-                    viewModel.updateLoginTextForPhoneNumber("+7")
+                viewModel.loginUser { isSuccess ->
+                    if (isSuccess) {
+                        navController.navigate("ToChat")
+                        viewModel.updateTextForPassword("")
+                        viewModel.updateLoginTextForPhoneNumber("+7")
+                    }
                 }
             },
             buttonText = "Войти"

@@ -212,32 +212,32 @@ class viewModel : ViewModel() {
         return user
     }
 
-    fun registerUser(): Boolean {
+    private val viewModelScope = CoroutineScope(Dispatchers.Main)
+
+    fun registerUser(onResult: (Boolean) -> Unit) {
         Log.i("viewModel: registerUser", "Регистрация: начало")
 
         if (!isRegistrationFormValid()) {
             Log.i("viewModel: registerUser", "Невалидные данные")
             Log.e("viewModel: registerUser", "Регистрация прошла не успешно: конец")
-            return false
+            onResult(false)
+            return
         }
-        val result = CompletableDeferred<Boolean>() // Создаем CompletableDeferred для хранения результата
-        CoroutineScope(Dispatchers.IO).launch {
-            val user = buildUser()
-            val isUserRegister = async { ServerRepository().registrationUser(user) }.await()
 
-            withContext(Dispatchers.IO) {
-                if (isUserRegister) {
-                    Log.i("viewModel: registerUser", "Регистрация прошла успешно: конец")
-                    result.complete(true) // Успешная регистрация
-                } else {
-                    Log.e("viewModel: registerUser", "Регистрация прошла не успешно: конец")
-                    result.complete(false) // Неуспешная регистрация
-                }
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                val user = buildUser()
+                ServerRepository().registrationUser(user)
+            }
+
+            if (result) {
+                Log.i("viewModel: registerUser", "Регистрация прошла успешно: конец")
+                onResult(true)
+            } else {
+                Log.e("viewModel: registerUser", "Регистрация не прошла: конец")
+                onResult(false)
             }
         }
-
-        // Блокируем текущий поток и ждем завершения CompletableDeferred
-        return runBlocking { result.await() }
     }
 
     private fun buildlLoginUser(): LoginUser {
@@ -249,29 +249,29 @@ class viewModel : ViewModel() {
 
     }
 
-    fun loginUser(): Boolean {
+    fun loginUser(onResult: (Boolean) -> Unit) {
         Log.i("viewModel: loginUser", "Авторизация: начало")
         if (!isLoginFormValid()) {
             Log.i("viewModel: loginUser", "Невалидные данные")
-            Log.e("viewModel: loginUser", "Авторизация прошла не успешно: конец")
-            return false
+            Log.e("viewModel: loginUser", "Авторизация не прошла: конец")
+            onResult(false)
+            return
         }
-        val result = CompletableDeferred<Boolean>()
-        CoroutineScope(Dispatchers.IO).launch {
-            val user = buildlLoginUser()
-            val token = async { ServerRepository().loginUser(user) }.await()
 
-            withContext(Dispatchers.IO) {
-                if (token.token != "") {
-                    Log.i("viewModel: loginUser", "Авторизация прошла успешно: конец")
-                    result.complete(true)
-                } else {
-                    Log.e("viewModel: loginUser", "Авторизация прошла не успешно: конец")
-                    result.complete(false)
-                }
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                val user = buildlLoginUser()
+                val token = ServerRepository().loginUser(user)
+                token.token != ""
+            }
+
+            if (result) {
+                Log.i("viewModel: loginUser", "Авторизация прошла успешно: конец")
+                onResult(true)
+            } else {
+                Log.e("viewModel: loginUser", "Авторизация прошла не успешно: конец")
+                onResult(false)
             }
         }
-
-        return runBlocking { result.await() }
     }
 }

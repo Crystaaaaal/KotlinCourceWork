@@ -125,17 +125,19 @@ fun SecondRegisterScreen(
             thirdColor = thirdColor,
             textColor = textColor,
             onClick = {
-                if (viewModel.registerUser()) {
-                    navController.navigate("ToEnter")
-                    viewModel.updateTextForRegisterPhoneNumber("+7")
-                    viewModel.updateTextForRegisterLogin("")
-                    viewModel.updateTextForRegisterPassword("")
-                    viewModel.updateTextForRegisterSecondName("")
-                    viewModel.updateTextForRegisterName("")
-                    viewModel.updateTextForRegisterFatherName("")
-                } else {
-                    message = "Неверное заполнение полей"
-                    showToast = true
+                viewModel.registerUser { isSuccess ->
+                    if (isSuccess) {
+                        navController.navigate("ToEnter")
+                        viewModel.updateTextForRegisterPhoneNumber("+7")
+                        viewModel.updateTextForRegisterLogin("")
+                        viewModel.updateTextForRegisterPassword("")
+                        viewModel.updateTextForRegisterSecondName("")
+                        viewModel.updateTextForRegisterName("")
+                        viewModel.updateTextForRegisterFatherName("")
+                    } else {
+                        message = "Неверное заполнение полей"
+                        showToast = true
+                    }
                 }
             },
             buttonText = "Закончить"
