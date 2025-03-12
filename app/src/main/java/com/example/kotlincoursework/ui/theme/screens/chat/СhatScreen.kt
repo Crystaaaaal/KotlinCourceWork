@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,6 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
+import com.example.kotlincoursework.viewModel.viewModel
 
 @Composable
 fun chatScreen(
@@ -50,7 +52,8 @@ fun chatScreen(
     mainColor: Color,
     secondColor: Color,
     thirdColor: Color,
-    textColor: Color
+    textColor: Color,
+    viewModel: viewModel
     //items: List<String>
 ) {
 
@@ -70,13 +73,14 @@ fun chatScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                var text by rememberSaveable { mutableStateOf("") }
+
+                val text by viewModel.textForSearch.collectAsState()
                 SearchAndInputTextWithPlaceholder(
                     mainColor = mainColor,
                     secondColor = secondColor,
                     textColor = textColor,
                     textForValue = text,
-                    onValueChange = { text = it },
+                    onValueChange = { viewModel.updateTextForSearch(it)},
                     placeholderText = "Поиск",
                     singleline = true,
                     modifier = Modifier
@@ -93,7 +97,7 @@ fun chatScreen(
                 IconButton(modifier = Modifier
                     .size(50.dp)
                     .background(thirdColor, CircleShape),
-                    onClick = {}) {
+                    onClick = {viewModel.searchUser()}) {
                     Surface(
                         shape = RoundedCornerShape(30.dp),
                         modifier = Modifier
@@ -181,7 +185,7 @@ fun chatPreview() {
 //        val textColor = colorResource(R.color.dark_text_color)
 
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
-        chatScreen(navController, mainColor, secondColor, thirdColor, textColor)
+        //chatScreen(navController, mainColor, secondColor, thirdColor, textColor)
 
     }
 }

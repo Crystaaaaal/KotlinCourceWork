@@ -4,7 +4,14 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-
+@Serializable
+data class ChatingResponse(
+    val userList: List<User>
+)
+@Serializable
+data class PhoneOrLoginRemote(
+    val phoneOrLogin: String
+)
 
 @Serializable
 data class ServerResponse(
@@ -31,6 +38,7 @@ data class User(
     val phoneNumber: String,
     val hashPassword:String,
     val fullName: String,
+    val login:String,
     val profileImage: ByteArray?,
     val createdAt: String
 )

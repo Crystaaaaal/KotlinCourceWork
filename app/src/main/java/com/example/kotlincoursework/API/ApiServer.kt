@@ -1,7 +1,9 @@
 package com.example.kotlincoursework.API
 
 
+import dataBase.ChatingResponse
 import dataBase.LoginUser
+import dataBase.PhoneOrLoginRemote
 import dataBase.RegistrationUserInfo
 import dataBase.ServerResponse
 import dataBase.Token
@@ -20,5 +22,7 @@ interface ApiServer {
     @POST("/login")
     suspend fun loginUser(@Body user: LoginUser): Response<Token>
 
+    @POST("/search")
+    suspend fun searchUser(@Body phoneOnLogin: PhoneOrLoginRemote): Response<ChatingResponse>
 
 }

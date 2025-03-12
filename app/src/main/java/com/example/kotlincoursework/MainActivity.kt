@@ -27,17 +27,6 @@ var textColor: Color = Color.Black
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Пример вызова репозитория
-        CoroutineScope(Dispatchers.IO).launch {
-            val isServerOnline = async {  ServerRepository().checkServerStatus()}.await()
-            withContext(Dispatchers.Main) {
-                if (isServerOnline) {
-                    Log.d("ServerStatus", "Сервер онлайн!")
-                } else {
-                    Log.e("ServerStatus", "Сервер оффлайн!")
-                }
-            }
-        }
         setContent {
             KotlinCourseWorkTheme {
                 mainColor = colorResource(R.color.light_main_color)
@@ -51,15 +40,12 @@ class MainActivity : ComponentActivity() {
 
                 //Отрисовываем панелей
                 BarDrawing(
-                    navController =  navController,
-                    viewModel =  viewModel,
+                    navController = navController,
+                    viewModel = viewModel,
                 )
             }
         }
-
     }
-
-
 }
 
 

@@ -42,7 +42,8 @@ fun ScreenNavHost(
                 mainColor,
                 secondColor,
                 thirdColor,
-                textColor
+                textColor,
+                viewModel
             )
         }
         composable("ToEnter") {

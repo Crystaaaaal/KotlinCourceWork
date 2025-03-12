@@ -1,5 +1,6 @@
 package com.example.kotlincoursework.ui.theme.screens.auth
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
@@ -30,6 +32,7 @@ import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.components.Toast
+import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import com.example.kotlincoursework.viewModel.viewModel
 import kotlinx.coroutines.delay
 
@@ -125,19 +128,12 @@ fun SecondRegisterScreen(
             thirdColor = thirdColor,
             textColor = textColor,
             onClick = {
-                viewModel.registerUser { isSuccess ->
-                    if (isSuccess) {
-                        navController.navigate("ToEnter")
-                        viewModel.updateTextForRegisterPhoneNumber("+7")
-                        viewModel.updateTextForRegisterLogin("")
-                        viewModel.updateTextForRegisterPassword("")
-                        viewModel.updateTextForRegisterSecondName("")
-                        viewModel.updateTextForRegisterName("")
-                        viewModel.updateTextForRegisterFatherName("")
-                    } else {
-                        message = "Неверное заполнение полей"
-                        showToast = true
-                    }
+                if (!viewModel.isRegistrationFormValid()) {
+                    message = "Невалидные данные"
+                    showToast = true
+                }
+                else{
+                    viewModel.registerUser()
                 }
             },
             buttonText = "Закончить"
@@ -157,6 +153,34 @@ fun SecondRegisterScreen(
         )
 
     }
+    val state by viewModel.registrationState.collectAsState()
+
+
+    when(state){
+        is RegistrationState.Idle -> {}
+        is RegistrationState.Loading ->{}
+        is RegistrationState.Success -> {
+            registrationIsSucces(navController =  navController)
+            viewModel.resetRegistrationStat()}
+
+        is RegistrationState.Error -> {
+            registrationIsError(
+                mainColor = mainColor,
+                secondColor = secondColor,
+                textColor = textColor,
+                message = (state as RegistrationState.Error).message
+            )
+        }
+    }
+
+
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            delay(3000)
+            showToast = false
+        }
+    }
+
     Toast(
         message = message,
         visible = showToast,
@@ -164,19 +188,45 @@ fun SecondRegisterScreen(
         secondColor = secondColor,
         textColor = textColor
     )
+
+
+}
+@Composable
+fun registrationIsError(
+    mainColor: Color,
+    secondColor: Color,
+    textColor: Color,
+    message:String
+){
+    var showToast by remember { mutableStateOf(true) }
+    RegistrationState.Idle
+    Toast(
+        message = message,
+        visible = showToast,
+        mainColor = mainColor,
+        secondColor = secondColor,
+        textColor = textColor
+    )
+
+    // Управление Toast
     LaunchedEffect(showToast) {
         if (showToast) {
-            delay(3000)
-            showToast = false
+            Log.d("SecodnRegisterScreen: LaunchedEffect", "Toast показан: $message")
+            delay(3000) // Показываем Toast в течение 3 секунд
+            showToast = false // Скрываем Toast
+            Log.d("SecodnRegisterScreen: LaunchedEffect", "Toast скрыт")
         }
     }
 }
+fun registrationIsSucces(navController: NavController){
+    Log.d("SecondRegisterScreen: registrationIsSucces","переход")
+    navController.navigate("toEnter")
 
-@Composable
-fun UserEnter() {
-    val viewModel: viewModel = viewModel()
-    viewModel.updateTopBarText("Мессенджер")
+
+
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

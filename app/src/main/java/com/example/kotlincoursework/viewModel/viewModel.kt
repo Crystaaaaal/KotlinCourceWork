@@ -1,29 +1,22 @@
 package com.example.kotlincoursework.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.kotlincoursework.API.ServerRepository
+import com.example.kotlincoursework.ui.theme.state.LoginState
+import com.example.kotlincoursework.ui.theme.state.RegistrationState
+import com.example.kotlincoursework.ui.theme.state.SeacrhState
 import dataBase.LoginUser
 import dataBase.RegistrationUserInfo
-import dataBase.UserRegistrationRequest
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-
 
 class viewModel : ViewModel() {
-
-
 
     var topBarText by mutableStateOf("Мессенджер")
         private set
@@ -38,8 +31,6 @@ class viewModel : ViewModel() {
     fun updateTopBarText(newText: String) {
         topBarText = newText
     }
-
-
 
     // Для номера телефона при авторизации
     private val _isLoginPhoneNumberValid = MutableStateFlow(false)
@@ -73,13 +64,11 @@ class viewModel : ViewModel() {
     private val _isRegisterFatherNameValid = MutableStateFlow(false)
     val isRegisterFatherNameValid: Boolean get() = _isRegisterFatherNameValid.value
 
-
-    //для хранение и обновления значения поля ввода логина при авторизации
-    // Состояние для текста номера телефона
+    // Для текста номера телефона при авторизации
     private val _loginTextForPhoneNumber = MutableStateFlow("+7")
     val loginTextForPhoneNumber: StateFlow<String> get() = _loginTextForPhoneNumber
 
-    //для хранения и обновления значение поля пароля при авторизации
+    // Для пароля при авторизации
     private val _textForPassword = MutableStateFlow("")
     val loginTextForPassword: StateFlow<String> get() = _textForPassword
 
@@ -107,59 +96,62 @@ class viewModel : ViewModel() {
     private val _textForRegisterFatherName = MutableStateFlow("")
     val textForRegisterFatherName: StateFlow<String> get() = _textForRegisterFatherName
 
+    //Для текста поиска в чатах
+    private val _textForSearch = MutableStateFlow("")
+    val textForSearch: StateFlow<String> get() = _textForSearch
 
+    //Обновление текста поиска
+    fun updateTextForSearch(text:String){
+        _textForSearch.value = text
+    }
 
-    // Для номера телефона при авторизации
+    // Обновление текста номера телефона при авторизации
     fun updateLoginTextForPhoneNumber(text: String) {
         _loginTextForPhoneNumber.value = text
         _isLoginPhoneNumberValid.value = validatePhoneNumber(text)
     }
 
-    // Для пароля при авторизации
+    // Обновление пароля при авторизации
     fun updateTextForPassword(text: String) {
         _textForPassword.value = text
         _isLoginPasswordValid.value = validatePassword(text)
     }
 
-    // Для номера телефона при регистрации
+    // Обновление номера телефона при регистрации
     fun updateTextForRegisterPhoneNumber(text: String) {
         _textForRegisterPhoneNumber.value = text
         _isRegisterPhoneNumberValid.value = validatePhoneNumber(text)
     }
 
-    // Для логина при регистрации
+    // Обновление логина при регистрации
     fun updateTextForRegisterLogin(text: String) {
         _textForRegisterLogin.value = text
         _isRegisterLoginValid.value = validateLogin(text)
     }
 
-    // Для пароля при регистрации
+    // Обновление пароля при регистрации
     fun updateTextForRegisterPassword(text: String) {
         _textForRegisterPassword.value = text
         _isRegisterPasswordValid.value = validatePassword(text)
     }
 
-    // Для фамилии при регистрации
+    // Обновление фамилии при регистрации
     fun updateTextForRegisterSecondName(text: String) {
         _textForRegisterSecondName.value = text
         _isRegisterSecondNameValid.value = validateName(text)
     }
 
-    // Для имени при регистрации
+    // Обновление имени при регистрации
     fun updateTextForRegisterName(text: String) {
         _textForRegisterName.value = text
         _isRegisterNameValid.value = validateName(text)
     }
 
-    // Для отчества при регистрации
+    // Обновление отчества при регистрации
     fun updateTextForRegisterFatherName(text: String) {
         _textForRegisterFatherName.value = text
         _isRegisterFatherNameValid.value = validateName(text)
     }
-
-
-
-
 
     // Проверка номера телефона
     private fun validatePhoneNumber(phoneNumber: String): Boolean {
@@ -178,11 +170,10 @@ class viewModel : ViewModel() {
 
     // Проверка имени, фамилии, отчества
     private fun validateName(name: String): Boolean {
-        return name.isNotBlank() && name.length in 2 .. 30
+        return name.isNotBlank() && name.length in 2..30
     }
 
-
-
+    // Проверка валидности формы регистрации
     fun isRegistrationFormValid(): Boolean {
         return _isRegisterPhoneNumberValid.value &&
                 _isRegisterLoginValid.value &&
@@ -192,15 +183,15 @@ class viewModel : ViewModel() {
                 _isRegisterFatherNameValid.value
     }
 
+    // Проверка валидности формы авторизации
     fun isLoginFormValid(): Boolean {
         return _isLoginPhoneNumberValid.value &&
                 _isLoginPasswordValid.value
     }
 
-
-
+    // Сборка данных пользователя для регистрации
     private fun buildUser(): RegistrationUserInfo {
-        val user = RegistrationUserInfo(
+        return RegistrationUserInfo(
             textForRegisterPhoneNumber.value,
             textForRegisterLogin.value,
             textForRegisterPassword.value,
@@ -208,70 +199,102 @@ class viewModel : ViewModel() {
             textForRegisterName.value,
             textForRegisterFatherName.value
         )
-        Log.d("viewModel: buildUser", "Пользователь: $user")
-        return user
     }
 
-    private val viewModelScope = CoroutineScope(Dispatchers.Main)
-
-    fun registerUser(onResult: (Boolean) -> Unit) {
-        Log.i("viewModel: registerUser", "Регистрация: начало")
-
-        if (!isRegistrationFormValid()) {
-            Log.i("viewModel: registerUser", "Невалидные данные")
-            Log.e("viewModel: registerUser", "Регистрация прошла не успешно: конец")
-            onResult(false)
-            return
-        }
-
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                val user = buildUser()
-                ServerRepository().registrationUser(user)
-            }
-
-            if (result) {
-                Log.i("viewModel: registerUser", "Регистрация прошла успешно: конец")
-                onResult(true)
-            } else {
-                Log.e("viewModel: registerUser", "Регистрация не прошла: конец")
-                onResult(false)
-            }
-        }
-    }
-
-    private fun buildlLoginUser(): LoginUser {
-        val user = LoginUser(
+    // Сборка данных пользователя для авторизации
+    private fun buildLoginUser(): LoginUser {
+        return LoginUser(
             phoneNumber = loginTextForPhoneNumber.value,
             password = loginTextForPassword.value
         )
-        return user
-
     }
 
-    fun loginUser(onResult: (Boolean) -> Unit) {
-        Log.i("viewModel: loginUser", "Авторизация: начало")
-        if (!isLoginFormValid()) {
-            Log.i("viewModel: loginUser", "Невалидные данные")
-            Log.e("viewModel: loginUser", "Авторизация не прошла: конец")
-            onResult(false)
+    // Состояние регистрации
+    private val _registrationState = MutableStateFlow<RegistrationState>(RegistrationState.Idle)
+    val registrationState: StateFlow<RegistrationState> get() = _registrationState
+
+    // Состояние авторизации
+    private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
+    val loginState: StateFlow<LoginState> get() = _loginState
+
+    // Состояние поиска
+    private val _searchState = MutableStateFlow<SeacrhState>(SeacrhState.Idle)
+    val searchState: StateFlow<SeacrhState> get() = _searchState
+
+    fun resetLoginState() {
+        _loginState.value = LoginState.Idle // Сбрасываем состояние
+    }
+    fun resetRegistrationStat(){
+        _registrationState.value = RegistrationState.Idle
+    }
+    // Регистрация пользователя
+    fun registerUser() {
+        if (!isRegistrationFormValid()) {
+            _registrationState.value = RegistrationState.Error("Невалидные данные")
             return
         }
 
-        viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                val user = buildlLoginUser()
-                val token = ServerRepository().loginUser(user)
-                token.token != ""
-            }
+        _registrationState.value = RegistrationState.Loading
 
-            if (result) {
-                Log.i("viewModel: loginUser", "Авторизация прошла успешно: конец")
-                onResult(true)
-            } else {
-                Log.e("viewModel: loginUser", "Авторизация прошла не успешно: конец")
-                onResult(false)
+        viewModelScope.launch {
+            val result = ServerRepository().registrationUser(buildUser())
+            _registrationState.value = result
+
+            // Сброс состояния после завершения
+            if (result is RegistrationState.Success) {
+                resetRegistrationForm()
             }
         }
     }
+
+    // Авторизация пользователя
+    fun loginUser() {
+
+        if (!isLoginFormValid()) {
+            _loginState.value = LoginState.Error("Невалидные данные")
+            return
+        }
+        viewModelScope.launch {
+
+        _loginState.value = LoginState.Loading
+
+
+            val result = ServerRepository().loginUser(buildLoginUser())
+            _loginState.value = result
+
+            // Сброс состояния после завершения
+            if (result is LoginState.Success) {
+                resetLoginForm()
+            }
+        }
+    }
+
+
+    // Сброс формы регистрации
+    private fun resetRegistrationForm() {
+        _textForRegisterPhoneNumber.value = "+7"
+        _textForRegisterLogin.value = ""
+        _textForRegisterPassword.value = ""
+        _textForRegisterSecondName.value = ""
+        _textForRegisterName.value = ""
+        _textForRegisterFatherName.value = ""
+    }
+
+    // Сброс формы авторизации
+    private fun resetLoginForm() {
+        _loginTextForPhoneNumber.value = "+7"
+        _textForPassword.value = ""
+    }
+    fun searchUser(){
+        viewModelScope.launch {
+
+            _searchState.value = SeacrhState.Loading
+
+            val result = ServerRepository().searchUser(textForSearch.value)
+            _searchState.value = result
+
+        }
+    }
+
+
 }
