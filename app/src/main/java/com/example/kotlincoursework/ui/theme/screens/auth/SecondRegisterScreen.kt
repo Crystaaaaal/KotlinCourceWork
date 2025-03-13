@@ -161,7 +161,7 @@ fun SecondRegisterScreen(
         is RegistrationState.Loading ->{}
         is RegistrationState.Success -> {
             registrationIsSucces(navController =  navController)
-            viewModel.resetRegistrationStat()}
+            viewModel.resetRegistrationState()}
 
         is RegistrationState.Error -> {
             registrationIsError(

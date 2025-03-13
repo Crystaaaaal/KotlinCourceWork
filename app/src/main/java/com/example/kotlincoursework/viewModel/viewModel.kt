@@ -224,8 +224,13 @@ class viewModel : ViewModel() {
     fun resetLoginState() {
         _loginState.value = LoginState.Idle // Сбрасываем состояние
     }
-    fun resetRegistrationStat(){
+
+    fun resetRegistrationState(){
         _registrationState.value = RegistrationState.Idle
+    }
+
+    fun resetSearchState(){
+        _searchState.value = SeacrhState.Idle
     }
     // Регистрация пользователя
     fun registerUser() {

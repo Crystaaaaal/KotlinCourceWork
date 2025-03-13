@@ -11,6 +11,7 @@ import dataBase.PhoneOrLoginRemote
 import dataBase.RegistrationUserInfo
 import dataBase.ServerResponse
 import dataBase.Token
+import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -61,17 +62,26 @@ class ServerRepository {
                         Log.d("ServerRepository: registrationUser", "Запрос отправлен")
 
                         if (response.isSuccessful && response.body() != null) {
-                            Log.i("ServerRepository: registrationUser", "Пользователь зарегистрирован")
+                            Log.i(
+                                "ServerRepository: registrationUser",
+                                "Пользователь зарегистрирован"
+                            )
                             return RegistrationState.Success(true) // Возвращаем успешный результат
                         } else {
                             return when (response.code()) {
                                 409 -> {
-                                    Log.w("ServerRepository: registrationUser", "Пользователь уже зарегистрирован")
+                                    Log.w(
+                                        "ServerRepository: registrationUser",
+                                        "Пользователь уже зарегистрирован"
+                                    )
                                     RegistrationState.Error("Пользователь уже зарегистрирован")
                                 }
 
                                 400 -> {
-                                    Log.w("ServerRepository: registrationUser", "Некорректный запрос")
+                                    Log.w(
+                                        "ServerRepository: registrationUser",
+                                        "Некорректный запрос"
+                                    )
                                     RegistrationState.Error("Некорректный запрос")
                                 }
 
@@ -81,7 +91,10 @@ class ServerRepository {
                                 }
 
                                 else -> {
-                                    Log.e("ServerRepository: registrationUser", "Неизвестная ошибка: ${response.code()}")
+                                    Log.e(
+                                        "ServerRepository: registrationUser",
+                                        "Неизвестная ошибка: ${response.code()}"
+                                    )
                                     RegistrationState.Error("Неизвестная ошибка: ${response.code()}")
                                 }
                             }
@@ -93,7 +106,10 @@ class ServerRepository {
                         Log.e("ServerRepository: registrationUser", "HTTP ошибка: ${e.message}")
                         return RegistrationState.Error("HTTP ошибка: ${e.message}") // Возвращаем HTTP ошибку
                     } catch (e: Exception) {
-                        Log.e("ServerRepository: registrationUser", "Неизвестная ошибка: ${e.message}")
+                        Log.e(
+                            "ServerRepository: registrationUser",
+                            "Неизвестная ошибка: ${e.message}"
+                        )
                         return RegistrationState.Error("Неизвестная ошибка: ${e.message}") // Возвращаем неизвестную ошибку
                     }
                 } else {
@@ -103,7 +119,10 @@ class ServerRepository {
             }
 
             is ServerState.Error -> {
-                Log.d("ServerRepository: registrationUser", "Ошибка сервера: ${serverState.message}")
+                Log.d(
+                    "ServerRepository: registrationUser",
+                    "Ошибка сервера: ${serverState.message}"
+                )
                 return RegistrationState.Error(serverState.message) // Возвращаем ошибку сервера
             }
 
@@ -191,27 +210,29 @@ class ServerRepository {
         }
     }
 
-
     suspend fun searchUser(phoneOrLogin: String): SeacrhState {
         return when (val serverState = checkServerStatus()) {
             is ServerState.Success -> {
                 if (serverState.isServerOnline) {
                     try {
-                        SeacrhState.Loading
                         val response: Response<ChatingResponse> = apiService.searchUser(
                             phoneOnLogin = PhoneOrLoginRemote(phoneOrLogin)
                         )
-                        if (response.isSuccessful) {
-                            SeacrhState.Success(response.body()!!.userList)
+
+                        if (response.isSuccessful && response.body() != null) {
+                            return SeacrhState.Success(response.body()!!.userList) // Возвращаем успешный результат
                         } else {
-                            when (response.code()) {
+                            return when (response.code()) {
                                 400 -> {
                                     Log.w("ServerRepository: searchUser", "Некорректный запрос")
                                     SeacrhState.Error("Некорректный запрос")
                                 }
 
                                 401 -> {
-                                    Log.w("ServerRepository: searchUser", "Неверные учетные данные")
+                                    Log.w(
+                                        "ServerRepository: searchUser",
+                                        "Неверные учетные данные"
+                                    )
                                     SeacrhState.Error("Неверные учетные данные")
                                 }
 
@@ -239,19 +260,38 @@ class ServerRepository {
                         }
                     } catch (e: IOException) {
                         Log.e("ServerRepository: searchUser", "Ошибка сети: ${e.message}")
+                        return SeacrhState.Error("Ошибка сети: ${e.message}") // Возвращаем ошибку сети
                     } catch (e: HttpException) {
                         Log.e("ServerRepository: searchUser", "HTTP ошибка: ${e.message}")
+                        return SeacrhState.Error("HTTP ошибка: ${e.message}") // Возвращаем HTTP ошибку
                     } catch (e: Exception) {
-                        Log.e("ServerRepository: searchUser", "Неизвестная ошибка: ${e.message}")
+                        Log.e(
+                            "ServerRepository: searchUser",
+                            "Неизвестная ошибка: ${e.message}"
+                        )
+                        return SeacrhState.Error("Неизвестная ошибка: ${e.message}") // Возвращаем неизвестную ошибку
                     }
-                    SeacrhState.Error("Сервер недоступен")
                 } else {
-                    SeacrhState.Error("Сервер недоступен")
+                    Log.d("ServerRepository: searchUser", "Сервер недоступен")
+                    return SeacrhState.Error("Сервер недоступен") // Возвращаем ошибку, если сервер оффлайн
                 }
             }
 
-            is ServerState.Error -> SeacrhState.Error(serverState.message)
-            else -> SeacrhState.Idle // Возвращаем Idle, если сервер не был проверен
+            is ServerState.Error -> {
+                Log.d("ServerRepository: searchUser", "Ошибка сервера: ${serverState.message}")
+                return SeacrhState.Error(serverState.message) // Возвращаем ошибку сервера
+            }
+
+            else -> {
+                Log.d("ServerRepository: searchUser", "Состояние сервера не определено")
+                return SeacrhState.Idle // Возвращаем Idle, если сервер не был проверен
+            }
         }
     }
+
 }
+
+
+//fun<T> makeApiRequest(): Flow<T> {
+//
+//}
