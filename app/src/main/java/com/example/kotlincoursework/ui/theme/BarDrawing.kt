@@ -536,8 +536,8 @@ fun barPreview() {
 //        val secondColor = colorResource(R.color.dark_second_color)
 //        val thirdColor = colorResource(R.color.dark_third_color)
 //        val textColor = colorResource(R.color.dark_text_color)
-        val viewModel: viewModel = viewModel()
+        //val viewModel: viewModel = viewModel()
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
-        ChatWithUserBottomBar(viewModel)
+        //ChatWithUserBottomBar(viewModel)
     }
 }

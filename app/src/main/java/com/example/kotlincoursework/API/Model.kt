@@ -5,12 +5,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Serializable
-data class ChatingResponse(
-    val userList: List<User>
+data class SearchingResponse(
+    val userList: List<User>,
 )
 @Serializable
 data class PhoneOrLoginRemote(
-    val phoneOrLogin: String
+    val phoneOrLogin: String,
+    val token: loginRecive
 )
 
 @Serializable
@@ -44,8 +45,10 @@ data class User(
 )
 
 @Serializable
-data class Token(
-    val token: String
+data class loginRecive(
+    val token: String,
+    val phoneNumber: String
+
 )
 
 @Serializable

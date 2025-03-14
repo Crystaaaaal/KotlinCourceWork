@@ -1,5 +1,6 @@
 package com.example.kotlincoursework.viewModel
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +17,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class viewModel : ViewModel() {
+class viewModel(
+    private val applicationContext: Context) : ViewModel() {
 
     var topBarText by mutableStateOf("Мессенджер")
         private set
@@ -242,7 +244,7 @@ class viewModel : ViewModel() {
         _registrationState.value = RegistrationState.Loading
 
         viewModelScope.launch {
-            val result = ServerRepository().registrationUser(buildUser())
+            val result = ServerRepository(applicationContext).registrationUser(buildUser())
             _registrationState.value = result
 
             // Сброс состояния после завершения
@@ -264,7 +266,7 @@ class viewModel : ViewModel() {
         _loginState.value = LoginState.Loading
 
 
-            val result = ServerRepository().loginUser(buildLoginUser())
+            val result = ServerRepository(applicationContext).loginUser(buildLoginUser())
             _loginState.value = result
 
             // Сброс состояния после завершения
@@ -295,7 +297,7 @@ class viewModel : ViewModel() {
 
             _searchState.value = SeacrhState.Loading
 
-            val result = ServerRepository().searchUser(textForSearch.value)
+            val result = ServerRepository(applicationContext).searchUser(textForSearch.value)
             _searchState.value = result
 
         }

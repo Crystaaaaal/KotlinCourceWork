@@ -7,8 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.compose.rememberNavController
-import com.example.kotlincoursework.API.ServerRepository
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.example.kotlincoursework.ui.theme.BarDrawing
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.viewModel
@@ -33,10 +35,13 @@ class MainActivity : ComponentActivity() {
                 secondColor = colorResource(R.color.light_second_color)
                 thirdColor = colorResource(R.color.light_third_color)
                 textColor = colorResource(R.color.light_text_color)
-
-                val viewModel: viewModel = viewModel()
+                val applicatonContext = applicationContext
 
                 val navController = rememberNavController()
+
+                val viewModel: viewModel = viewModel(
+                    applicationContext = applicatonContext
+                )
 
                 //Отрисовываем панелей
                 BarDrawing(

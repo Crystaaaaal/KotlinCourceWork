@@ -84,8 +84,8 @@ fun chatWithUserPreview() {
 //        val textColor = colorResource(R.color.dark_text_color)
 
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
-        val viewModel: viewModel = viewModel()
-        ChatWithUserScreen(navController, mainColor, secondColor, thirdColor, textColor, viewModel)
+        //val viewModel: viewModel = viewModel()
+        //ChatWithUserScreen(navController, mainColor, secondColor, thirdColor, textColor, viewModel)
 
     }
 }

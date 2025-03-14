@@ -1,22 +1,26 @@
 package com.example.kotlincoursework.API
 
+import android.content.Context
 import android.util.Log
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.example.kotlincoursework.ui.theme.state.LoginState
 import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import com.example.kotlincoursework.ui.theme.state.SeacrhState
 import com.example.kotlincoursework.ui.theme.state.ServerState
-import dataBase.ChatingResponse
+import dataBase.SearchingResponse
 import dataBase.LoginUser
 import dataBase.PhoneOrLoginRemote
 import dataBase.RegistrationUserInfo
 import dataBase.ServerResponse
-import dataBase.Token
-import kotlinx.coroutines.flow.Flow
+import dataBase.loginRecive
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
-class ServerRepository {
+class ServerRepository(
+    private val applicationContext: Context
+) {
     private val apiService = ApiClient.apiService
 
     suspend fun checkServerStatus(): ServerState {
@@ -36,15 +40,15 @@ class ServerRepository {
             }
         } catch (e: IOException) {
             Log.e("ServerRepository: checkServerStatus", "Ошибка сети: ${e.message}")
-            Log.d("ServerRepository: checkServerStatus", "ошибка 3")
+            Log.d("ServerRepository: checkServerStatus", "Ошибка сети")
             ServerState.Error("Сервер недоступен")
         } catch (e: HttpException) {
             Log.e("ServerRepository: checkServerStatus", "HTTP ошибка: ${e.message}")
-            Log.d("ServerRepository: checkServerStatus", "ошибка 2")
+            Log.d("ServerRepository: checkServerStatus", "ошибка HTTP")
             ServerState.Error("Сервер недоступен")
         } catch (e: Exception) {
             Log.e("ServerRepository: checkServerStatus", "Неизвестная ошибка: ${e.message}")
-            Log.d("ServerRepository: checkServerStatus", "ошибка 1")
+            Log.d("ServerRepository: checkServerStatus", "Неизвестная ошибка")
             ServerState.Error("Сервер недоступен")
         }
     }
@@ -142,12 +146,30 @@ class ServerRepository {
                         // Устанавливаем состояние Loading перед началом запроса
                         LoginState.Loading
 
-                        val response: Response<Token> = apiService.loginUser(user)
+                        val response: Response<loginRecive> = apiService.loginUser(user)
                         Log.d("ServerRepository: loginUser", "Запрос отправлен")
 
                         if (response.isSuccessful && response.body() != null) {
                             Log.i("ServerRepository: loginUser", "Пользователь успешно авторизован")
-                            return LoginState.Success(response.body()!!) // Возвращаем успешный результат
+                            // Создаем MasterKey для EncryptedSharedPreferences
+                            val masterKey = MasterKey.Builder(applicationContext)
+                                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                                .build()
+
+                            // Инициализируем EncryptedSharedPreferences
+                            val sharedPreferences = EncryptedSharedPreferences.create(
+                                applicationContext,
+                                "secure_prefs", // Имя файла SharedPreferences
+                                masterKey,
+                                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                            )
+                            // Сохраняем токен
+                            sharedPreferences.edit().putString("auth_token", response.body()!!.token).apply()
+                            sharedPreferences.edit().putString("auth_phone", response.body()!!.phoneNumber).apply()
+
+
+                            return LoginState.Success(true) // Возвращаем успешный результат
                         } else {
                             return when (response.code()) {
                                 400 -> {
@@ -215,8 +237,28 @@ class ServerRepository {
             is ServerState.Success -> {
                 if (serverState.isServerOnline) {
                     try {
-                        val response: Response<ChatingResponse> = apiService.searchUser(
-                            phoneOnLogin = PhoneOrLoginRemote(phoneOrLogin)
+                        val masterKey = MasterKey.Builder(applicationContext, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                            .build()
+
+                        val sharedPreferences = EncryptedSharedPreferences.create(
+                            applicationContext,
+                            "secure_prefs",
+                            masterKey,
+                            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                        )
+
+                        // Извлекаем токен
+                        val token = sharedPreferences.getString("auth_token", null)
+                        val phoneNumber = sharedPreferences.getString("auth_phone",null)
+
+                        if (token==null || phoneNumber==null) {
+                            //TODO(Выкидывать из акка если поряметры пусты)
+                        }
+                        val response: Response<SearchingResponse> = apiService.searchUser(
+                            phoneOnLogin = PhoneOrLoginRemote(phoneOrLogin = phoneOrLogin,
+                                token = loginRecive(token!!,phoneNumber!!))
                         )
 
                         if (response.isSuccessful && response.body() != null) {
@@ -289,9 +331,6 @@ class ServerRepository {
         }
     }
 
+
 }
 
-
-//fun<T> makeApiRequest(): Flow<T> {
-//
-//}

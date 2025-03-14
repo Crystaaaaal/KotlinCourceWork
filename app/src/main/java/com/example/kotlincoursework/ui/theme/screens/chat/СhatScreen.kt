@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -55,6 +56,7 @@ import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import com.example.kotlincoursework.ui.theme.state.SeacrhState
 import com.example.kotlincoursework.viewModel.viewModel
 import dataBase.Message
+import dataBase.User
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
@@ -65,7 +67,6 @@ fun chatScreen(
     thirdColor: Color,
     textColor: Color,
     viewModel: viewModel
-    //items: List<String>
 ) {
     Column(Modifier.fillMaxSize()) {
         searchPanel(
@@ -76,20 +77,28 @@ fun chatScreen(
             textColor = textColor,
             viewModel = viewModel
         )
-        //Spacer(Modifier.height(0.dp))
 
         val state by viewModel.searchState.collectAsState()
 
         when (state) {
             is SeacrhState.Idle -> {
                 Log.d("ChatScreen: SeacrhState.Idle", "Idle")
+                val byteArray = ByteArray(1)
+                val user = User(
+                    "+79168653828",
+                    "",
+                    "Скугарев Антон Павлович",
+                    "Crystal",
+                    byteArray,
+                    "")
                 showChats(
                     navController = navController,
                     mainColor = mainColor,
                     secondColor = secondColor,
                     thirdColor = thirdColor,
                     textColor = textColor,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    userList = listOf(user)
                 )
             }
 
@@ -99,6 +108,26 @@ fun chatScreen(
 
             is SeacrhState.Success -> {
                 Log.d("ChatScreen: SeacrhState.Success", "Success")
+                if ((state as SeacrhState.Success).UserList.isEmpty()) {
+                    searchIsError(
+                        message = "Ничего не найдено",
+                        mainColor = mainColor,
+                        secondColor = secondColor,
+                        thirdColor = thirdColor,
+                        textColor = textColor,
+                        viewModel = viewModel
+                    )
+                }
+                else{
+                    showChats(
+                        navController = navController,
+                        mainColor = mainColor,
+                        secondColor = secondColor,
+                        textColor = textColor,
+                        thirdColor = thirdColor,
+                        viewModel = viewModel,
+                        userList = (state as SeacrhState.Success).UserList)
+                }
             }
 
             is SeacrhState.Error -> {
@@ -110,7 +139,6 @@ fun chatScreen(
                     thirdColor = thirdColor,
                     textColor = textColor,
                     viewModel = viewModel
-
                 )
             }
         }
@@ -164,6 +192,7 @@ fun searchIsError(
     }
 }
 
+
 @Composable
 fun showChats(
     navController: NavHostController,
@@ -171,7 +200,8 @@ fun showChats(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel
+    viewModel: viewModel,
+    userList: List<User>
 ) {
     LazyColumn(
         modifier = Modifier
@@ -179,7 +209,7 @@ fun showChats(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        items(4) {
+        items(userList) { user ->
             Row(
                 modifier = Modifier
                     .height(120.dp)
@@ -220,7 +250,7 @@ fun showChats(
                 }
                 Spacer(modifier = Modifier.width(70.dp))
                 Text(
-                    text = "Антон Скугарев",
+                    text = user.fullName,
                     fontSize = 18.sp,
                     color = textColor,
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -308,7 +338,7 @@ fun chatPreview() {
 //        val secondColor = colorResource(R.color.dark_second_color)
 //        val thirdColor = colorResource(R.color.dark_third_color)
 //        val textColor = colorResource(R.color.dark_text_color)
-        val viewModel = viewModel()
+        //val viewModel = viewModel()
 //        searchIsError(
 //            message = "text",
 //            mainColor = mainColor,
@@ -317,14 +347,14 @@ fun chatPreview() {
 //            textColor = textColor,
 //            viewModel = viewModel
 //        )
-        searchPanel(
-            navController = navController,
-            mainColor = mainColor,
-            secondColor = secondColor,
-            thirdColor = thirdColor,
-            textColor = textColor,
-            viewModel = viewModel
-        )
+//        searchPanel(
+//            navController = navController,
+//            mainColor = mainColor,
+//            secondColor = secondColor,
+//            thirdColor = thirdColor,
+//            textColor = textColor,
+//            viewModel = viewModel
+//        )
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
         //chatScreen(navController, mainColor, secondColor, thirdColor, textColor)
 

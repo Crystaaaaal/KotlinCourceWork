@@ -50,9 +50,7 @@ fun EnterScreen(
     viewModel: viewModel
 ) {
     var message by remember { mutableStateOf("") }
-    val loginState by viewModel.loginState.collectAsState()
     var showToast by remember { mutableStateOf(false) }
-    var stateHandled by remember { mutableStateOf(false) }
 
     Column(
         Modifier.fillMaxSize(),
@@ -121,9 +119,9 @@ fun EnterScreen(
             textDecoration = Underline
         )
     }
+
+
     val state by viewModel.loginState.collectAsState()
-
-
         when(state){
             is LoginState.Idle -> {}
             is LoginState.Loading ->{}
