@@ -1,5 +1,6 @@
 package com.example.kotlincoursework.ui.theme.screens.chat
 
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -31,12 +32,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -52,6 +57,7 @@ import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
 import com.example.kotlincoursework.ui.theme.screens.auth.registrationIsError
 import com.example.kotlincoursework.ui.theme.screens.auth.registrationIsSucces
+import com.example.kotlincoursework.ui.theme.screens.settings.toImageBitmap
 import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import com.example.kotlincoursework.ui.theme.state.SeacrhState
 import com.example.kotlincoursework.viewModel.viewModel
@@ -203,6 +209,7 @@ fun showChats(
     viewModel: viewModel,
     userList: List<User>
 ) {
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
@@ -210,6 +217,7 @@ fun showChats(
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         items(userList) { user ->
+            val imageBitmap = user.profileImage?.takeIf { it.isNotEmpty() }?.toImageBitmap()
             Row(
                 modifier = Modifier
                     .height(120.dp)
@@ -243,7 +251,11 @@ fun showChats(
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(70.dp),
-                        painter = painterResource(id = R.drawable.picture), // Загружаем изображение из ресурсов
+                        painter = if (imageBitmap != null) {
+                            BitmapPainter(imageBitmap)
+                        } else {
+                            painterResource(id = R.drawable.picture) // Фолбек, если изображение не загружено
+                        },
                         contentDescription = "User Avatar",
                         contentScale = ContentScale.Crop // Масштабирует и обрезает изображение
                     )
@@ -321,6 +333,14 @@ fun searchPanel(
         }
     }
     //Spacer(modifier = Modifier.height(30.dp))
+}
+
+fun ByteArray.toImageBitmap(): ImageBitmap? {
+    return try {
+        BitmapFactory.decodeByteArray(this, 0, this.size)?.asImageBitmap()
+    } catch (e: Exception) {
+        null
+    }
 }
 
 

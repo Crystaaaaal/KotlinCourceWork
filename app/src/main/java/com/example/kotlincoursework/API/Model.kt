@@ -11,12 +11,22 @@ data class SearchingResponse(
 @Serializable
 data class PhoneOrLoginRemote(
     val phoneOrLogin: String,
-    val token: loginRecive
+    val token: LoginRecive
 )
+@Serializable
+data class UpdateUser(
+    val loginRecive: LoginRecive,
+    val activeUser:ActiveUser
+)
+@Serializable
+data class ActiveUser(
+    val userImage: ByteArray,
+    val fullName:String)
+
 
 @Serializable
 data class ServerResponse(
-    val success: Boolean
+    val result: Boolean
 )
 @Serializable
 data class RegistrationUserInfo(
@@ -45,7 +55,7 @@ data class User(
 )
 
 @Serializable
-data class loginRecive(
+data class LoginRecive(
     val token: String,
     val phoneNumber: String
 

@@ -1,6 +1,7 @@
 package com.example.kotlincoursework.viewModel
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -8,17 +9,26 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kotlincoursework.API.ServerRepository
+import com.example.kotlincoursework.API.UserInfoRepository
+import dataBase.ActiveUser
+import com.example.kotlincoursework.ui.theme.state.GetUserInfoState
 import com.example.kotlincoursework.ui.theme.state.LoginState
 import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import com.example.kotlincoursework.ui.theme.state.SeacrhState
+import com.example.kotlincoursework.ui.theme.state.UpdateUserInfoState
 import dataBase.LoginUser
 import dataBase.RegistrationUserInfo
+import dataBase.LoginRecive
+import dataBase.UpdateUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class viewModel(
-    private val applicationContext: Context) : ViewModel() {
+    private val applicationContext: Context,
+    private val sharedPreferences: SharedPreferences
+) : ViewModel() {
 
     var topBarText by mutableStateOf("Мессенджер")
         private set
@@ -102,8 +112,24 @@ class viewModel(
     private val _textForSearch = MutableStateFlow("")
     val textForSearch: StateFlow<String> get() = _textForSearch
 
+    private val _ActiveUser = MutableStateFlow(ActiveUser(byteArrayOf(), ""))
+    val ActiveUser: MutableStateFlow<ActiveUser> get() = _ActiveUser
+
+    fun updateUserImageMas(array: ByteArray) {
+        _ActiveUser.update { currentUser ->
+            currentUser.copy(userImage = array)
+        }
+    }
+
+    fun updateUserFullName(fullName: String) {
+        _ActiveUser.update { currentUser ->
+            currentUser.copy(fullName = fullName)
+        }
+    }
+
+
     //Обновление текста поиска
-    fun updateTextForSearch(text:String){
+    fun updateTextForSearch(text: String) {
         _textForSearch.value = text
     }
 
@@ -223,17 +249,32 @@ class viewModel(
     private val _searchState = MutableStateFlow<SeacrhState>(SeacrhState.Idle)
     val searchState: StateFlow<SeacrhState> get() = _searchState
 
+    // Состояние получения данных пользователя
+    private val _getUserInfoState = MutableStateFlow<GetUserInfoState>(GetUserInfoState.Idle)
+    val getUserInfoState: StateFlow<GetUserInfoState> get() = _getUserInfoState
+
+    private val _updateUserInfoState = MutableStateFlow<UpdateUserInfoState>(UpdateUserInfoState.Idle)
+    val updateUserInfoState: StateFlow<UpdateUserInfoState> get() = _updateUserInfoState
+
+    fun resertUpdateUserInfoStat(){
+        _updateUserInfoState.value = UpdateUserInfoState.Idle
+    }
+    fun resetGetUserInfoState() {
+        _getUserInfoState.value = GetUserInfoState.Idle
+    }
+
     fun resetLoginState() {
         _loginState.value = LoginState.Idle // Сбрасываем состояние
     }
 
-    fun resetRegistrationState(){
+    fun resetRegistrationState() {
         _registrationState.value = RegistrationState.Idle
     }
 
-    fun resetSearchState(){
+    fun resetSearchState() {
         _searchState.value = SeacrhState.Idle
     }
+
     // Регистрация пользователя
     fun registerUser() {
         if (!isRegistrationFormValid()) {
@@ -263,7 +304,7 @@ class viewModel(
         }
         viewModelScope.launch {
 
-        _loginState.value = LoginState.Loading
+            _loginState.value = LoginState.Loading
 
 
             val result = ServerRepository(applicationContext).loginUser(buildLoginUser())
@@ -276,6 +317,21 @@ class viewModel(
         }
     }
 
+    fun getUserInfo() {
+        viewModelScope.launch {
+            _getUserInfoState.value = GetUserInfoState.Loading
+            val loginRecive = createLoginRecive()
+            if (loginRecive == null) {
+                //TODO выкидывание из ака и переход на экран входа
+            }
+            val result = UserInfoRepository(applicationContext).getUserInfo(loginRecive!!)
+            _getUserInfoState.value = result
+            if (result is GetUserInfoState.Success) {
+                _ActiveUser.value = result.success
+                resetGetUserInfoState()
+            }
+        }
+    }
 
     // Сброс формы регистрации
     private fun resetRegistrationForm() {
@@ -292,16 +348,47 @@ class viewModel(
         _loginTextForPhoneNumber.value = "+7"
         _textForPassword.value = ""
     }
-    fun searchUser(){
-        viewModelScope.launch {
 
+    fun udpateUserImage(){
+        viewModelScope.launch {
+            _updateUserInfoState.value = UpdateUserInfoState.Idle
+            val loginRecive = createLoginRecive()
+            if (loginRecive == null) {
+                //TODO выкидывание из ака и переход на экран входа
+            }
+            val updateUser = UpdateUser(loginRecive!!,ActiveUser.value)
+            val result = UserInfoRepository(applicationContext).updateUserInfo(updateUser)
+            _updateUserInfoState.value = result
+        }
+    }
+
+
+    fun searchUser() {
+        viewModelScope.launch {
             _searchState.value = SeacrhState.Loading
 
-            val result = ServerRepository(applicationContext).searchUser(textForSearch.value)
+            val loginRecive = createLoginRecive()
+            if (loginRecive == null) {
+                //TODO выкидывание из ака и переход на экран входа
+            }
+
+            val result = ServerRepository(applicationContext).searchUser(
+                textForSearch.value,
+                loginRecive!!
+            )
             _searchState.value = result
 
         }
     }
 
+    private fun createLoginRecive(): LoginRecive? {
+        val token = sharedPreferences.getString("auth_token", null)
+        val phoneNumber = sharedPreferences.getString("auth_phone", null)
+        if (token.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
+            return null
+        }
+        val loginRecive = LoginRecive(token!!, phoneNumber!!)
+        return loginRecive
+    }
 
 }

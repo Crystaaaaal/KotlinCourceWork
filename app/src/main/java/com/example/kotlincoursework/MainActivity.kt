@@ -2,23 +2,16 @@ package com.example.kotlincoursework
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.compose.rememberNavController
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.kotlincoursework.ui.theme.BarDrawing
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.viewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 var mainColor: Color = Color.Black
@@ -38,10 +31,23 @@ class MainActivity : ComponentActivity() {
                 val applicatonContext = applicationContext
 
                 val navController = rememberNavController()
+                val masterKey = MasterKey.Builder(applicationContext, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build()
+
+                val sharedPreferences = EncryptedSharedPreferences.create(
+                    applicationContext,
+                    "secure_prefs",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                )
 
                 val viewModel: viewModel = viewModel(
-                    applicationContext = applicatonContext
+                    applicationContext = applicatonContext,
+                    sharedPreferences = sharedPreferences
                 )
+                viewModel.getUserInfo()
 
                 //Отрисовываем панелей
                 BarDrawing(

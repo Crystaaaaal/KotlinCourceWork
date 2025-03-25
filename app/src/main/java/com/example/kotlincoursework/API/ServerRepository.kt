@@ -4,16 +4,18 @@ import android.content.Context
 import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.kotlincoursework.ui.theme.state.GetUserInfoState
 import com.example.kotlincoursework.ui.theme.state.LoginState
 import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import com.example.kotlincoursework.ui.theme.state.SeacrhState
 import com.example.kotlincoursework.ui.theme.state.ServerState
+import dataBase.ActiveUser
 import dataBase.SearchingResponse
 import dataBase.LoginUser
 import dataBase.PhoneOrLoginRemote
 import dataBase.RegistrationUserInfo
 import dataBase.ServerResponse
-import dataBase.loginRecive
+import dataBase.LoginRecive
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
@@ -144,9 +146,8 @@ class ServerRepository(
                     try {
                         Log.d("ServerRepository: loginUser", "Отправление запроса")
                         // Устанавливаем состояние Loading перед началом запроса
-                        LoginState.Loading
 
-                        val response: Response<loginRecive> = apiService.loginUser(user)
+                        val response: Response<LoginRecive> = apiService.loginUser(user)
                         Log.d("ServerRepository: loginUser", "Запрос отправлен")
 
                         if (response.isSuccessful && response.body() != null) {
@@ -165,8 +166,11 @@ class ServerRepository(
                                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
                             )
                             // Сохраняем токен
-                            sharedPreferences.edit().putString("auth_token", response.body()!!.token).apply()
-                            sharedPreferences.edit().putString("auth_phone", response.body()!!.phoneNumber).apply()
+                            sharedPreferences.edit()
+                                .putString("auth_token", response.body()!!.token).apply()
+                            // Сохраняем номер телефона
+                            sharedPreferences.edit()
+                                .putString("auth_phone", response.body()!!.phoneNumber).apply()
 
 
                             return LoginState.Success(true) // Возвращаем успешный результат
@@ -232,35 +236,17 @@ class ServerRepository(
         }
     }
 
-    suspend fun searchUser(phoneOrLogin: String): SeacrhState {
+    suspend fun searchUser(phoneOrLogin: String, user: LoginRecive): SeacrhState {
         return when (val serverState = checkServerStatus()) {
             is ServerState.Success -> {
                 if (serverState.isServerOnline) {
                     try {
-                        val masterKey = MasterKey.Builder(applicationContext, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
-                            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                            .build()
-
-                        val sharedPreferences = EncryptedSharedPreferences.create(
-                            applicationContext,
-                            "secure_prefs",
-                            masterKey,
-                            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                        )
-
-                        // Извлекаем токен
-                        val token = sharedPreferences.getString("auth_token", null)
-                        val phoneNumber = sharedPreferences.getString("auth_phone",null)
-
-                        if (token==null || phoneNumber==null) {
-                            //TODO(Выкидывать из акка если поряметры пусты)
-                        }
                         val response: Response<SearchingResponse> = apiService.searchUser(
-                            phoneOnLogin = PhoneOrLoginRemote(phoneOrLogin = phoneOrLogin,
-                                token = loginRecive(token!!,phoneNumber!!))
+                            phoneOnLogin = PhoneOrLoginRemote(
+                                phoneOrLogin = phoneOrLogin,
+                                token = user
+                            )
                         )
-
                         if (response.isSuccessful && response.body() != null) {
                             return SeacrhState.Success(response.body()!!.userList) // Возвращаем успешный результат
                         } else {
@@ -330,7 +316,6 @@ class ServerRepository(
             }
         }
     }
-
 
 }
 

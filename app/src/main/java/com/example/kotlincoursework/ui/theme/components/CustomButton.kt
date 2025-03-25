@@ -23,8 +23,7 @@ fun SettingsButton(
     secondColor: Color,
     textColor: Color,
     buttonText: String,
-    navController: NavController,
-    navControllerRoute: String
+    onClick: () -> Unit = {},
 ) {
     val modifier: Modifier = Modifier
         .background(
@@ -47,7 +46,7 @@ fun SettingsButton(
         modifier = modifier,
         colors = buttonColors,
         shape = RoundedCornerShape(30.dp),
-        onClick = {navController.navigate(navControllerRoute)}) {
+        onClick = {onClick()}) {
         Text(
             text = buttonText,
             fontSize = 16.sp,
