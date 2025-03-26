@@ -174,7 +174,7 @@ fun SettingsTopBar(
     navController: NavController
 ) {
     TopAppBar(
-        modifier = Modifier.height(40.dp),
+        modifier = Modifier.height(60.dp),
         title = {
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -220,7 +220,7 @@ fun ChatWithUserTopBar(
     navController: NavController
 ) {
     TopAppBar(
-        modifier = Modifier.height(40.dp),
+        modifier = Modifier.height(70.dp),
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -389,7 +389,7 @@ fun ScreenTopBar(
     viewModel: viewModel
 ) {
     CenterAlignedTopAppBar(
-        modifier = Modifier.height(40.dp),
+        modifier = Modifier.height(60.dp),
         title = {
             Text(
                 text = viewModel.topBarText,
@@ -411,7 +411,7 @@ fun ScreenBottomBar(
     viewModel: viewModel
 ) {
     BottomAppBar(
-        modifier = Modifier.height(40.dp),
+        modifier = Modifier.height(60.dp),
         containerColor = secondColor
     ) {
         Row(

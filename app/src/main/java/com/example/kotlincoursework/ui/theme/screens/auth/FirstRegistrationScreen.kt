@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -41,6 +42,8 @@ fun FirstRegistrationScreen(
     textColor: Color,
     authenticationViewModel: AuthenticationViewModel
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeightDp = configuration.screenHeightDp.dp
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,7 +56,12 @@ fun FirstRegistrationScreen(
             extraText = "Регистрация"
         )
 
-        Spacer(modifier = Modifier.height(100.dp))
+        if (screenHeightDp > 650.dp) {
+            Spacer(modifier = Modifier.height(100.dp))
+        }
+        else {
+            Spacer(modifier = Modifier.height(20.dp))
+        }
 
         var colorForRegisterPhoneNumber by remember { mutableStateOf(secondColor) }
         var colorForRegisterLogin by remember { mutableStateOf(secondColor) }
@@ -117,7 +125,12 @@ fun FirstRegistrationScreen(
             titleText = "Пароль"
         )
 
-        Spacer(modifier = Modifier.height(130.dp))
+        if (screenHeightDp > 650.dp) {
+            Spacer(modifier = Modifier.height(130.dp))
+        }
+        else {
+            Spacer(modifier = Modifier.height(30.dp))
+        }
 
         ButtonThirdColor(
             thirdColor = thirdColor,
