@@ -17,28 +17,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.kotlincoursework.R
-import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.components.Toast
 import com.example.kotlincoursework.ui.theme.state.LoginState
-import com.example.kotlincoursework.viewModel.viewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.example.kotlincoursework.viewModel.AuthenticationViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun EnterScreen(
@@ -47,7 +39,7 @@ fun EnterScreen(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel
+    authenticationViewModel: AuthenticationViewModel
 ) {
     var message by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
@@ -64,24 +56,24 @@ fun EnterScreen(
 
         Spacer(modifier = Modifier.height(100.dp))
 
-        val loginText by viewModel.loginTextForPhoneNumber.collectAsState()
+        val loginText by authenticationViewModel.loginTextForPhoneNumber.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
             textForValue = loginText,
-            onValueChange = { viewModel.updateLoginTextForPhoneNumber(it) },
+            onValueChange = { authenticationViewModel.updateLoginTextForPhoneNumber(it) },
             titleText = "Номер телефона",
             keyboardType = KeyboardType.Phone
         )
 
-        val passwordText by viewModel.loginTextForPassword.collectAsState()
+        val passwordText by authenticationViewModel.loginTextForPassword.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
             textForValue = passwordText,
-            onValueChange = { viewModel.updateTextForPassword(it) },
+            onValueChange = { authenticationViewModel.updateTextForPassword(it) },
             titleText = "Пароль",
             keyboardType = KeyboardType.Password,
             visualTransformation = PasswordVisualTransformation()
@@ -93,12 +85,11 @@ fun EnterScreen(
             thirdColor = thirdColor,
             textColor = textColor,
             onClick = {
-                if (!viewModel.isLoginPhoneNumberValid.value || !viewModel.isLoginPasswordValid.value) {
+                if (!authenticationViewModel.isLoginPhoneNumberValid.value || !authenticationViewModel.isLoginPasswordValid.value) {
                     message = "Невалидные данные"
                     showToast = true
-                }
-                else {
-                    viewModel.loginUser()
+                } else {
+                    authenticationViewModel.loginUser()
                 }
             },
             buttonText = "Войти"
@@ -110,8 +101,8 @@ fun EnterScreen(
             modifier = Modifier
                 .clickable {
                     navController.navigate("ToRegister")
-                    viewModel.updateTextForPassword("")
-                    viewModel.updateLoginTextForPhoneNumber("+7")
+                    authenticationViewModel.updateTextForPassword("")
+                    authenticationViewModel.updateLoginTextForPhoneNumber("+7")
                 },
             text = "Регистрация",
             fontSize = 20.sp,
@@ -121,23 +112,24 @@ fun EnterScreen(
     }
 
 
-    val state by viewModel.loginState.collectAsState()
-        when(state){
-            is LoginState.Idle -> {}
-            is LoginState.Loading ->{}
-            is LoginState.Success -> {
-                loginIsSucces(navController =  navController)
-                viewModel.resetLoginState()}
-
-            is LoginState.Error -> {
-                loginIsError(
-                    mainColor = mainColor,
-                    secondColor = secondColor,
-                    textColor = textColor,
-                    message = (state as LoginState.Error).message
-                )
-            }
+    val state by authenticationViewModel.loginState.collectAsState()
+    when (state) {
+        is LoginState.Idle -> {}
+        is LoginState.Loading -> {}
+        is LoginState.Success -> {
+            loginIsSucces(navController = navController)
+            authenticationViewModel.resetLoginState()
         }
+
+        is LoginState.Error -> {
+            loginIsError(
+                mainColor = mainColor,
+                secondColor = secondColor,
+                textColor = textColor,
+                message = (state as LoginState.Error).message
+            )
+        }
+    }
 
     Toast(
         message = message,
@@ -157,13 +149,14 @@ fun EnterScreen(
     }
 
 }
+
 @Composable
 fun loginIsError(
     mainColor: Color,
     secondColor: Color,
     textColor: Color,
-    message:String
-){
+    message: String
+) {
     var showToast by remember { mutableStateOf(true) }
     LoginState.Idle
     Toast(
@@ -184,10 +177,10 @@ fun loginIsError(
         }
     }
 }
-fun loginIsSucces(navController: NavController){
-    Log.d("EnterScreen: loginIsSucces","переход")
-    navController.navigate("toChat")
 
+fun loginIsSucces(navController: NavController) {
+    Log.d("EnterScreen: loginIsSucces", "переход")
+    navController.navigate("toChat")
 
 
 }

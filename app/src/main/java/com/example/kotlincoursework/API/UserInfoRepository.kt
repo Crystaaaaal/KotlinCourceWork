@@ -2,6 +2,7 @@ package com.example.kotlincoursework.API
 
 import android.content.Context
 import android.util.Log
+import com.example.kotlincoursework.API.Repositorys.ServerStatusRepository
 import com.example.kotlincoursework.ui.theme.state.GetUserInfoState
 import com.example.kotlincoursework.ui.theme.state.ServerState
 import com.example.kotlincoursework.ui.theme.state.UpdateUserInfoState
@@ -19,7 +20,7 @@ class UserInfoRepository(
     private val apiService = ApiClient.apiService
 
     suspend fun getUserInfo(user: LoginRecive): GetUserInfoState {
-        return when (val serverState = ServerRepository(applicationContext).checkServerStatus()) {
+        return when (val serverState = ServerStatusRepository().checkServerStatus()) {
             is ServerState.Success -> {
                 if (serverState.isServerOnline) {
                     try {
@@ -90,7 +91,7 @@ class UserInfoRepository(
     }
 
     suspend fun updateUserInfo(updateUser: UpdateUser): UpdateUserInfoState{
-        return when (val serverState = ServerRepository(applicationContext).checkServerStatus()) {
+        return when (val serverState = ServerStatusRepository().checkServerStatus()) {
             is ServerState.Success -> {
                 if (serverState.isServerOnline) {
                     try {

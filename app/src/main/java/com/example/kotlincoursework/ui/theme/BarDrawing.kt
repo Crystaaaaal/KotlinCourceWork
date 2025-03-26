@@ -67,12 +67,18 @@ import com.example.kotlincoursework.secondColor
 import com.example.kotlincoursework.textColor
 import com.example.kotlincoursework.thirdColor
 import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
+import com.example.kotlincoursework.viewModel.AuthenticationViewModel
+import com.example.kotlincoursework.viewModel.ChatViewModel
+import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.viewModel
 
 
 @Composable
 fun BarDrawing(navController: NavHostController,
-               viewModel: viewModel) {
+               viewModel: viewModel,
+               authenticationViewModel: AuthenticationViewModel,
+               chatViewModel: ChatViewModel,
+               settingsViewModel: SettingsViewModel) {
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
@@ -152,7 +158,10 @@ fun BarDrawing(navController: NavHostController,
             ScreenMainContent(
                 navController = navController,
                 paddingValues =  paddingValues,
-                viewModel = viewModel)
+                viewModel = viewModel,
+                authenticationViewModel = authenticationViewModel,
+                chatViewModel = chatViewModel,
+                settingsViewModel = settingsViewModel)
         }
     )
 }
@@ -459,7 +468,10 @@ fun ScreenBottomBar(
 fun ScreenMainContent(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    viewModel: viewModel
+    viewModel: viewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    chatViewModel: ChatViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
     Box(
         modifier = Modifier
@@ -471,6 +483,9 @@ fun ScreenMainContent(
         ScreenNavHost(
             navController,
             viewModel = viewModel,
+            authenticationViewModel = authenticationViewModel,
+            chatViewModel = chatViewModel,
+            settingsViewModel = settingsViewModel
         )
     }
 }

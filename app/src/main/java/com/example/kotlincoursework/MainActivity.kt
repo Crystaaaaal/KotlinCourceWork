@@ -11,6 +11,9 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.kotlincoursework.ui.theme.BarDrawing
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.viewModel.AuthenticationViewModel
+import com.example.kotlincoursework.viewModel.ChatViewModel
+import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.viewModel
 
 
@@ -47,12 +50,26 @@ class MainActivity : ComponentActivity() {
                     applicationContext = applicatonContext,
                     sharedPreferences = sharedPreferences
                 )
-                viewModel.getUserInfo()
+                val authenticationViewModel = AuthenticationViewModel(
+                    applicationContext = applicatonContext
+                )
+                val chatViewModel = ChatViewModel(
+                    applicationContext = applicatonContext,
+                    sharedPreferences = sharedPreferences
+                )
+                val settingsViewModel = SettingsViewModel(
+                    applicationContext = applicatonContext,
+                    sharedPreferences = sharedPreferences
+                )
+                settingsViewModel.getUserInfo()
 
                 //Отрисовываем панелей
                 BarDrawing(
                     navController = navController,
                     viewModel = viewModel,
+                    authenticationViewModel = authenticationViewModel,
+                    chatViewModel = chatViewModel,
+                    settingsViewModel = settingsViewModel
                 )
             }
         }

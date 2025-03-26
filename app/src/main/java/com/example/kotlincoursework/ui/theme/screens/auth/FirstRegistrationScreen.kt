@@ -30,16 +30,16 @@ import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
-import com.example.kotlincoursework.viewModel.viewModel
+import com.example.kotlincoursework.viewModel.AuthenticationViewModel
 
 @Composable
-fun FirstRegisterScreen(
+fun FirstRegistrationScreen(
     navController: NavHostController,
     mainColor: Color,
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel
+    authenticationViewModel: AuthenticationViewModel
 ) {
     Column(
         modifier = Modifier
@@ -59,25 +59,25 @@ fun FirstRegisterScreen(
         var colorForRegisterLogin by remember { mutableStateOf(secondColor) }
         var colorForRegisterPassword by remember { mutableStateOf(secondColor) }
 
-        val textForRegisterPhoneNumber by viewModel.textForRegisterPhoneNumber.collectAsState()
-        val textForRegisterLogin by viewModel.textForRegisterLogin.collectAsState()
-        val textForRegisterPassword by viewModel.textForRegisterPassword.collectAsState()
+        val textForRegisterPhoneNumber by authenticationViewModel.textForRegisterPhoneNumber.collectAsState()
+        val textForRegisterLogin by authenticationViewModel.textForRegisterLogin.collectAsState()
+        val textForRegisterPassword by authenticationViewModel.textForRegisterPassword.collectAsState()
 
-        if (textForRegisterPhoneNumber != "+7" && !viewModel.isRegisterPhoneNumberValid){
+        if (textForRegisterPhoneNumber != "+7" && !authenticationViewModel.isRegisterPhoneNumberValid){
             colorForRegisterPhoneNumber = Color.Red
         }
         else{
             colorForRegisterPhoneNumber = secondColor
         }
 
-        if (textForRegisterLogin != "" && !viewModel.isRegisterLoginValid){
+        if (textForRegisterLogin != "" && !authenticationViewModel.isRegisterLoginValid){
             colorForRegisterLogin = Color.Red
         }
         else {
             colorForRegisterLogin = secondColor
         }
 
-        if (textForRegisterPassword != "" && !viewModel.isRegisterPasswordValid){
+        if (textForRegisterPassword != "" && !authenticationViewModel.isRegisterPasswordValid){
             colorForRegisterPassword = Color.Red
         }
         else {
@@ -92,7 +92,7 @@ fun FirstRegisterScreen(
             textColor = textColor,
             textForValue = textForRegisterPhoneNumber,
             keyboardType = KeyboardType.Phone,
-            onValueChange = { viewModel.updateTextForRegisterPhoneNumber(it) },
+            onValueChange = { authenticationViewModel.updateTextForRegisterPhoneNumber(it) },
             titleText = "Номер телефона"
         )
 
@@ -102,7 +102,7 @@ fun FirstRegisterScreen(
             secondColor = colorForRegisterLogin,
             textColor = textColor,
             textForValue = textForRegisterLogin,
-            onValueChange = { viewModel.updateTextForRegisterLogin(it) },
+            onValueChange = { authenticationViewModel.updateTextForRegisterLogin(it) },
             titleText = "Логин",
         )
 
@@ -112,7 +112,7 @@ fun FirstRegisterScreen(
             textColor = textColor,
             textForValue = textForRegisterPassword,
             keyboardType = KeyboardType.Password,
-            onValueChange = { viewModel.updateTextForRegisterPassword(it) },
+            onValueChange = { authenticationViewModel.updateTextForRegisterPassword(it) },
             visualTransformation = PasswordVisualTransformation(),
             titleText = "Пароль"
         )

@@ -33,17 +33,17 @@ import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.components.Toast
 import com.example.kotlincoursework.ui.theme.state.RegistrationState
-import com.example.kotlincoursework.viewModel.viewModel
+import com.example.kotlincoursework.viewModel.AuthenticationViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun SecondRegisterScreen(
+fun SecondRegistrationScreen(
     navController: NavHostController,
     mainColor: Color,
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel
+    authenticationViewModel: AuthenticationViewModel
 ) {
     var message by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
@@ -64,27 +64,27 @@ fun SecondRegisterScreen(
         var colorForRegisterName by remember { mutableStateOf(secondColor) }
         var colorForRegisterFatherName by remember { mutableStateOf(secondColor) }
 
-        val textForRegisterSecondName by viewModel.textForRegisterSecondName.collectAsState()
-        val textForRegisterName by viewModel.textForRegisterName.collectAsState()
-        val textForRegisterFatherName by viewModel.textForRegisterFatherName.collectAsState()
+        val textForRegisterSecondName by authenticationViewModel.textForRegisterSecondName.collectAsState()
+        val textForRegisterName by authenticationViewModel.textForRegisterName.collectAsState()
+        val textForRegisterFatherName by authenticationViewModel.textForRegisterFatherName.collectAsState()
 
 
 
 
 
-        if (textForRegisterSecondName != "" && !viewModel.isRegisterSecondNameValid) {
+        if (textForRegisterSecondName != "" && !authenticationViewModel.isRegisterSecondNameValid) {
             colorForRegisterSecondName = Color.Red
         } else {
             colorForRegisterSecondName = secondColor
         }
 
-        if (textForRegisterName != "" && !viewModel.isRegisterNameValid) {
+        if (textForRegisterName != "" && !authenticationViewModel.isRegisterNameValid) {
             colorForRegisterName = Color.Red
         } else {
             colorForRegisterName = secondColor
         }
 
-        if (textForRegisterFatherName != "" && !viewModel.isRegisterFatherNameValid) {
+        if (textForRegisterFatherName != "" && !authenticationViewModel.isRegisterFatherNameValid) {
             colorForRegisterFatherName = Color.Red
         } else {
             colorForRegisterFatherName = secondColor
@@ -99,7 +99,7 @@ fun SecondRegisterScreen(
             secondColor = colorForRegisterSecondName,
             textColor = textColor,
             textForValue = textForRegisterSecondName,
-            onValueChange = { viewModel.updateTextForRegisterSecondName(it) },
+            onValueChange = { authenticationViewModel.updateTextForRegisterSecondName(it) },
             titleText = "Фамилия"
         )
 
@@ -108,7 +108,7 @@ fun SecondRegisterScreen(
             secondColor = colorForRegisterName,
             textColor = textColor,
             textForValue = textForRegisterName,
-            onValueChange = { viewModel.updateTextForRegisterName(it) },
+            onValueChange = { authenticationViewModel.updateTextForRegisterName(it) },
             titleText = "Имя"
         )
 
@@ -118,7 +118,7 @@ fun SecondRegisterScreen(
             secondColor = colorForRegisterFatherName,
             textColor = textColor,
             textForValue = textForRegisterFatherName,
-            onValueChange = { viewModel.updateTextForRegisterFatherName(it) },
+            onValueChange = { authenticationViewModel.updateTextForRegisterFatherName(it) },
             titleText = "Отчество"
         )
 
@@ -128,12 +128,12 @@ fun SecondRegisterScreen(
             thirdColor = thirdColor,
             textColor = textColor,
             onClick = {
-                if (!viewModel.isRegistrationFormValid()) {
+                if (!authenticationViewModel.isRegistrationFormValid()) {
                     message = "Невалидные данные"
                     showToast = true
                 }
                 else{
-                    viewModel.registerUser()
+                    authenticationViewModel.registerUser()
                 }
             },
             buttonText = "Закончить"
@@ -153,7 +153,7 @@ fun SecondRegisterScreen(
         )
 
     }
-    val state by viewModel.registrationState.collectAsState()
+    val state by authenticationViewModel.registrationState.collectAsState()
 
 
     when(state){
@@ -161,7 +161,7 @@ fun SecondRegisterScreen(
         is RegistrationState.Loading ->{}
         is RegistrationState.Success -> {
             registrationIsSucces(navController =  navController)
-            viewModel.resetRegistrationState()}
+            authenticationViewModel.resetRegistrationState()}
 
         is RegistrationState.Error -> {
             registrationIsError(

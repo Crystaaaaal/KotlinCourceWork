@@ -47,7 +47,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.SettingsButton
-import com.example.kotlincoursework.viewModel.viewModel
+import com.example.kotlincoursework.viewModel.SettingsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,13 +61,13 @@ fun SettingScreen(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel
+    settingsViewModel: SettingsViewModel
 ) {
     var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
     var showImagePicker by remember { mutableStateOf(false) } // Состояние для управления выбором изображения
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val ActiveUser by viewModel.ActiveUser.collectAsState()
+    val ActiveUser by settingsViewModel.ActiveUser.collectAsState()
     val imageBitmap = remember(ActiveUser.userImage) {
         ActiveUser.userImage.takeIf { it.isNotEmpty() }?.toImageBitmap()
     }
@@ -81,8 +81,8 @@ fun SettingScreen(
                     val bytes = getImageBytes(context, it)
                     imageBytes = bytes // Сохраняем массив байтов
                     bytes?.let { onImagePicked ->
-                        viewModel.updateUserImageMas(onImagePicked)
-                        viewModel.udpateUserImage()
+                        settingsViewModel.updateUserImageMas(onImagePicked)
+                        settingsViewModel.udpateUserImage()
                     }
                 }
             }

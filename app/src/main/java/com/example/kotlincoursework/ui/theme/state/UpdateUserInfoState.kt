@@ -1,7 +1,5 @@
 package com.example.kotlincoursework.ui.theme.state
 
-import dataBase.ActiveUser
-
 sealed class UpdateUserInfoState {
     object Idle : UpdateUserInfoState()
     object Loading : UpdateUserInfoState()

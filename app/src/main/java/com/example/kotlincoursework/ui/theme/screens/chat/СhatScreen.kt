@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,10 +30,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,15 +50,10 @@ import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
-import com.example.kotlincoursework.ui.theme.screens.auth.registrationIsError
-import com.example.kotlincoursework.ui.theme.screens.auth.registrationIsSucces
 import com.example.kotlincoursework.ui.theme.screens.settings.toImageBitmap
-import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import com.example.kotlincoursework.ui.theme.state.SeacrhState
-import com.example.kotlincoursework.viewModel.viewModel
-import dataBase.Message
+import com.example.kotlincoursework.viewModel.ChatViewModel
 import dataBase.User
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
 fun chatScreen(
@@ -72,7 +62,7 @@ fun chatScreen(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel
+    chatViewModel: ChatViewModel
 ) {
     Column(Modifier.fillMaxSize()) {
         searchPanel(
@@ -81,10 +71,10 @@ fun chatScreen(
             secondColor = secondColor,
             thirdColor = thirdColor,
             textColor = textColor,
-            viewModel = viewModel
+            chatViewModel = chatViewModel
         )
 
-        val state by viewModel.searchState.collectAsState()
+        val state by chatViewModel.searchState.collectAsState()
 
         when (state) {
             is SeacrhState.Idle -> {
@@ -103,7 +93,7 @@ fun chatScreen(
                     secondColor = secondColor,
                     thirdColor = thirdColor,
                     textColor = textColor,
-                    viewModel = viewModel,
+                    chatViewModel = chatViewModel,
                     userList = listOf(user)
                 )
             }
@@ -121,7 +111,7 @@ fun chatScreen(
                         secondColor = secondColor,
                         thirdColor = thirdColor,
                         textColor = textColor,
-                        viewModel = viewModel
+                        chatViewModel = chatViewModel
                     )
                 }
                 else{
@@ -131,7 +121,7 @@ fun chatScreen(
                         secondColor = secondColor,
                         textColor = textColor,
                         thirdColor = thirdColor,
-                        viewModel = viewModel,
+                        chatViewModel = chatViewModel,
                         userList = (state as SeacrhState.Success).UserList)
                 }
             }
@@ -144,7 +134,7 @@ fun chatScreen(
                     secondColor = secondColor,
                     thirdColor = thirdColor,
                     textColor = textColor,
-                    viewModel = viewModel
+                    chatViewModel = chatViewModel
                 )
             }
         }
@@ -158,7 +148,7 @@ fun searchIsError(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel
+    chatViewModel: ChatViewModel
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -180,7 +170,7 @@ fun searchIsError(
             ButtonThirdColor(
                 thirdColor = thirdColor,
                 textColor = textColor,
-                onClick = { viewModel.searchUser() },
+                onClick = { chatViewModel.searchUser() },
                 buttonText = "Повторить"
             )
 
@@ -188,7 +178,7 @@ fun searchIsError(
 
             Text(
                 modifier = Modifier
-                    .clickable { viewModel.resetSearchState() },
+                    .clickable { chatViewModel.resetSearchState() },
                 text = "Назад",
                 fontSize = 20.sp,
                 color = secondColor,
@@ -206,7 +196,7 @@ fun showChats(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel,
+    chatViewModel: ChatViewModel,
     userList: List<User>
 ) {
 
@@ -279,7 +269,7 @@ fun searchPanel(
     secondColor: Color,
     thirdColor: Color,
     textColor: Color,
-    viewModel: viewModel
+    chatViewModel: ChatViewModel
 ) {
     Row(
         modifier = Modifier
@@ -291,13 +281,13 @@ fun searchPanel(
         horizontalArrangement = Arrangement.Center
     ) {
 
-        val text by viewModel.textForSearch.collectAsState()
+        val text by chatViewModel.textForSearch.collectAsState()
         SearchAndInputTextWithPlaceholder(
             mainColor = mainColor,
             secondColor = secondColor,
             textColor = textColor,
             textForValue = text,
-            onValueChange = { viewModel.updateTextForSearch(it) },
+            onValueChange = { chatViewModel.updateTextForSearch(it) },
             placeholderText = "Поиск",
             singleline = true,
             modifier = Modifier
@@ -314,7 +304,7 @@ fun searchPanel(
         IconButton(modifier = Modifier
             .size(50.dp)
             .background(thirdColor, CircleShape),
-            onClick = { viewModel.searchUser() }) {
+            onClick = { chatViewModel.searchUser() }) {
             Surface(
                 shape = RoundedCornerShape(30.dp),
                 modifier = Modifier
