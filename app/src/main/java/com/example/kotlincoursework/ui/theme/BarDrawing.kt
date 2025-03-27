@@ -33,6 +33,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -62,15 +63,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ShowMessage
-import com.example.kotlincoursework.mainColor
-import com.example.kotlincoursework.secondColor
-import com.example.kotlincoursework.textColor
-import com.example.kotlincoursework.thirdColor
 import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
 import com.example.kotlincoursework.viewModel.ChatViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
+import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
+
 
 
 @Composable
@@ -78,9 +77,12 @@ fun BarDrawing(navController: NavHostController,
                viewModel: viewModel,
                authenticationViewModel: AuthenticationViewModel,
                chatViewModel: ChatViewModel,
-               settingsViewModel: SettingsViewModel) {
+               settingsViewModel: SettingsViewModel,
+               themeViewModel: ThemeViewModel) {
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
 
     Scaffold(
 
@@ -139,8 +141,8 @@ fun BarDrawing(navController: NavHostController,
                 "ToRegister",
                 "ToSecondRegister" -> {
                     SetSystemBarsColor(
-                        statusBarColor = mainColor.toArgb(), // Цвет статус-бара
-                        navigationBarColor = mainColor.toArgb(), // Цвет навигационной панели
+                        statusBarColor = color.background.toArgb(), // Цвет статус-бара
+                        navigationBarColor = color.background.toArgb(), // Цвет навигационной панели
                         lightStatusBar = true, // Светлый текст на статус-баре
                         lightNavigationBar = true // Светлый текст на навигационной панели
                     )
@@ -148,8 +150,8 @@ fun BarDrawing(navController: NavHostController,
 
                 else -> {
                     SetSystemBarsColor(
-                        statusBarColor = secondColor.toArgb(), // Цвет статус-бара
-                        navigationBarColor = secondColor.toArgb(), // Цвет навигационной панели
+                        statusBarColor = color.primary.toArgb(), // Цвет статус-бара
+                        navigationBarColor = color.primary.toArgb(), // Цвет навигационной панели
                         lightStatusBar = true, // Светлый текст на статус-баре
                         lightNavigationBar = true // Светлый текст на навигационной панели
                     )
@@ -161,7 +163,9 @@ fun BarDrawing(navController: NavHostController,
                 viewModel = viewModel,
                 authenticationViewModel = authenticationViewModel,
                 chatViewModel = chatViewModel,
-                settingsViewModel = settingsViewModel)
+                settingsViewModel = settingsViewModel,
+                themeViewModel = themeViewModel
+            )
         }
     )
 }
@@ -173,6 +177,8 @@ fun SettingsTopBar(
     viewModel: viewModel,
     navController: NavController
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
+
     TopAppBar(
         modifier = Modifier.height(60.dp),
         title = {
@@ -183,7 +189,7 @@ fun SettingsTopBar(
                 Text(
                     text = viewModel.topBarText,
                     textAlign = TextAlign.Center,
-                    color = textColor,
+                    color = color.onPrimary,
                     modifier = Modifier.offset(x = (-24).dp) // Компенсируем смещение от кнопки
                 )
             }
@@ -200,14 +206,14 @@ fun SettingsTopBar(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Назад",
-                        tint = textColor,
-                        modifier = Modifier.background(thirdColor)
+                        tint = color.onPrimary,
+                        modifier = Modifier.background(color.secondary)
                     )
                 }
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = secondColor
+            containerColor = color.primary
         )
     )
 }
@@ -219,8 +225,10 @@ fun ChatWithUserTopBar(
     viewModel: viewModel,
     navController: NavController
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
+
     TopAppBar(
-        modifier = Modifier.height(70.dp),
+        modifier = Modifier.height(60.dp),
         title = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -239,8 +247,8 @@ fun ChatWithUserTopBar(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Назад",
-                            tint = textColor,
-                            modifier = Modifier.background(thirdColor)
+                            tint = color.onPrimary,
+                            modifier = Modifier.background(color.secondary)
                         )
                     }
                 }
@@ -249,7 +257,7 @@ fun ChatWithUserTopBar(
                 Text(
                     text = viewModel.topBarText,
                     textAlign = TextAlign.Center,
-                    color = textColor,
+                    color = color.onPrimary,
                     modifier = Modifier
                         .weight(1f) // Занимает все доступное пространство между кнопкой и аватаром
                         .padding(horizontal = 8.dp) // Добавляем отступы, чтобы текст не прилипал к краям
@@ -261,10 +269,10 @@ fun ChatWithUserTopBar(
                         .padding(end = 20.dp)
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(thirdColor)
+                        .background(color.secondary)
                         .border(
                             width = 2.dp,
-                            color = thirdColor,
+                            color = color.secondary,
                             shape = RoundedCornerShape(1.dp)
                         ),
                     contentAlignment = Alignment.Center
@@ -281,7 +289,7 @@ fun ChatWithUserTopBar(
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = secondColor
+            containerColor = color.primary
         )
     )
 }
@@ -291,15 +299,13 @@ fun ChatWithUserTopBar(
 fun ChatWithUserBottomBar(
     viewModel: viewModel
 ) {
-    val mainColor = colorResource(R.color.light_main_color)
-    val secondColor = colorResource(R.color.light_second_color)
-    val thirdColor = colorResource(R.color.light_third_color)
-    val textColor = colorResource(R.color.light_text_color)
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
+
     BottomAppBar(
         modifier = Modifier
             .heightIn(min = 60.dp, max = 600.dp)
             .wrapContentHeight(),
-        containerColor = secondColor
+        containerColor = color.primary
     ) {
         Row(
             modifier =
@@ -324,10 +330,10 @@ fun ChatWithUserBottomBar(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Добавить",
-                        tint = textColor,
+                        tint = color.onPrimary,
                         modifier = Modifier
                             .size(3.dp)
-                            .background(thirdColor)
+                            .background(color.secondary)
                     )
                 }
             }
@@ -335,9 +341,6 @@ fun ChatWithUserBottomBar(
 
             var textForMessage by rememberSaveable { mutableStateOf("") }
             SearchAndInputTextWithPlaceholder(
-                mainColor = mainColor,
-                secondColor = secondColor,
-                textColor = textColor,
                 textForValue = textForMessage,
                 onValueChange = { textForMessage = it },
                 placeholderText = "Сообщение",
@@ -369,10 +372,10 @@ fun ChatWithUserBottomBar(
                     Icon(
                         imageVector = Icons.Default.Done,
                         contentDescription = "Отправить",
-                        tint = textColor,
+                        tint = color.onPrimary,
                         modifier = Modifier
                             .size(3.dp)
-                            .background(thirdColor)
+                            .background(color.secondary)
                     )
                 }
             }
@@ -388,17 +391,19 @@ fun ChatWithUserBottomBar(
 fun ScreenTopBar(
     viewModel: viewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
+
     CenterAlignedTopAppBar(
         modifier = Modifier.height(60.dp),
         title = {
             Text(
                 text = viewModel.topBarText,
                 textAlign = TextAlign.Center,
-                color = textColor
+                color = color.onPrimary
             )
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = secondColor
+            containerColor = color.primary
         )
     )
 }
@@ -410,9 +415,11 @@ fun ScreenBottomBar(
     navController: NavController,
     viewModel: viewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
+
     BottomAppBar(
         modifier = Modifier.height(60.dp),
-        containerColor = secondColor
+        containerColor = color.primary
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -432,10 +439,10 @@ fun ScreenBottomBar(
                     Icon(
                         imageVector = Icons.Default.MailOutline,
                         contentDescription = "Чат",
-                        tint = textColor,
+                        tint = color.onPrimary,
                         modifier = Modifier
                             .size(3.dp)
-                            .background(thirdColor)
+                            .background(color.secondary)
                     )
                 }
             }
@@ -454,8 +461,8 @@ fun ScreenBottomBar(
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Настройки",
-                        tint = textColor,
-                        modifier = Modifier.background(thirdColor)
+                        tint = color.onPrimary,
+                        modifier = Modifier.background(color.secondary)
                     )
                 }
             }
@@ -471,21 +478,25 @@ fun ScreenMainContent(
     viewModel: viewModel,
     authenticationViewModel: AuthenticationViewModel,
     chatViewModel: ChatViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    themeViewModel: ThemeViewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(mainColor)
+            .background(color.background)
             .padding(paddingValues),
         contentAlignment = Alignment.Center
     ) {
         ScreenNavHost(
-            navController,
+            navController = navController,
             viewModel = viewModel,
             authenticationViewModel = authenticationViewModel,
             chatViewModel = chatViewModel,
-            settingsViewModel = settingsViewModel
+            settingsViewModel = settingsViewModel,
+            themeViewModel = themeViewModel
         )
     }
 }
@@ -541,16 +552,8 @@ fun SetSystemBarsColor(
 @Composable
 fun barPreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
         val navController = rememberNavController()
 
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
         //val viewModel: viewModel = viewModel()
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
         //ChatWithUserBottomBar(viewModel)

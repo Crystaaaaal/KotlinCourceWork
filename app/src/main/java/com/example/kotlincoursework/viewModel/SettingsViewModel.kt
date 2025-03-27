@@ -2,6 +2,7 @@ package com.example.kotlincoursework.viewModel
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kotlincoursework.API.UserInfoRepository
@@ -70,6 +71,7 @@ class SettingsViewModel(
 
     fun udpateUserImage(){
         viewModelScope.launch {
+            Log.i("settingsViewModel","")
             _updateUserInfoState.value = UpdateUserInfoState.Idle
             val loginRecive = createLoginRecive()
             if (loginRecive == null) {

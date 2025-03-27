@@ -30,14 +30,11 @@ import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable
 fun CustomToggleSwitch(
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     SwitchValue: Boolean,
     onValueChange: (Boolean) -> Unit,
+    onClick: () -> Unit = {},
 ) {
-
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
 
     // Анимация для плавного перемещения ползунка
     val thumbOffset by animateDpAsState(
@@ -50,15 +47,16 @@ fun CustomToggleSwitch(
             .width(150.dp) // Ширина переключателя
             .height(50.dp) // Высота переключателя
             .background(
-                color = if (SwitchValue) secondColor else mainColor,
+                color = if (SwitchValue) color.primary else color.background,
                 shape = RoundedCornerShape(15.dp) // Закруглённые углы
             )
             .border(
                 width = 4.dp, // Окантовка
-                color = thirdColor,
+                color = color.outline,
                 shape = RoundedCornerShape(15.dp) // Закруглённые углы окантовки
             )
-            .clickable { onValueChange(!SwitchValue) } // Обработка клика
+            .clickable { onValueChange(!SwitchValue)
+                onClick()} // Обработка клика
             .padding(10.dp) // Отступ для ползунка
     ) {
         Box(
@@ -66,7 +64,7 @@ fun CustomToggleSwitch(
                 .offset(x = thumbOffset) // Анимация перемещения
                 .size(30.dp) // Размер ползунка
                 .clip(CircleShape)
-                .background(thirdColor) // Закруглённые углы ползунка
+                .background(color.outline) // Закруглённые углы ползунка
 
         )
     }
@@ -76,23 +74,10 @@ fun CustomToggleSwitch(
 @Composable
 fun AppearancePreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
-        val navController = rememberNavController()
 
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
 
         var SwitchValue by remember { mutableStateOf(false) }
         CustomToggleSwitch(
-            mainColor,
-            secondColor,
-            thirdColor,
-            textColor,
             SwitchValue,
             {newState -> SwitchValue = newState }
         )

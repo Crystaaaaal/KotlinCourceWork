@@ -4,14 +4,17 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,17 +29,22 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
+import com.example.kotlincoursework.ui.theme.DarkPrimary
+import com.example.kotlincoursework.ui.theme.GreenPrimary
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
+import com.example.kotlincoursework.ui.theme.LightPrimary
+import com.example.kotlincoursework.ui.theme.OrangePrimary
+import com.example.kotlincoursework.ui.theme.PurplePrimary
 import com.example.kotlincoursework.ui.theme.components.CustomToggleSwitch
+import com.example.kotlincoursework.ui.theme.components.SwapColorButton
+import com.example.kotlincoursework.viewModel.ThemeViewModel
 
 @Composable
 fun AppearanceScreen(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
+    themeViewModel: ThemeViewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -48,31 +56,71 @@ fun AppearanceScreen(
                 .padding(10.dp)
                 .border(
                     width = 4.dp,
-                    color = secondColor,
+                    color = color.primary,
                     shape = RoundedCornerShape(30.dp)
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Темная тема:",
+                text = "Выберите тему:",
                 fontSize = 18.sp,
-                color = textColor
+                color = color.onPrimary
             )
-
-
             Spacer(modifier = Modifier.height(10.dp))
 
-            var SwitchValue by remember { mutableStateOf(false) }
-            CustomToggleSwitch(
-                mainColor,
-                secondColor,
-                thirdColor,
-                textColor,
-                SwitchValue,
-                { newState -> SwitchValue = newState }
-            )
+            val currentTheme by themeViewModel.currentTheme.collectAsState()
 
+            // Определяем состояние для каждой кнопки на основе текущей темы
+            val lightSelected = currentTheme.id == "light"
+            val darkSelected = currentTheme.id == "dark"
+            val purpleSelected = currentTheme.id == "purple"
+            val greenSelected = currentTheme.id == "green"
+            val orangeSelected = currentTheme.id == "orange"
+
+            Row(
+                modifier = Modifier
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.spacedBy(40.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SwapColorButton(
+                    color = LightPrimary,
+                    isSelected = lightSelected,
+                    onClick = { themeViewModel.setTheme("light") }
+                )
+
+                SwapColorButton(
+                    color = DarkPrimary,
+                    isSelected = darkSelected,
+                    onClick = { themeViewModel.setTheme("dark") }
+                )
+
+                SwapColorButton(
+                    color = PurplePrimary,
+                    isSelected = purpleSelected,
+                    onClick = { themeViewModel.setTheme("purple") }
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.spacedBy(40.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SwapColorButton(
+                    color = GreenPrimary,
+                    isSelected = greenSelected,
+                    onClick = { themeViewModel.setTheme("green") }
+                )
+
+                SwapColorButton(
+                    color = OrangePrimary,
+                    isSelected = orangeSelected,
+                    onClick = { themeViewModel.setTheme("orange") }
+                )
+            }
         }
     }
 }
@@ -82,19 +130,10 @@ fun AppearanceScreen(
 @Composable
 fun AppearancePreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
         val navController = rememberNavController()
 
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
-
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
-        AppearanceScreen(navController, mainColor, secondColor, thirdColor, textColor)
+        //AppearanceScreen(navController)
 
     }
 }

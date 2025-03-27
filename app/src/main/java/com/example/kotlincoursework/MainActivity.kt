@@ -1,11 +1,22 @@
 package com.example.kotlincoursework
 
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.provider.Settings.Global.putString
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.core.content.edit
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -14,67 +25,105 @@ import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
 import com.example.kotlincoursework.viewModel.ChatViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
+import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
-
-
-var mainColor: Color = Color.Black
-var secondColor: Color = Color.Black
-var thirdColor: Color = Color.Black
-var textColor: Color = Color.Black
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            KotlinCourseWorkTheme {
-                mainColor = colorResource(R.color.light_main_color)
-                secondColor = colorResource(R.color.light_second_color)
-                thirdColor = colorResource(R.color.light_third_color)
-                textColor = colorResource(R.color.light_text_color)
-                val applicatonContext = applicationContext
+            val themeViewModel = ThemeViewModel()
 
-                val navController = rememberNavController()
-                val masterKey = MasterKey.Builder(applicationContext, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+            val applicatonContext = applicationContext
+
+            val navController = rememberNavController()
+            val masterKey =
+                MasterKey.Builder(applicationContext, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                     .build()
 
-                val sharedPreferences = EncryptedSharedPreferences.create(
-                    applicationContext,
-                    "secure_prefs",
-                    masterKey,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                )
+            val sharedPreferences = EncryptedSharedPreferences.create(
+                applicationContext,
+                "secure_prefs",
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
 
-                val viewModel: viewModel = viewModel(
-                    applicationContext = applicatonContext,
-                    sharedPreferences = sharedPreferences
-                )
-                val authenticationViewModel = AuthenticationViewModel(
-                    applicationContext = applicatonContext
-                )
-                val chatViewModel = ChatViewModel(
-                    applicationContext = applicatonContext,
-                    sharedPreferences = sharedPreferences
-                )
-                val settingsViewModel = SettingsViewModel(
-                    applicationContext = applicatonContext,
-                    sharedPreferences = sharedPreferences
-                )
-                settingsViewModel.getUserInfo()
-
-                //Отрисовываем панелей
-                BarDrawing(
-                    navController = navController,
-                    viewModel = viewModel,
-                    authenticationViewModel = authenticationViewModel,
-                    chatViewModel = chatViewModel,
-                    settingsViewModel = settingsViewModel
-                )
+            val themId = sharedPreferences.getString("theme",null)
+            if (themId==null) {
+                Log.i("theme","не вышло")
+                themeViewModel.setTheme("light")
             }
+            else {
+                Log.i("theme",themId)
+                themeViewModel.setTheme(themId)
+            }
+
+            val viewModel = viewModel(
+                applicationContext = applicatonContext,
+                sharedPreferences = sharedPreferences
+            )
+            val authenticationViewModel = AuthenticationViewModel(
+                applicationContext = applicatonContext
+            )
+            val chatViewModel = ChatViewModel(
+                applicationContext = applicatonContext,
+                sharedPreferences = sharedPreferences
+            )
+            val settingsViewModel = SettingsViewModel(
+                applicationContext = applicatonContext,
+                sharedPreferences = sharedPreferences
+            )
+            settingsViewModel.getUserInfo()
+
+            app(
+                themeViewModel = themeViewModel,
+                navController = navController,
+                authenticationViewModel = authenticationViewModel,
+                chatViewModel = chatViewModel,
+                settingsViewModel = settingsViewModel,
+                viewModel = viewModel,
+                sharedPreferences = sharedPreferences
+            )
+        }
+    }
+
+    @Composable
+    fun app(
+        navController: NavHostController,
+        themeViewModel: ThemeViewModel,
+        authenticationViewModel: AuthenticationViewModel,
+        chatViewModel: ChatViewModel,
+        settingsViewModel: SettingsViewModel,
+        viewModel: viewModel,
+        sharedPreferences: SharedPreferences
+    ) {
+        val currentTheme by themeViewModel.currentTheme.collectAsState()
+
+        // Сохраняем тему при изменении
+        LaunchedEffect(currentTheme.id) {
+            sharedPreferences.edit {
+                putString("theme", currentTheme.id)
+                apply() // или commit()
+            }
+        }
+
+        KotlinCourseWorkTheme(theme = currentTheme) {
+            //Отрисовываем панелей
+            BarDrawing(
+                navController = navController,
+                viewModel = viewModel,
+                authenticationViewModel = authenticationViewModel,
+                chatViewModel = chatViewModel,
+                settingsViewModel = settingsViewModel,
+                themeViewModel = themeViewModel
+            )
         }
     }
 }
+
+
 
 
 

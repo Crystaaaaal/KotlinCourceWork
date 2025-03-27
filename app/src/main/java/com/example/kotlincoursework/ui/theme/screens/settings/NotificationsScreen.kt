@@ -32,11 +32,8 @@ import com.example.kotlincoursework.ui.theme.components.CustomToggleSwitch
 @Composable
 fun NotificationScreen(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -48,7 +45,7 @@ fun NotificationScreen(
                 .padding(10.dp)
                 .border(
                     width = 4.dp,
-                    color = secondColor,
+                    color = color.primary,
                     shape = RoundedCornerShape(30.dp)
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,7 +54,7 @@ fun NotificationScreen(
             Text(
                 text = "Уведомления:",
                 fontSize = 18.sp,
-                color = textColor
+                color = color.onPrimary
             )
 
 
@@ -65,10 +62,6 @@ fun NotificationScreen(
 
             var SwitchValue by remember { mutableStateOf(false) }
             CustomToggleSwitch(
-                mainColor,
-                secondColor,
-                thirdColor,
-                textColor,
                 SwitchValue,
                 { newState -> SwitchValue = newState }
             )
@@ -82,19 +75,9 @@ fun NotificationScreen(
 @Composable
 fun NotificationPreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
         val navController = rememberNavController()
 
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
-
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
-        NotificationScreen(navController, mainColor, secondColor, thirdColor, textColor)
-
+        NotificationScreen(navController)
     }
 }

@@ -1,57 +1,117 @@
 package com.example.kotlincoursework.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import com.example.kotlincoursework.ui.theme.state.AppTheme
+import com.example.kotlincoursework.ui.theme.state.AppThemes
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+val LightColorScheme = lightColorScheme(
+    primary = LightPrimary,
+    onPrimary = LightOnPrimary,
+    secondary = LightSecondary,
+    onSecondary = LightOnSecondary,
+    outline = LightOutline,
+    background = LightBackground,
+    onBackground = LightOnBackground,
+    surface = LightSurface,
+    onSurface = LightOnSurface,
+    error = LightError
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+val DarkColorScheme = darkColorScheme(
+    primary = DarkPrimary,
+    onPrimary = DarkOnPrimary,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    secondary = DarkSecondary,
+    onSecondary = DarkOnSecondary,
+
+    outline = DarkOutline,
+
+    background = DarkBackground,
+    onBackground = DarkOnBackground,
+
+    surface = DarkSurface,
+    onSurface = DarkOnSurface,
+
+    error = DarkError
 )
+
+val PurpleColorScheme = darkColorScheme(
+    primary = PurplePrimary,
+    onPrimary = PurpleOnPrimary,
+
+    secondary = PurpleSecondary,
+    onSecondary = PurpleOnSecondary,
+
+    outline = PurpleOutline,
+
+    background = PurpleBackground,
+    onBackground = PurpleOnBackground,
+
+    surface = PurpleSurface,
+    onSurface = PurpleOnSurface,
+
+    error = PurpleError
+)
+
+val GreenColorScheme = darkColorScheme(
+    primary = GreenPrimary,
+    onPrimary = GreenOnPrimary,
+
+    secondary = GreenSecondary,
+    onSecondary = GreenOnSecondary,
+
+    outline = GreenOutline,
+
+    background = GreenBackground,
+    onBackground = GreenOnBackground,
+
+    surface = GreenSurface,
+    onSurface = GreenOnSurface,
+
+    error = GreenError
+)
+
+val OrangeColorScheme = darkColorScheme(
+    primary = OrangePrimary,
+    onPrimary = OrangeOnPrimary,
+
+    secondary = OrangeSecondary,
+    onSecondary = OrangeOnSecondary,
+
+    outline = OrangeOutline,
+
+    background = OrangeBackground,
+    onBackground = OrangeOnBackground,
+
+    surface = OrangeSurface,
+    onSurface = OrangeOnSurface,
+
+    error = OrangeError
+)
+
+// Local provider для текущей темы
+val LocalTheme = staticCompositionLocalOf { AppThemes.Light }
 
 @Composable
 fun KotlinCourseWorkTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    theme: AppTheme = AppThemes.Light,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    CompositionLocalProvider(LocalTheme provides theme) {
+        MaterialTheme(
+            colorScheme = theme.colorScheme,
+            typography = Typography,
+            content = content
+        )
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
 }
+
+// Расширенные свойства для доступа к теме
+val MaterialTheme.customTheme: AppTheme
+    @Composable
+    get() = LocalTheme.current

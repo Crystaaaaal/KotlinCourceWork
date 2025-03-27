@@ -48,7 +48,9 @@ import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.SettingsButton
 import com.example.kotlincoursework.viewModel.SettingsViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -57,16 +59,15 @@ import java.io.ByteArrayOutputStream
 @Composable
 fun SettingScreen(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     settingsViewModel: SettingsViewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
     var showImagePicker by remember { mutableStateOf(false) } // Состояние для управления выбором изображения
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val ioCoroutineScope = remember {
+        CoroutineScope(Dispatchers.IO + SupervisorJob())
+    }
     val ActiveUser by settingsViewModel.ActiveUser.collectAsState()
     val imageBitmap = remember(ActiveUser.userImage) {
         ActiveUser.userImage.takeIf { it.isNotEmpty() }?.toImageBitmap()
@@ -77,7 +78,7 @@ fun SettingScreen(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
             uri?.let {
-                coroutineScope.launch {
+                ioCoroutineScope.launch {
                     val bytes = getImageBytes(context, it)
                     imageBytes = bytes // Сохраняем массив байтов
                     bytes?.let { onImagePicked ->
@@ -92,7 +93,7 @@ fun SettingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(mainColor),
+            .background(color.background),
         contentAlignment = Alignment.Center
     ) {
         LazyColumn(
@@ -114,10 +115,10 @@ fun SettingScreen(
                         modifier = Modifier
                             .size(100.dp)
                             .clip(CircleShape)
-                            .background(thirdColor)
+                            .background(color.outline)
                             .border(
                                 width = 4.dp,
-                                color = thirdColor,
+                                color = color.outline,
                                 shape = RoundedCornerShape(1.dp)
                             ),
                         contentAlignment = Alignment.Center
@@ -138,7 +139,7 @@ fun SettingScreen(
                     Text(
                         text = "Антон Скугарев",
                         fontSize = 24.sp,
-                        color = textColor,
+                        color = color.onPrimary,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
@@ -148,9 +149,6 @@ fun SettingScreen(
             }
             item {
                 SettingsButton(
-                    mainColor = mainColor,
-                    secondColor = secondColor,
-                    textColor = textColor,
                     buttonText = "Изменить фото",
                     onClick = {
                         // Запускаем выбор изображения
@@ -160,28 +158,20 @@ fun SettingScreen(
             }
             item {
                 SettingsButton(
-                    mainColor = mainColor,
-                    secondColor = secondColor,
-                    textColor = textColor,
                     buttonText = "Оформление",
                     onClick = { navController.navigate("ToAppearance") }
                 )
             }
             item {
                 SettingsButton(
-                    mainColor = mainColor,
-                    secondColor = secondColor,
-                    textColor = textColor,
                     buttonText = "Уведомления",
                     onClick = { navController.navigate("ToNotification") }
                 )
             }
             item {
                 SettingsButton(
-                    mainColor = mainColor,
-                    secondColor = secondColor,
-                    textColor = Color.Red,
                     buttonText = "Выйти из аккаунта",
+                    warningColor = true,
                     onClick = { navController.navigate("ToEnter") }
                 )
             }
@@ -221,10 +211,6 @@ private suspend fun getImageBytes(context: android.content.Context, uri: Uri): B
     @Composable
     fun SettingPreview() {
         KotlinCourseWorkTheme {
-            val mainColor = colorResource(R.color.light_main_color)
-            val secondColor = colorResource(R.color.light_second_color)
-            val thirdColor = colorResource(R.color.light_third_color)
-            val textColor = colorResource(R.color.light_text_color)
             val navController = rememberNavController()
 
 //        val mainColor = colorResource(R.color.dark_main_color)

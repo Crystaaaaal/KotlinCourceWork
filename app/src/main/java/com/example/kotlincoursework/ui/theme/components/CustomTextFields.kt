@@ -40,70 +40,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
-//@Composable
-//fun RegisterAndAuntificationTextFieldsWithText(
-//    mainColor: Color,
-//    secondColor: Color,
-//    textColor: Color,
-//    textForValue: String,
-//    onValueChange: (String) -> Unit,
-//    titleText: String,
-//    keyboardType: KeyboardType = KeyboardType.Text,
-//    visualTransformation: VisualTransformation = VisualTransformation.None
-//) {
-//    Column() {
-//        Text(
-//            modifier = Modifier
-//                .padding(horizontal = 10.dp, vertical = 5.dp),
-//            text = titleText,
-//            color = textColor,
-//            fontSize = 18.sp,
-//            textAlign = TextAlign.Start
-//        )
-//
-//        TextField(
-//            singleLine = true,
-//            value = textForValue,
-//            onValueChange = onValueChange,
-//            shape = RoundedCornerShape(20.dp),
-//            textStyle = androidx.compose.ui.text.TextStyle(
-//                color = textColor,
-//                textAlign = TextAlign.Start
-//            ),
-//            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-//            visualTransformation = visualTransformation,
-//            colors = TextFieldDefaults.colors
-//                (
-//                focusedContainerColor = mainColor,
-//                unfocusedContainerColor = mainColor
-//            ),
-//            modifier = Modifier
-//                .background(mainColor)
-//                .clip(RoundedCornerShape(20.dp))
-//                .height(50.dp)
-//                .width(300.dp)
-//                .fillMaxWidth()
-//                .border
-//                    (
-//                    width = 4.dp,
-//                    color = secondColor,
-//                    shape = RoundedCornerShape(20.dp)
-//                )
-//        )
-//    }
-//}
-
 @Composable
 fun RegisterAndAuntificationTextFieldsWithText(
-    mainColor: Color,
-    secondColor: Color,
-    textColor: Color,
     textForValue: String,
     onValueChange: (String) -> Unit,
     titleText: String,
     keyboardType: KeyboardType = KeyboardType.Text,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    errorStatus: Boolean = false
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     // Состояние для управления видимостью пароля
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -112,7 +58,7 @@ fun RegisterAndAuntificationTextFieldsWithText(
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 5.dp),
             text = titleText,
-            color = textColor,
+            color = color.onPrimary,
             fontSize = 18.sp,
             textAlign = TextAlign.Start
         )
@@ -123,7 +69,7 @@ fun RegisterAndAuntificationTextFieldsWithText(
             onValueChange = onValueChange,
             shape = RoundedCornerShape(20.dp),
             textStyle = androidx.compose.ui.text.TextStyle(
-                color = textColor,
+                color = color.onPrimary,
                 textAlign = TextAlign.Start,
                 fontSize = 16.sp
             ),
@@ -135,8 +81,8 @@ fun RegisterAndAuntificationTextFieldsWithText(
                 visualTransformation // Используем переданное значение (например, PasswordVisualTransformation)
             },
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = mainColor,
-                unfocusedContainerColor = mainColor
+                focusedContainerColor = color.background,
+                unfocusedContainerColor = color.background
             ),
             trailingIcon = {
                 // Показываем кнопку только если visualTransformation = PasswordVisualTransformation
@@ -157,37 +103,36 @@ fun RegisterAndAuntificationTextFieldsWithText(
                             } else {
                                 "Показать пароль"
                             },
-                            tint = textColor
+                            tint = color.onPrimary
                         )
                     }
                 }
             },
             modifier = Modifier
-                .background(mainColor)
+                .background(color.background)
                 .clip(RoundedCornerShape(20.dp))
                 .height(50.dp)
                 .width(300.dp)
                 .fillMaxWidth()
                 .border(
                     width = 4.dp,
-                    color = secondColor,
+                    color = if (errorStatus) color.error else color.primary ,
                     shape = RoundedCornerShape(20.dp)
                 )
+
         )
     }
 }
 
 @Composable
 fun SearchAndInputTextWithPlaceholder(
-    mainColor: Color,
-    secondColor: Color,
-    textColor: Color,
     textForValue: String,
     onValueChange: (String) -> Unit,
     placeholderText: String,
     singleline: Boolean,
     modifier: Modifier
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     TextField(
         singleLine = singleline,
         value = textForValue,
@@ -195,15 +140,15 @@ fun SearchAndInputTextWithPlaceholder(
         placeholder = {
             Text(
                 text = placeholderText,
-                color = textColor.copy(alpha = 0.5f), // Полупрозрачный цвет для плейсхолдера
+                color = color.onPrimary.copy(alpha = 0.5f), // Полупрозрачный цвет для плейсхолдера
                 fontSize = 16.sp
             )
         },
         shape = RoundedCornerShape(30.dp),
-        textStyle = androidx.compose.ui.text.TextStyle(color = textColor, fontSize = 16.sp),
+        textStyle = androidx.compose.ui.text.TextStyle(color = color.onPrimary, fontSize = 16.sp),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = mainColor,
-            unfocusedContainerColor = mainColor,
+            focusedContainerColor = color.background,
+            unfocusedContainerColor = color.background,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
@@ -215,7 +160,7 @@ fun SearchAndInputTextWithPlaceholder(
                     Icon(
                         imageVector = Icons.Default.Clear, // Иконка очистки
                         contentDescription = "Очистить",
-                        tint = textColor,
+                        tint = color.onPrimary,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -223,7 +168,7 @@ fun SearchAndInputTextWithPlaceholder(
         },
         modifier = modifier
             .background(
-                secondColor,
+                color = color.primary,
                 shape = RoundedCornerShape(30.dp)
             )
             .clip(RoundedCornerShape(30.dp))
@@ -235,31 +180,10 @@ fun SearchAndInputTextWithPlaceholder(
 @Composable
 fun TextFieldPreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
-        val navController = rememberNavController()
-
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
 
         var textForPhoneNumber by rememberSaveable { mutableStateOf("") }
-//        RegisterAndAuntificationTextFieldsWithText(
-//            mainColor = mainColor,
-//            secondColor = secondColor,
-//            textColor = textColor,
-//            textForValue = textForPhoneNumber,
-//            onValueChange = { textForPhoneNumber = it },
-//            titleText = "Номер телефона"
-//        )
 
         SearchAndInputTextWithPlaceholder(
-            mainColor = mainColor,
-            secondColor = secondColor,
-            textColor = textColor,
             textForValue = textForPhoneNumber,
             onValueChange = { textForPhoneNumber = it },
             placeholderText = "Сообщение",

@@ -1,13 +1,10 @@
 package com.example.kotlincoursework.ui.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.kotlincoursework.mainColor
-import com.example.kotlincoursework.secondColor
-import com.example.kotlincoursework.textColor
-import com.example.kotlincoursework.thirdColor
 import com.example.kotlincoursework.ui.theme.screens.auth.EnterScreen
 import com.example.kotlincoursework.ui.theme.screens.auth.FirstRegistrationScreen
 import com.example.kotlincoursework.ui.theme.screens.auth.SecondRegistrationScreen
@@ -19,6 +16,7 @@ import com.example.kotlincoursework.ui.theme.screens.settings.SettingScreen
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
 import com.example.kotlincoursework.viewModel.ChatViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
+import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
 
 // Метод навигации
@@ -28,7 +26,9 @@ fun ScreenNavHost(
     viewModel: viewModel,
     authenticationViewModel: AuthenticationViewModel,
     chatViewModel: ChatViewModel,
-    settingsViewModel: SettingsViewModel) {
+    settingsViewModel: SettingsViewModel,
+    themeViewModel: ThemeViewModel
+) {
     NavHost(
         navController = navController,
         startDestination = "ToChat"
@@ -36,79 +36,48 @@ fun ScreenNavHost(
         composable("ToSetting") {
             SettingScreen(
                 navController = navController,
-                mainColor = mainColor,
-                secondColor = secondColor,
-                thirdColor = thirdColor,
-                textColor = textColor,
                 settingsViewModel = settingsViewModel
             )
         }
         composable("ToChat") {
             chatScreen(
                 navController = navController,
-                mainColor = mainColor,
-                secondColor = secondColor,
-                thirdColor = thirdColor,
-                textColor = textColor,
                 chatViewModel = chatViewModel
             )
         }
         composable("ToEnter") {
             EnterScreen(
                 navController = navController,
-                mainColor = mainColor,
-                secondColor = secondColor,
-                thirdColor = thirdColor,
-                textColor = textColor,
                 authenticationViewModel = authenticationViewModel
             )
         }
         composable("ToRegister") {
             FirstRegistrationScreen(
                 navController = navController,
-                mainColor = mainColor,
-                secondColor = secondColor,
-                thirdColor = thirdColor,
-                textColor = textColor,
                 authenticationViewModel = authenticationViewModel
             )
         }
         composable("ToSecondRegister") {
             SecondRegistrationScreen(
                 navController = navController,
-                mainColor = mainColor,
-                secondColor = secondColor,
-                thirdColor = thirdColor,
-                textColor = textColor,
                 authenticationViewModel = authenticationViewModel
             )
         }
         composable("ToAppearance") {
             AppearanceScreen(
-                navController,
-                mainColor,
-                secondColor,
-                thirdColor,
-                textColor
+                navController = navController,
+                themeViewModel = themeViewModel
             )
         }
         composable("ToNotification") {
             NotificationScreen(
-                navController,
-                mainColor,
-                secondColor,
-                thirdColor,
-                textColor
+                navController = navController
             )
         }
         composable("ToUserChat") {
             ChatWithUserScreen(
-                navController,
-                mainColor,
-                secondColor,
-                thirdColor,
-                textColor,
-                viewModel
+                navController = navController,
+                viewModel = viewModel
             )
         }
     }

@@ -40,12 +40,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun SecondRegistrationScreen(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     authenticationViewModel: AuthenticationViewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     var message by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
@@ -54,19 +51,17 @@ fun SecondRegistrationScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(mainColor),
+            .background(color.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NameAppTextWithExtra(
-            secondColor = secondColor,
-            thirdColor = thirdColor,
             extraText = "Личные данные"
         )
 
 
-        var colorForRegisterSecondName by remember { mutableStateOf(secondColor) }
-        var colorForRegisterName by remember { mutableStateOf(secondColor) }
-        var colorForRegisterFatherName by remember { mutableStateOf(secondColor) }
+        var colorForRegisterSecondName by remember { mutableStateOf(false) }
+        var colorForRegisterName by remember { mutableStateOf(false) }
+        var colorForRegisterFatherName by remember { mutableStateOf(false) }
 
         val textForRegisterSecondName by authenticationViewModel.textForRegisterSecondName.collectAsState()
         val textForRegisterName by authenticationViewModel.textForRegisterName.collectAsState()
@@ -77,21 +72,21 @@ fun SecondRegistrationScreen(
 
 
         if (textForRegisterSecondName != "" && !authenticationViewModel.isRegisterSecondNameValid) {
-            colorForRegisterSecondName = Color.Red
+            colorForRegisterSecondName = true
         } else {
-            colorForRegisterSecondName = secondColor
+            colorForRegisterSecondName = false
         }
 
         if (textForRegisterName != "" && !authenticationViewModel.isRegisterNameValid) {
-            colorForRegisterName = Color.Red
+            colorForRegisterName = true
         } else {
-            colorForRegisterName = secondColor
+            colorForRegisterName = false
         }
 
         if (textForRegisterFatherName != "" && !authenticationViewModel.isRegisterFatherNameValid) {
-            colorForRegisterFatherName = Color.Red
+            colorForRegisterFatherName = true
         } else {
-            colorForRegisterFatherName = secondColor
+            colorForRegisterFatherName = false
         }
 
         if (screenHeightDp > 650.dp) {
@@ -102,43 +97,35 @@ fun SecondRegistrationScreen(
         }
 
         RegisterAndAuntificationTextFieldsWithText(
-            mainColor = mainColor,
-            secondColor = colorForRegisterSecondName,
-            textColor = textColor,
             textForValue = textForRegisterSecondName,
             onValueChange = { authenticationViewModel.updateTextForRegisterSecondName(it) },
-            titleText = "Фамилия"
+            titleText = "Фамилия",
+            errorStatus = colorForRegisterSecondName
         )
 
         RegisterAndAuntificationTextFieldsWithText(
-            mainColor = mainColor,
-            secondColor = colorForRegisterName,
-            textColor = textColor,
             textForValue = textForRegisterName,
             onValueChange = { authenticationViewModel.updateTextForRegisterName(it) },
-            titleText = "Имя"
+            titleText = "Имя",
+            errorStatus = colorForRegisterName
         )
 
 
         RegisterAndAuntificationTextFieldsWithText(
-            mainColor = mainColor,
-            secondColor = colorForRegisterFatherName,
-            textColor = textColor,
             textForValue = textForRegisterFatherName,
             onValueChange = { authenticationViewModel.updateTextForRegisterFatherName(it) },
-            titleText = "Отчество"
+            titleText = "Отчество",
+            errorStatus = colorForRegisterFatherName
         )
 
         if (screenHeightDp > 650.dp) {
-            Spacer(modifier = Modifier.height(200.dp))
+            Spacer(modifier = Modifier.height(130.dp))
         }
         else {
             Spacer(modifier = Modifier.height(30.dp))
         }
 
         ButtonThirdColor(
-            thirdColor = thirdColor,
-            textColor = textColor,
             onClick = {
                 if (!authenticationViewModel.isRegistrationFormValid()) {
                     message = "Невалидные данные"
@@ -160,7 +147,7 @@ fun SecondRegistrationScreen(
                 },
             text = "Назад",
             fontSize = 20.sp,
-            color = secondColor,
+            color = color.primary,
             textDecoration = Underline
         )
 
@@ -177,9 +164,6 @@ fun SecondRegistrationScreen(
 
         is RegistrationState.Error -> {
             registrationIsError(
-                mainColor = mainColor,
-                secondColor = secondColor,
-                textColor = textColor,
                 message = (state as RegistrationState.Error).message
             )
         }
@@ -195,29 +179,20 @@ fun SecondRegistrationScreen(
 
     Toast(
         message = message,
-        visible = showToast,
-        mainColor = mainColor,
-        secondColor = secondColor,
-        textColor = textColor
+        visible = showToast
     )
 
 
 }
 @Composable
 fun registrationIsError(
-    mainColor: Color,
-    secondColor: Color,
-    textColor: Color,
     message:String
 ){
     var showToast by remember { mutableStateOf(true) }
     RegistrationState.Idle
     Toast(
         message = message,
-        visible = showToast,
-        mainColor = mainColor,
-        secondColor = secondColor,
-        textColor = textColor
+        visible = showToast
     )
 
     // Управление Toast
@@ -244,17 +219,7 @@ fun registrationIsSucces(navController: NavController){
 @Composable
 fun secondRegisterPreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
         val navController = rememberNavController()
-
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
-
 
         //SecondRegisterScreen(navController, mainColor, secondColor, thirdColor, textColor)
 

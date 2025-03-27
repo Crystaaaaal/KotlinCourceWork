@@ -36,23 +36,18 @@ import com.example.kotlincoursework.viewModel.AuthenticationViewModel
 @Composable
 fun FirstRegistrationScreen(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     authenticationViewModel: AuthenticationViewModel
 ) {
     val configuration = LocalConfiguration.current
     val screenHeightDp = configuration.screenHeightDp.dp
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(mainColor),
+            .background(color.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NameAppTextWithExtra(
-            secondColor = secondColor,
-            thirdColor = thirdColor,
             extraText = "Регистрация"
         )
 
@@ -63,66 +58,60 @@ fun FirstRegistrationScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
-        var colorForRegisterPhoneNumber by remember { mutableStateOf(secondColor) }
-        var colorForRegisterLogin by remember { mutableStateOf(secondColor) }
-        var colorForRegisterPassword by remember { mutableStateOf(secondColor) }
+        var colorForRegisterPhoneNumber by remember { mutableStateOf(false) }
+        var colorForRegisterLogin by remember { mutableStateOf(false) }
+        var colorForRegisterPassword by remember { mutableStateOf(false) }
 
         val textForRegisterPhoneNumber by authenticationViewModel.textForRegisterPhoneNumber.collectAsState()
         val textForRegisterLogin by authenticationViewModel.textForRegisterLogin.collectAsState()
         val textForRegisterPassword by authenticationViewModel.textForRegisterPassword.collectAsState()
 
         if (textForRegisterPhoneNumber != "+7" && !authenticationViewModel.isRegisterPhoneNumberValid){
-            colorForRegisterPhoneNumber = Color.Red
+            colorForRegisterPhoneNumber = true
         }
         else{
-            colorForRegisterPhoneNumber = secondColor
+            colorForRegisterPhoneNumber = false
         }
 
         if (textForRegisterLogin != "" && !authenticationViewModel.isRegisterLoginValid){
-            colorForRegisterLogin = Color.Red
+            colorForRegisterLogin = true
         }
         else {
-            colorForRegisterLogin = secondColor
+            colorForRegisterLogin = false
         }
 
         if (textForRegisterPassword != "" && !authenticationViewModel.isRegisterPasswordValid){
-            colorForRegisterPassword = Color.Red
+            colorForRegisterPassword = true
         }
         else {
-            colorForRegisterPassword = secondColor
+            colorForRegisterPassword = false
         }
 
 
 
         RegisterAndAuntificationTextFieldsWithText(
-            mainColor = mainColor,
-            secondColor = colorForRegisterPhoneNumber,
-            textColor = textColor,
             textForValue = textForRegisterPhoneNumber,
             keyboardType = KeyboardType.Phone,
             onValueChange = { authenticationViewModel.updateTextForRegisterPhoneNumber(it) },
-            titleText = "Номер телефона"
+            titleText = "Номер телефона",
+            errorStatus = colorForRegisterPhoneNumber
         )
 
 
         RegisterAndAuntificationTextFieldsWithText(
-            mainColor = mainColor,
-            secondColor = colorForRegisterLogin,
-            textColor = textColor,
             textForValue = textForRegisterLogin,
             onValueChange = { authenticationViewModel.updateTextForRegisterLogin(it) },
             titleText = "Логин",
+            errorStatus = colorForRegisterLogin
         )
 
         RegisterAndAuntificationTextFieldsWithText(
-            mainColor = mainColor,
-            secondColor = colorForRegisterPassword,
-            textColor = textColor,
             textForValue = textForRegisterPassword,
             keyboardType = KeyboardType.Password,
             onValueChange = { authenticationViewModel.updateTextForRegisterPassword(it) },
             visualTransformation = PasswordVisualTransformation(),
-            titleText = "Пароль"
+            titleText = "Пароль",
+            errorStatus = colorForRegisterPassword
         )
 
         if (screenHeightDp > 650.dp) {
@@ -133,8 +122,6 @@ fun FirstRegistrationScreen(
         }
 
         ButtonThirdColor(
-            thirdColor = thirdColor,
-            textColor = textColor,
             buttonText = "Далее",
             onClick = {
                 navController.navigate("ToSecondRegister")
@@ -150,7 +137,7 @@ fun FirstRegistrationScreen(
                 },
             text = "Назад",
             fontSize = 20.sp,
-            color = secondColor,
+            color = color.primary,
             textDecoration = Underline
         )
 
@@ -161,17 +148,7 @@ fun FirstRegistrationScreen(
 @Composable
 fun firstRegisterPreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
         val navController = rememberNavController()
-
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
-
 
         //FirstRegisterScreen(navController, mainColor, secondColor, thirdColor, textColor)
 

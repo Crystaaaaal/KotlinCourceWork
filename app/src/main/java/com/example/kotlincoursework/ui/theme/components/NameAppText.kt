@@ -18,7 +18,10 @@ import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 
 @Composable
-fun NameAppTextWithExtra(secondColor: Color, thirdColor: Color, extraText: String) {
+fun NameAppTextWithExtra(
+    extraText: String) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
+
     Column(
         modifier = Modifier
             .padding(vertical = 50.dp)
@@ -36,7 +39,7 @@ fun NameAppTextWithExtra(secondColor: Color, thirdColor: Color, extraText: Strin
                 modifier = Modifier
                     .padding(end = 100.dp),
                 fontSize = 30.sp,
-                color = thirdColor
+                color = color.primary
             )
         }
 
@@ -51,7 +54,7 @@ fun NameAppTextWithExtra(secondColor: Color, thirdColor: Color, extraText: Strin
                 modifier = Modifier
                     .padding(start = 100.dp),
                 fontSize = 24.sp,
-                color = secondColor
+                color = color.secondary
             )
         }
     }
@@ -62,21 +65,8 @@ fun NameAppTextWithExtra(secondColor: Color, thirdColor: Color, extraText: Strin
 @Composable
 fun NameAppPreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
-        val navController = rememberNavController()
-
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
-
 
         NameAppTextWithExtra(
-            secondColor = secondColor,
-            thirdColor = thirdColor,
             extraText = "Вход в аккаунт"
         )
 

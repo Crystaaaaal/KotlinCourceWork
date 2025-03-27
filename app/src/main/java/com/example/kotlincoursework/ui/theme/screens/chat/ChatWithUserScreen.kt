@@ -27,12 +27,9 @@ import com.example.kotlincoursework.viewModel.viewModel
 @Composable
 fun ChatWithUserScreen(
     navController: NavController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     viewModel: viewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     // Отображение списка Box с помощью LazyColumn
     LazyColumn(
         modifier = Modifier
@@ -43,12 +40,12 @@ fun ChatWithUserScreen(
         items(viewModel.items.size) { item ->
             Box(
                 modifier = Modifier
-                    .background(mainColor)
+                    .background(color.background)
                     .wrapContentSize()
                     .padding(10.dp)
                     .border(
                         width = 4.dp,
-                        color = secondColor,
+                        color = color.primary,
                         shape = RoundedCornerShape(30.dp)
                     ),
 
@@ -58,7 +55,7 @@ fun ChatWithUserScreen(
                         .padding(20.dp)
                         .widthIn(max = 300.dp),
                     text = viewModel.items[viewModel.items.size - 1 - item],
-                    color = textColor,
+                    color = color.onPrimary,
                     softWrap = true,
                     fontSize = 18.sp
                 )
@@ -72,16 +69,7 @@ fun ChatWithUserScreen(
 @Composable
 fun chatWithUserPreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
         val navController = rememberNavController()
-
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
 
         //val sampleItems = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5")
         //val viewModel: viewModel = viewModel()

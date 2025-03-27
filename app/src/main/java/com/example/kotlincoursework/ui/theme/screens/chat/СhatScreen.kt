@@ -58,19 +58,11 @@ import dataBase.User
 @Composable
 fun chatScreen(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     chatViewModel: ChatViewModel
 ) {
     Column(Modifier.fillMaxSize()) {
         searchPanel(
             navController = navController,
-            mainColor = mainColor,
-            secondColor = secondColor,
-            thirdColor = thirdColor,
-            textColor = textColor,
             chatViewModel = chatViewModel
         )
 
@@ -89,10 +81,6 @@ fun chatScreen(
                     "")
                 showChats(
                     navController = navController,
-                    mainColor = mainColor,
-                    secondColor = secondColor,
-                    thirdColor = thirdColor,
-                    textColor = textColor,
                     chatViewModel = chatViewModel,
                     userList = listOf(user)
                 )
@@ -107,20 +95,12 @@ fun chatScreen(
                 if ((state as SeacrhState.Success).UserList.isEmpty()) {
                     searchIsError(
                         message = "Ничего не найдено",
-                        mainColor = mainColor,
-                        secondColor = secondColor,
-                        thirdColor = thirdColor,
-                        textColor = textColor,
                         chatViewModel = chatViewModel
                     )
                 }
                 else{
                     showChats(
                         navController = navController,
-                        mainColor = mainColor,
-                        secondColor = secondColor,
-                        textColor = textColor,
-                        thirdColor = thirdColor,
                         chatViewModel = chatViewModel,
                         userList = (state as SeacrhState.Success).UserList)
                 }
@@ -130,10 +110,6 @@ fun chatScreen(
                 Log.d("ChatScreen: SeacrhState.Error", "Error")
                 searchIsError(
                     message = (state as SeacrhState.Error).message,
-                    mainColor = mainColor,
-                    secondColor = secondColor,
-                    thirdColor = thirdColor,
-                    textColor = textColor,
                     chatViewModel = chatViewModel
                 )
             }
@@ -144,12 +120,9 @@ fun chatScreen(
 @Composable
 fun searchIsError(
     message: String,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     chatViewModel: ChatViewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -157,19 +130,17 @@ fun searchIsError(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(mainColor),
+                .background(color.background),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = message,
-                color = textColor,
+                color = color.onPrimary,
                 fontSize = 20.sp
             )
             Spacer(Modifier.height(100.dp))
 
             ButtonThirdColor(
-                thirdColor = thirdColor,
-                textColor = textColor,
                 onClick = { chatViewModel.searchUser() },
                 buttonText = "Повторить"
             )
@@ -181,7 +152,7 @@ fun searchIsError(
                     .clickable { chatViewModel.resetSearchState() },
                 text = "Назад",
                 fontSize = 20.sp,
-                color = secondColor,
+                color = color.primary,
                 textDecoration = Underline
             )
         }
@@ -192,14 +163,10 @@ fun searchIsError(
 @Composable
 fun showChats(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     chatViewModel: ChatViewModel,
     userList: List<User>
 ) {
-
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
@@ -217,7 +184,7 @@ fun showChats(
                     .border(
                         width = 4.dp,
                         shape = RoundedCornerShape(15.dp),
-                        color = secondColor
+                        color = color.primary
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -227,11 +194,11 @@ fun showChats(
                         .padding(10.dp)
                         .size(80.dp)
                         .clip(CircleShape)
-                        .background(thirdColor)
+                        .background(color.outline)
 
                         .border(
                             width = 4.dp,
-                            color = thirdColor,
+                            color = color.outline,
                             shape = RoundedCornerShape(30.dp)
                         ),
                     contentAlignment = Alignment.Center
@@ -254,7 +221,7 @@ fun showChats(
                 Text(
                     text = user.fullName,
                     fontSize = 18.sp,
-                    color = textColor,
+                    color = color.onPrimary,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
@@ -265,12 +232,9 @@ fun showChats(
 @Composable
 fun searchPanel(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     chatViewModel: ChatViewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     Row(
         modifier = Modifier
             .height(70.dp)
@@ -283,9 +247,6 @@ fun searchPanel(
 
         val text by chatViewModel.textForSearch.collectAsState()
         SearchAndInputTextWithPlaceholder(
-            mainColor = mainColor,
-            secondColor = secondColor,
-            textColor = textColor,
             textForValue = text,
             onValueChange = { chatViewModel.updateTextForSearch(it) },
             placeholderText = "Поиск",
@@ -294,7 +255,7 @@ fun searchPanel(
                 .width(250.dp)
                 .border(
                     width = 4.dp,
-                    color = secondColor,
+                    color = color.primary,
                     shape = RoundedCornerShape(30.dp)
                 )
         )
@@ -303,7 +264,7 @@ fun searchPanel(
 
         IconButton(modifier = Modifier
             .size(50.dp)
-            .background(thirdColor, CircleShape),
+            .background(color.outline, CircleShape),
             onClick = { chatViewModel.searchUser() }) {
             Surface(
                 shape = RoundedCornerShape(30.dp),
@@ -314,10 +275,10 @@ fun searchPanel(
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Чат",
-                    tint = textColor,
+                    tint = color.onPrimary,
                     modifier = Modifier
                         .size(3.dp)
-                        .background(thirdColor)
+                        .background(color.outline)
                 )
             }
         }
@@ -338,16 +299,9 @@ fun ByteArray.toImageBitmap(): ImageBitmap? {
 @Composable
 fun chatPreview() {
     KotlinCourseWorkTheme {
-        val mainColor = colorResource(R.color.light_main_color)
-        val secondColor = colorResource(R.color.light_second_color)
-        val thirdColor = colorResource(R.color.light_third_color)
-        val textColor = colorResource(R.color.light_text_color)
         val navController = rememberNavController()
 
-//        val mainColor = colorResource(R.color.dark_main_color)
-//        val secondColor = colorResource(R.color.dark_second_color)
-//        val thirdColor = colorResource(R.color.dark_third_color)
-//        val textColor = colorResource(R.color.dark_text_color)
+
         //val viewModel = viewModel()
 //        searchIsError(
 //            message = "text",

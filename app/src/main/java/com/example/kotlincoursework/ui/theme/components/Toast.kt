@@ -23,10 +23,8 @@ import androidx.compose.ui.unit.sp
 fun Toast(
     message: String,
     visible: Boolean,
-    mainColor:Color,
-    textColor: Color,
-    secondColor: Color
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn() + slideInVertically { -40 },
@@ -38,7 +36,7 @@ fun Toast(
                 .padding(16.dp)
                 .border(
                     width = 4.dp,
-                    color = Color.Red,
+                    color = color.error,
                     shape = RoundedCornerShape(20.dp)
 
                 ),
@@ -48,10 +46,10 @@ fun Toast(
         ) {
             Text(
                 text = message,
-                color = textColor,
+                color = color.onPrimary,
                 fontSize = 16.sp,
                 modifier = Modifier
-                    .background(mainColor, RoundedCornerShape(8.dp))
+                    .background(color.background, RoundedCornerShape(8.dp))
                     .padding(16.dp)
             )
         }

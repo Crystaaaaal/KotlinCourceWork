@@ -16,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,12 +35,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun EnterScreen(
     navController: NavHostController,
-    mainColor: Color,
-    secondColor: Color,
-    thirdColor: Color,
-    textColor: Color,
     authenticationViewModel: AuthenticationViewModel
 ) {
+    val color = androidx.compose.material3.MaterialTheme.colorScheme
     var message by remember { mutableStateOf("") }
     var showToast by remember { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
@@ -52,8 +48,6 @@ fun EnterScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NameAppTextWithExtra(
-            secondColor = secondColor,
-            thirdColor = thirdColor,
             extraText = "Вход в аккаунт"
         )
 
@@ -66,9 +60,6 @@ fun EnterScreen(
 
         val loginText by authenticationViewModel.loginTextForPhoneNumber.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
-            mainColor = mainColor,
-            secondColor = secondColor,
-            textColor = textColor,
             textForValue = loginText,
             onValueChange = { authenticationViewModel.updateLoginTextForPhoneNumber(it) },
             titleText = "Номер телефона",
@@ -77,9 +68,6 @@ fun EnterScreen(
 
         val passwordText by authenticationViewModel.loginTextForPassword.collectAsState()
         RegisterAndAuntificationTextFieldsWithText(
-            mainColor = mainColor,
-            secondColor = secondColor,
-            textColor = textColor,
             textForValue = passwordText,
             onValueChange = { authenticationViewModel.updateTextForPassword(it) },
             titleText = "Пароль",
@@ -94,8 +82,6 @@ fun EnterScreen(
             Spacer(modifier = Modifier.height(50.dp))
         }
         ButtonThirdColor(
-            thirdColor = thirdColor,
-            textColor = textColor,
             onClick = {
                 if (!authenticationViewModel.isLoginPhoneNumberValid.value || !authenticationViewModel.isLoginPasswordValid.value) {
                     message = "Невалидные данные"
@@ -118,7 +104,7 @@ fun EnterScreen(
                 },
             text = "Регистрация",
             fontSize = 20.sp,
-            color = secondColor,
+            color = color.primary,
             textDecoration = Underline
         )
     }
@@ -135,9 +121,6 @@ fun EnterScreen(
 
         is LoginState.Error -> {
             loginIsError(
-                mainColor = mainColor,
-                secondColor = secondColor,
-                textColor = textColor,
                 message = (state as LoginState.Error).message
             )
         }
@@ -146,9 +129,6 @@ fun EnterScreen(
     Toast(
         message = message,
         visible = showToast,
-        mainColor = mainColor,
-        secondColor = secondColor,
-        textColor = textColor
     )
     // Управление Toast
     LaunchedEffect(showToast) {
@@ -164,9 +144,6 @@ fun EnterScreen(
 
 @Composable
 fun loginIsError(
-    mainColor: Color,
-    secondColor: Color,
-    textColor: Color,
     message: String
 ) {
     var showToast by remember { mutableStateOf(true) }
@@ -174,9 +151,6 @@ fun loginIsError(
     Toast(
         message = message,
         visible = showToast,
-        mainColor = mainColor,
-        secondColor = secondColor,
-        textColor = textColor
     )
 
     // Управление Toast
