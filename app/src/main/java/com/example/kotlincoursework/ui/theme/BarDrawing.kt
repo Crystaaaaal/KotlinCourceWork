@@ -2,13 +2,14 @@ package com.example.kotlincoursework.ui.theme
 
 import android.app.Activity
 import android.os.Build
-import android.util.Log
 import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,21 +43,26 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -64,22 +70,24 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ShowMessage
-import com.example.kotlincoursework.ui.theme.components.SearchAndInputTextWithPlaceholder
+import com.example.kotlincoursework.ui.theme.components.InputMessageTextField
+import com.example.kotlincoursework.ui.theme.components.SearchTextFieldWithPlaceholder
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
-import com.example.kotlincoursework.viewModel.ChatViewModel
+import com.example.kotlincoursework.viewModel.SearchViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
 
 
-
 @Composable
-fun BarDrawing(navController: NavHostController,
-               viewModel: viewModel,
-               authenticationViewModel: AuthenticationViewModel,
-               chatViewModel: ChatViewModel,
-               settingsViewModel: SettingsViewModel,
-               themeViewModel: ThemeViewModel) {
+fun BarDrawing(
+    navController: NavHostController,
+    viewModel: viewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    searchViewModel: SearchViewModel,
+    settingsViewModel: SettingsViewModel,
+    themeViewModel: ThemeViewModel
+) {
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
@@ -109,9 +117,13 @@ fun BarDrawing(navController: NavHostController,
                     ScreenTopBar(viewModel)
                 }
 
-                "ToChat" -> {
+                "ToChat", "ToSearchScreen" -> {
                     viewModel.updateTopBarText("Мессенджер")
-                    ScreenTopBar(viewModel)
+                    ChatTopBar(
+                        navController = navController,
+                        viewModel = viewModel,
+                        searchViewModel = searchViewModel
+                    )
                 }
 
                 "ToUserChat" -> {
@@ -125,7 +137,8 @@ fun BarDrawing(navController: NavHostController,
             when (currentRoute) {
                 "ToEnter",
                 "ToRegister",
-                "ToSecondRegister" -> {
+                "ToSecondRegister",
+                "ToSearchScreen" -> {
                 }
 
                 "ToUserChat" -> {
@@ -148,6 +161,7 @@ fun BarDrawing(navController: NavHostController,
                         lightNavigationBar = true // Светлый текст на навигационной панели
                     )
                 }
+
                 else -> {
                     SetSystemBarsColor(
                         statusBarColor = color.primary.toArgb(), // Цвет статус-бара
@@ -159,10 +173,10 @@ fun BarDrawing(navController: NavHostController,
             }
             ScreenMainContent(
                 navController = navController,
-                paddingValues =  paddingValues,
+                paddingValues = paddingValues,
                 viewModel = viewModel,
                 authenticationViewModel = authenticationViewModel,
-                chatViewModel = chatViewModel,
+                searchViewModel = searchViewModel,
                 settingsViewModel = settingsViewModel,
                 themeViewModel = themeViewModel
             )
@@ -340,7 +354,7 @@ fun ChatWithUserBottomBar(
             Spacer(modifier = Modifier.width(10.dp))
 
             var textForMessage by rememberSaveable { mutableStateOf("") }
-            SearchAndInputTextWithPlaceholder(
+            InputMessageTextField(
                 textForValue = textForMessage,
                 onValueChange = { textForMessage = it },
                 placeholderText = "Сообщение",
@@ -385,6 +399,81 @@ fun ChatWithUserBottomBar(
 }
 
 
+@Composable
+fun ChatTopBar(
+    navController: NavController,
+    viewModel: viewModel,
+    searchViewModel: SearchViewModel
+) {
+    val color = MaterialTheme.colorScheme
+    var userSearching by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Surface(
+        color = color.primary,
+        shadowElevation = 3.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(20.dp))
+            if (!userSearching) {
+                Text(
+                    text = viewModel.topBarText,
+                    textAlign = TextAlign.Center,
+                    color = color.onPrimary,
+                    fontSize = 20.sp
+                )
+            }
+            val text by searchViewModel.textForSearch.collectAsState()
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SearchTextFieldWithPlaceholder(
+                    textForValue = text,
+                    onValueChange = {
+                        searchViewModel.updateTextForSearch(it)
+                    },
+                    placeholderText = "Поиск",
+                    singleline = true,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(10.dp)
+                        .onFocusChanged { focusState ->
+                            if (focusState.isFocused) {
+                                userSearching = true
+                                navController.navigate("ToSearchScreen")
+                            }
+                        }
+                )
+                if (userSearching) {
+                    Text(
+                        text = "Назад",
+                        textAlign = TextAlign.Center,
+                        color = color.onPrimary,
+                        fontSize = 20.sp,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .clickable {
+                                userSearching = false
+                                focusManager.clearFocus() // Сбрасываем фокус
+                                keyboardController?.hide() // Закрываем клавиатуру
+                                navController.navigate("ToChat")
+                                searchViewModel.resetSearchState()
+                                searchViewModel.updateTextForSearch("")
+                            })
+                }
+            }
+        }
+    }
+}
+
 // Метод для создания TopBar для основного экрана
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -397,6 +486,7 @@ fun ScreenTopBar(
         modifier = Modifier.height(60.dp),
         title = {
             Text(
+                fontSize = 20.sp,
                 text = viewModel.topBarText,
                 textAlign = TextAlign.Center,
                 color = color.onPrimary
@@ -477,7 +567,7 @@ fun ScreenMainContent(
     paddingValues: PaddingValues,
     viewModel: viewModel,
     authenticationViewModel: AuthenticationViewModel,
-    chatViewModel: ChatViewModel,
+    searchViewModel: SearchViewModel,
     settingsViewModel: SettingsViewModel,
     themeViewModel: ThemeViewModel
 ) {
@@ -494,7 +584,7 @@ fun ScreenMainContent(
             navController = navController,
             viewModel = viewModel,
             authenticationViewModel = authenticationViewModel,
-            chatViewModel = chatViewModel,
+            searchViewModel = searchViewModel,
             settingsViewModel = settingsViewModel,
             themeViewModel = themeViewModel
         )

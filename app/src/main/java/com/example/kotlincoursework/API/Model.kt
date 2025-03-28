@@ -52,7 +52,26 @@ data class User(
     val login:String,
     val profileImage: ByteArray?,
     val createdAt: String
-)
+){
+    // Переопределяем equals и hashCode для корректного сравнения пользователей
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as User
+
+        if (phoneNumber != other.phoneNumber) return false
+        if (login != other.login) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = phoneNumber.hashCode()
+        result = 31 * result + login.hashCode()
+        return result
+    }
+}
+
 
 @Serializable
 data class LoginRecive(

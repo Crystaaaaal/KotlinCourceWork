@@ -3,7 +3,6 @@ package com.example.kotlincoursework
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.provider.Settings.Global.putString
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,11 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.core.content.edit
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -23,7 +18,7 @@ import androidx.security.crypto.MasterKey
 import com.example.kotlincoursework.ui.theme.BarDrawing
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
-import com.example.kotlincoursework.viewModel.ChatViewModel
+import com.example.kotlincoursework.viewModel.SearchViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
@@ -67,7 +62,8 @@ class MainActivity : ComponentActivity() {
             val authenticationViewModel = AuthenticationViewModel(
                 applicationContext = applicatonContext
             )
-            val chatViewModel = ChatViewModel(
+
+            val searchViewModel = SearchViewModel(
                 applicationContext = applicatonContext,
                 sharedPreferences = sharedPreferences
             )
@@ -81,7 +77,7 @@ class MainActivity : ComponentActivity() {
                 themeViewModel = themeViewModel,
                 navController = navController,
                 authenticationViewModel = authenticationViewModel,
-                chatViewModel = chatViewModel,
+                searchViewModel = searchViewModel,
                 settingsViewModel = settingsViewModel,
                 viewModel = viewModel,
                 sharedPreferences = sharedPreferences
@@ -94,7 +90,7 @@ class MainActivity : ComponentActivity() {
         navController: NavHostController,
         themeViewModel: ThemeViewModel,
         authenticationViewModel: AuthenticationViewModel,
-        chatViewModel: ChatViewModel,
+        searchViewModel: SearchViewModel,
         settingsViewModel: SettingsViewModel,
         viewModel: viewModel,
         sharedPreferences: SharedPreferences
@@ -115,7 +111,7 @@ class MainActivity : ComponentActivity() {
                 navController = navController,
                 viewModel = viewModel,
                 authenticationViewModel = authenticationViewModel,
-                chatViewModel = chatViewModel,
+                searchViewModel = searchViewModel,
                 settingsViewModel = settingsViewModel,
                 themeViewModel = themeViewModel
             )
