@@ -144,6 +144,7 @@ fun SearchAndInputTextWithPlaceholder(
                 fontSize = 16.sp
             )
         },
+
         shape = RoundedCornerShape(30.dp),
         textStyle = androidx.compose.ui.text.TextStyle(color = color.onPrimary, fontSize = 16.sp),
         colors = TextFieldDefaults.colors(

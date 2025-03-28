@@ -2,6 +2,7 @@ package com.example.kotlincoursework.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.util.Log
 import android.view.View
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -147,7 +148,6 @@ fun BarDrawing(navController: NavHostController,
                         lightNavigationBar = true // Светлый текст на навигационной панели
                     )
                 }
-
                 else -> {
                     SetSystemBarsColor(
                         statusBarColor = color.primary.toArgb(), // Цвет статус-бара

@@ -1,5 +1,7 @@
 package com.example.kotlincoursework.ui.theme.screens.settings
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -137,7 +139,7 @@ fun SettingScreen(
                     }
                     Spacer(modifier = Modifier.width(30.dp))
                     Text(
-                        text = "Антон Скугарев",
+                        text = ActiveUser.fullName,
                         fontSize = 24.sp,
                         color = color.onPrimary,
                         modifier = Modifier.align(Alignment.CenterVertically)
@@ -188,22 +190,83 @@ fun ByteArray.toImageBitmap(): ImageBitmap? {
 }
 
 // Функция для преобразования Uri изображения в массив байтов
-private suspend fun getImageBytes(context: android.content.Context, uri: Uri): ByteArray? {
-    return withContext(Dispatchers.IO) {
-        try {
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
-            inputStream?.close()
-            bitmap?.let {
-                val stream = ByteArrayOutputStream()
-                it.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, stream)
-                stream.toByteArray()
+//private suspend fun getImageBytes(context: android.content.Context, uri: Uri): ByteArray? {
+//    return withContext(Dispatchers.IO) {
+//        try {
+//            val inputStream = context.contentResolver.openInputStream(uri)
+//            val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+//            inputStream?.close()
+//            bitmap?.let {
+//                val stream = ByteArrayOutputStream()
+//                it.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, stream)
+//                stream.toByteArray()
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            null
+//        }
+//    }
+//}
+private suspend fun getImageBytes(
+    context: Context,
+    uri: Uri,
+    maxWidth: Int = 1024,
+    maxHeight: Int = 1024,
+    quality: Int = 80
+): ByteArray? = withContext(Dispatchers.IO) {
+    try {
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            // Первое декодирование только для получения размеров
+            val options = BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+            BitmapFactory.decodeStream(inputStream, null, options)
+
+            // Вычисляем коэффициент масштабирования
+            val (width, height) = options.outWidth to options.outHeight
+            val scaleFactor = calculateInSampleSize(options, maxWidth, maxHeight)
+
+            // Декодируем с уменьшением размера
+            val newOptions = BitmapFactory.Options().apply {
+                inSampleSize = scaleFactor
+            }
+
+            // Переоткрываем поток (важно!)
+            context.contentResolver.openInputStream(uri)?.use { newInputStream ->
+                BitmapFactory.decodeStream(newInputStream, null, newOptions)?.let { bitmap ->
+                    ByteArrayOutputStream().use { outputStream ->
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+                        outputStream.toByteArray()
+                    }
+                }
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+// Вычисление коэффициента уменьшения
+private fun calculateInSampleSize(
+    options: BitmapFactory.Options,
+    reqWidth: Int,
+    reqHeight: Int
+): Int {
+    val (height, width) = options.outHeight to options.outWidth
+    var inSampleSize = 1
+
+    if (height > reqHeight || width > reqWidth) {
+        val halfHeight = height / 2
+        val halfWidth = width / 2
+
+        while (halfHeight / inSampleSize >= reqHeight &&
+            halfWidth / inSampleSize >= reqWidth) {
+            inSampleSize *= 2
         }
     }
+
+    return inSampleSize
 }
 
 

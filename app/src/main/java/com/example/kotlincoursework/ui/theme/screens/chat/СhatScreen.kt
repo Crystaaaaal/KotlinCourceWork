@@ -21,11 +21,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -78,7 +80,8 @@ fun chatScreen(
                     "Скугарев Антон Павлович",
                     "Crystal",
                     byteArray,
-                    "")
+                    ""
+                )
                 showChats(
                     navController = navController,
                     chatViewModel = chatViewModel,
@@ -87,7 +90,7 @@ fun chatScreen(
             }
 
             is SeacrhState.Loading -> {
-                Log.d("ChatScreen: SeacrhState.Loading", "Loading")
+                searchLoading()
             }
 
             is SeacrhState.Success -> {
@@ -97,12 +100,12 @@ fun chatScreen(
                         message = "Ничего не найдено",
                         chatViewModel = chatViewModel
                     )
-                }
-                else{
+                } else {
                     showChats(
                         navController = navController,
                         chatViewModel = chatViewModel,
-                        userList = (state as SeacrhState.Success).UserList)
+                        userList = (state as SeacrhState.Success).UserList
+                    )
                 }
             }
 
@@ -114,6 +117,22 @@ fun chatScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun searchLoading() {
+    Box(
+        Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(50.dp),
+            color = MaterialTheme.colorScheme.primary,
+            strokeWidth = 4.dp
+        )
+        Log.d("ChatScreen: SeacrhState.Loading", "Loading")
+
     }
 }
 
@@ -265,7 +284,10 @@ fun searchPanel(
         IconButton(modifier = Modifier
             .size(50.dp)
             .background(color.outline, CircleShape),
-            onClick = { chatViewModel.searchUser() }) {
+            onClick = {
+                if (text.length >= 3)
+                    chatViewModel.searchUser()
+            }) {
             Surface(
                 shape = RoundedCornerShape(30.dp),
                 modifier = Modifier
