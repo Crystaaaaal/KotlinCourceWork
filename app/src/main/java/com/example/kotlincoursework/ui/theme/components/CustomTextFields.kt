@@ -4,15 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -185,61 +184,60 @@ fun SearchTextFieldWithPlaceholder(
     textForValue: String,
     onValueChange: (String) -> Unit,
     placeholderText: String,
-    singleline: Boolean,
+    singleLine: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val color = MaterialTheme.colorScheme
 
-    TextField(
-        value = textForValue,
-        onValueChange = onValueChange,
-        singleLine = singleline,
-        textStyle = LocalTextStyle.current.copy(
-            color = color.onPrimary,
-            fontSize = 16.sp,
-        ),
-        placeholder = {
-                Text(
-                    text = placeholderText,
-                    color = color.onSecondary.copy(alpha = 0.5f),
-                    fontSize = 14.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-        },
-        shape = RoundedCornerShape(30.dp),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = color.secondary,
-            unfocusedContainerColor = color.secondary,
-            disabledContainerColor = color.secondary,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            cursorColor = color.onPrimary,
-            focusedTextColor = color.onPrimary,
-            unfocusedTextColor = color.onPrimary
-        ),
-        trailingIcon = {
-            if (textForValue.isNotEmpty()) {
-                IconButton(
-                    onClick = { onValueChange("") },
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Clear",
-                        tint = color.onPrimary.copy(alpha = 0.7f)
-                    )
-                }
-            }
-        },
+    Box(
         modifier = modifier
-            .defaultMinSize(minHeight = 40.dp) // Минимальная высота без обрезания текста
             .fillMaxWidth()
             .background(
                 color = color.secondary,
                 shape = RoundedCornerShape(15.dp)
             )
-    )
+            .padding(10.dp) // Компактные отступы
+    ) {
+        BasicTextField(
+            value = textForValue,
+            onValueChange = onValueChange,
+            singleLine = singleLine,
+            textStyle = LocalTextStyle.current.copy(
+                color = color.onPrimary,
+                fontSize = 14.sp,
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterEnd)
+        ) { innerTextField ->
+            if (textForValue.isEmpty()) {
+                    Text(
+                        text = placeholderText,
+                        color = color.onSecondary.copy(alpha = 0.5f),
+                        fontSize = 16.sp,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+            }
+            innerTextField()
+        }
+
+        if (textForValue.isNotEmpty()) {
+            IconButton(
+                onClick = { onValueChange("") },
+                modifier = Modifier
+                    .size(20.dp)
+                    .align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Clear",
+                    tint = color.onPrimary.copy(alpha = 0.7f),
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)

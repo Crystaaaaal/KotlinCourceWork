@@ -416,10 +416,12 @@ fun ChatTopBar(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
             if (!userSearching) {
                 Text(
                     text = viewModel.topBarText,
@@ -428,10 +430,14 @@ fun ChatTopBar(
                     fontSize = 20.sp
                 )
             }
+            else{
+                Spacer(modifier = Modifier.height(5.dp))
+            }
             val text by searchViewModel.textForSearch.collectAsState()
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -441,10 +447,8 @@ fun ChatTopBar(
                         searchViewModel.updateTextForSearch(it)
                     },
                     placeholderText = "Поиск",
-                    singleline = true,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(10.dp)
                         .onFocusChanged { focusState ->
                             if (focusState.isFocused) {
                                 userSearching = true

@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
@@ -71,9 +72,11 @@ fun SearchScreen(
                     searchViewModel = searchViewModel
                 )
             }
+
             is SeacrhState.Loading -> {
                 searchLoading()
             }
+
             is SeacrhState.Success -> {
                 if ((state as SeacrhState.Success).UserList.isEmpty()) {
                     searchIsError(
@@ -89,6 +92,7 @@ fun SearchScreen(
                     )
                 }
             }
+
             is SeacrhState.Error -> {
                 searchIsError(
                     message = (state as SeacrhState.Error).message,
@@ -186,76 +190,27 @@ fun showHistory(
                     ) {
                         Text(
                             text = "Вы искали:",
-                            fontSize = 20.sp
+                            fontSize = 20.sp,
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
                         )
                         Text(
                             text = "Очистить",
                             fontSize = 20.sp,
-                            modifier = Modifier.clickable {
-                                searchViewModel.clearHistory(historyManager)
-                            }
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp)
+                                .clickable {
+                                    searchViewModel.clearHistory(historyManager)
+                                }
                         )
                     }
                 }
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    items(userList) { user ->
-                        val imageBitmap = user.profileImage?.takeIf { it.isNotEmpty() }?.toImageBitmap()
-                        Row(
-                            modifier = Modifier
-                                .padding(horizontal = 10.dp, vertical = 5.dp)
-                                .fillMaxWidth()
-                                .clickable {
-                                    navController.navigate("ToUserChat")
-                                    historyManager.saveUser(user)
-                                }
-                                .border(
-                                    width = 4.dp,
-                                    shape = RoundedCornerShape(15.dp),
-                                    color = color.primary
-                                ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .size(80.dp)
-                                    .clip(CircleShape)
-                                    .background(color.outline)
-                                    .border(
-                                        width = 4.dp,
-                                        color = color.outline,
-                                        shape = RoundedCornerShape(30.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Image(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .size(70.dp),
-                                    painter = if (imageBitmap != null) {
-                                        BitmapPainter(imageBitmap)
-                                    } else {
-                                        painterResource(id = R.drawable.picture)
-                                    },
-                                    contentDescription = "User Avatar",
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(70.dp))
-                            Text(
-                                text = user.fullName,
-                                fontSize = 18.sp,
-                                color = color.onPrimary,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
-                        }
-                    }
-                }
+                showChats(
+                    navController = navController,
+                    searchViewModel = searchViewModel,
+                    userList = userList,
+                    historyManager = historyManager
+                )
             }
         }
     }
@@ -267,8 +222,10 @@ fun historyIsEmpty() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "История пуста",
-            fontSize = 20.sp)
+        Text(
+            text = "История пуста",
+            fontSize = 20.sp
+        )
     }
 }
 
@@ -280,63 +237,66 @@ fun showChats(
     historyManager: SearchHistoryManager
 ) {
     val color = MaterialTheme.colorScheme
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        items(userList) { user ->
-            val imageBitmap = user.profileImage?.takeIf { it.isNotEmpty() }?.toImageBitmap()
-            Row(
-                modifier = Modifier
-                    .height(120.dp)
-                    .padding(horizontal = 10.dp, vertical = 5.dp)
-                    .fillMaxWidth()
-                    .clickable {
-                        navController.navigate("ToUserChat")
-                        historyManager.saveUser(user)
-                    }
-                    .border(
-                        width = 4.dp,
-                        shape = RoundedCornerShape(15.dp),
-                        color = color.primary
-                    ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
+    Column() {
+        Spacer(modifier = Modifier.height(5.dp))
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(9.dp)
+        ) {
+            items(userList) { user ->
+                val imageBitmap =
+                    user.profileImage?.takeIf { it.isNotEmpty() }?.toImageBitmap()
+                Row(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(color.outline)
+                        .padding(horizontal = 14.dp)
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate("ToUserChat")
+                            historyManager.saveUser(user)
+                        }
                         .border(
                             width = 4.dp,
-                            color = color.outline,
-                            shape = RoundedCornerShape(30.dp)
+                            shape = RoundedCornerShape(15.dp),
+                            color = color.primary
                         ),
-                    contentAlignment = Alignment.Center
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
+                    Box(
                         modifier = Modifier
+                            .padding(10.dp)
+                            .size(80.dp)
                             .clip(CircleShape)
-                            .size(70.dp),
-                        painter = if (imageBitmap != null) {
-                            BitmapPainter(imageBitmap)
-                        } else {
-                            painterResource(id = R.drawable.picture)
-                        },
-                        contentDescription = "User Avatar",
-                        contentScale = ContentScale.Crop
+                            .background(color.outline)
+                            .border(
+                                width = 4.dp,
+                                color = color.outline,
+                                shape = RoundedCornerShape(30.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .size(70.dp),
+                            painter = if (imageBitmap != null) {
+                                BitmapPainter(imageBitmap)
+                            } else {
+                                painterResource(id = R.drawable.picture)
+                            },
+                            contentDescription = "User Avatar",
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(70.dp))
+                    Text(
+                        text = user.fullName,
+                        fontSize = 18.sp,
+                        color = color.onPrimary,
+                        modifier = Modifier.align(Alignment.CenterVertically)
                     )
                 }
-                Spacer(modifier = Modifier.width(70.dp))
-                Text(
-                    text = user.fullName,
-                    fontSize = 18.sp,
-                    color = color.onPrimary,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
             }
         }
     }
