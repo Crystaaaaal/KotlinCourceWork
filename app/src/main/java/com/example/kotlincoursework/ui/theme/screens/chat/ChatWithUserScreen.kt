@@ -54,7 +54,7 @@ fun ChatWithUserScreen(
                     modifier = Modifier
                         .padding(20.dp)
                         .widthIn(max = 300.dp),
-                    text = viewModel.items[viewModel.items.size - 1 - item],
+                    text = viewModel.items[viewModel.items.size - 1 - item].messageText,
                     color = color.onPrimary,
                     softWrap = true,
                     fontSize = 18.sp

@@ -40,6 +40,8 @@ import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kotlincoursework.R
@@ -49,10 +51,12 @@ import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.state.SeacrhState
 import com.example.kotlincoursework.viewModel.SearchViewModel
+import com.example.kotlincoursework.viewModel.viewModel
 import dataBase.User
 
 @Composable
 fun SearchScreen(
+    viewModel: viewModel,
     navController: NavHostController,
     searchViewModel: SearchViewModel
 ) {
@@ -67,6 +71,7 @@ fun SearchScreen(
         when (state) {
             is SeacrhState.Idle -> {
                 showHistory(
+                    viewModel = viewModel,
                     navController = navController,
                     historyManager = historyManager,
                     searchViewModel = searchViewModel
@@ -86,9 +91,9 @@ fun SearchScreen(
                 } else {
                     showChats(
                         navController = navController,
-                        searchViewModel = searchViewModel,
+                        viewModel = viewModel,
                         userList = (state as SeacrhState.Success).UserList,
-                        historyManager
+                        historyManager = historyManager
                     )
                 }
             }
@@ -161,6 +166,7 @@ fun searchIsError(
 
 @Composable
 fun showHistory(
+    viewModel: viewModel,
     historyManager: SearchHistoryManager,
     navController: NavHostController,
     searchViewModel: SearchViewModel
@@ -207,7 +213,7 @@ fun showHistory(
                 }
                 showChats(
                     navController = navController,
-                    searchViewModel = searchViewModel,
+                    viewModel = viewModel,
                     userList = userList,
                     historyManager = historyManager
                 )
@@ -232,7 +238,7 @@ fun historyIsEmpty() {
 @Composable
 fun showChats(
     navController: NavHostController,
-    searchViewModel: SearchViewModel,
+    viewModel: viewModel,
     userList: List<User>,
     historyManager: SearchHistoryManager
 ) {
@@ -253,6 +259,7 @@ fun showChats(
                         .padding(horizontal = 14.dp)
                         .fillMaxWidth()
                         .clickable {
+                            viewModel.setUser(user)
                             navController.navigate("ToUserChat")
                             historyManager.saveUser(user)
                         }

@@ -3,6 +3,7 @@ package dataBase
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 @Serializable
 data class SearchingResponse(
@@ -72,7 +73,6 @@ data class User(
     }
 }
 
-
 @Serializable
 data class LoginRecive(
     val token: String,
@@ -92,16 +92,25 @@ data class Chat(
 
 @Serializable
 data class Message(
-    val id: Int,
-    val chatId: Int,
-    val senderId: Int,
+    val forUser: User,
+    val fromUser: LoginRecive,
     val messageText: String,
     val sentAt: String
-) {
-    fun sentAtDateTime(): LocalDateTime {
-        return LocalDateTime.parse(sentAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    }
-}
+)
+
+@Serializable
+data class MessageIncoming(
+    val forUser: String,
+    val fromUser: String,
+    val messageText: String,
+    val sentAt: String
+)
+
+data class MessageForShow(
+    val messageText: String,
+    val sentAt: String
+)
+
 
 @Serializable
 data class UserRegistrationRequest(

@@ -15,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.kotlincoursework.API.ApiClient
 import com.example.kotlincoursework.ui.theme.BarDrawing
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
@@ -22,11 +23,13 @@ import com.example.kotlincoursework.viewModel.SearchViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
+import dataBase.LoginRecive
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             val themeViewModel = ThemeViewModel()
 
             val applicatonContext = applicationContext
@@ -45,13 +48,12 @@ class MainActivity : ComponentActivity() {
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
 
-            val themId = sharedPreferences.getString("theme",null)
-            if (themId==null) {
-                Log.i("theme","не вышло")
+            val themId = sharedPreferences.getString("theme", null)
+            if (themId == null) {
+                Log.i("theme", "не вышло")
                 themeViewModel.setTheme("light")
-            }
-            else {
-                Log.i("theme",themId)
+            } else {
+                Log.i("theme", themId)
                 themeViewModel.setTheme(themId)
             }
 
@@ -72,6 +74,13 @@ class MainActivity : ComponentActivity() {
                 sharedPreferences = sharedPreferences
             )
             settingsViewModel.getUserInfo()
+
+
+            val phoneNumber = sharedPreferences.getString("auth_phone", null)
+            if (!phoneNumber.isNullOrEmpty()) {
+                ApiClient.startWebSocket(phoneNumber = phoneNumber!!, viewModel = viewModel)
+            }
+
 
             app(
                 themeViewModel = themeViewModel,

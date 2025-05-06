@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -68,15 +69,20 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlincoursework.API.ApiClient
 import com.example.kotlincoursework.R
-import com.example.kotlincoursework.ShowMessage
 import com.example.kotlincoursework.ui.theme.components.InputMessageTextField
 import com.example.kotlincoursework.ui.theme.components.SearchTextFieldWithPlaceholder
+import com.example.kotlincoursework.ui.theme.screens.chat.toImageBitmap
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
 import com.example.kotlincoursework.viewModel.SearchViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
+import dataBase.LoginRecive
+import dataBase.MessageForShow
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -268,8 +274,11 @@ fun ChatWithUserTopBar(
                 }
 
                 // Текст (по центру)
+
+                val user by viewModel.User.collectAsState()
+
                 Text(
-                    text = viewModel.topBarText,
+                    text = user.fullName,
                     textAlign = TextAlign.Center,
                     color = color.onPrimary,
                     modifier = Modifier
@@ -291,11 +300,17 @@ fun ChatWithUserTopBar(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
+                    val imageBitmap =
+                        user.profileImage?.takeIf { it.isNotEmpty() }?.toImageBitmap()
                     Image(
                         modifier = Modifier
                             .clip(CircleShape)
                             .size(30.dp),
-                        painter = painterResource(id = R.drawable.picture),
+                        painter = if (imageBitmap != null) {
+                            BitmapPainter(imageBitmap)
+                        } else {
+                            painterResource(id = R.drawable.picture)
+                        },
                         contentDescription = "User Avatar",
                         contentScale = ContentScale.Crop
                     )
@@ -322,8 +337,7 @@ fun ChatWithUserBottomBar(
         containerColor = color.primary
     ) {
         Row(
-            modifier =
-            Modifier
+            modifier = Modifier
                 .padding(vertical = 10.dp)
                 .heightIn(min = 60.dp, max = 600.dp)
                 .fillMaxWidth()
@@ -351,7 +365,7 @@ fun ChatWithUserBottomBar(
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(10.dp))
+            //Spacer(modifier = Modifier.width(10.dp))
 
             var textForMessage by rememberSaveable { mutableStateOf("") }
             InputMessageTextField(
@@ -367,13 +381,20 @@ fun ChatWithUserBottomBar(
 
             )
 
-            Spacer(modifier = Modifier.width(10.dp))
+            //Spacer(modifier = Modifier.width(10.dp))
+
+            //val user by viewModel.User.collectAsState()
 
             IconButton(modifier = Modifier
                 .padding(end = 10.dp)
                 .size(50.dp),
                 onClick = {
-                    ShowMessage(viewModel, textForMessage)
+                    val sentAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    val message = MessageForShow(
+                        messageText = textForMessage,
+                        sentAt = sentAt)
+                    viewModel.buildAndSendMessage(messageText = textForMessage,sentAt = sentAt)
+                    viewModel.addItem(message)
                     textForMessage = ""
                 }
             ) {

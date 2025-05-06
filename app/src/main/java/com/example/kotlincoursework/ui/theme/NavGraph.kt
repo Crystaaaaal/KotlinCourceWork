@@ -82,6 +82,7 @@ fun ScreenNavHost(
         }
         composable("ToSearchScreen") {
             SearchScreen(
+                viewModel = viewModel,
                 navController = navController,
                 searchViewModel = searchViewModel
             )
