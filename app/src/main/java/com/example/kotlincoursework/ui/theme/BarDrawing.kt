@@ -255,10 +255,10 @@ fun ChatWithUserTopBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                // Кнопка "Назад" (слева)
+                // Кнопка "Назад"
                 IconButton(
                     modifier = Modifier.size(50.dp, 30.dp),
-                    onClick = { navController.popBackStack() }
+                    onClick = { navController.navigate("ToChat") }
                 ) {
                     Surface(
                         shape = RoundedCornerShape(30.dp),
@@ -342,29 +342,29 @@ fun ChatWithUserBottomBar(
                 .heightIn(min = 60.dp, max = 600.dp)
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(modifier = Modifier
-                .padding(start = 10.dp)
-                .size(50.dp),
-                onClick = {}) {
-                Surface(
-                    shape = RoundedCornerShape(30.dp),
-                    modifier = Modifier
-                        .height(80.dp)
-                        .width(80.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Добавить",
-                        tint = color.onPrimary,
-                        modifier = Modifier
-                            .size(3.dp)
-                            .background(color.secondary)
-                    )
-                }
-            }
+//            IconButton(modifier = Modifier
+//                .padding(start = 10.dp)
+//                .size(50.dp),
+//                onClick = {}) {
+//                Surface(
+//                    shape = RoundedCornerShape(30.dp),
+//                    modifier = Modifier
+//                        .height(80.dp)
+//                        .width(80.dp)
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Default.Add,
+//                        contentDescription = "Добавить",
+//                        tint = color.onPrimary,
+//                        modifier = Modifier
+//                            .size(3.dp)
+//                            .background(color.secondary)
+//                    )
+//                }
+//            }
             //Spacer(modifier = Modifier.width(10.dp))
 
             var textForMessage by rememberSaveable { mutableStateOf("") }
@@ -374,6 +374,7 @@ fun ChatWithUserBottomBar(
                 placeholderText = "Сообщение",
                 singleline = false,
                 modifier = Modifier
+                    .padding(horizontal = 10.dp)
                     .width(225.dp)
                     .wrapContentHeight()
                     .heightIn(min = 50.dp, max = 590.dp)
@@ -386,16 +387,20 @@ fun ChatWithUserBottomBar(
             //val user by viewModel.User.collectAsState()
 
             IconButton(modifier = Modifier
-                .padding(end = 10.dp)
+                .padding(horizontal = 10.dp)
                 .size(50.dp),
                 onClick = {
-                    val sentAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                    val message = MessageForShow(
-                        messageText = textForMessage,
-                        sentAt = sentAt)
-                    viewModel.buildAndSendMessage(messageText = textForMessage,sentAt = sentAt)
-                    viewModel.addItem(message)
-                    textForMessage = ""
+                    if (textForMessage.isNotBlank()) {
+                        val sentAt =
+                            LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                        val message = MessageForShow(
+                            messageText = textForMessage,
+                            sentAt = sentAt
+                        )
+                        viewModel.buildAndSendMessage(messageText = textForMessage, sentAt = sentAt)
+                        viewModel.addItem(message)
+                        textForMessage = ""
+                    }
                 }
             ) {
                 Surface(

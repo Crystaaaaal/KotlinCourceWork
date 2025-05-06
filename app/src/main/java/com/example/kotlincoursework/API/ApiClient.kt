@@ -6,6 +6,7 @@ import com.example.kotlincoursework.viewModel.viewModel
 import com.google.gson.Gson
 import dataBase.LoginRecive
 import dataBase.Message
+import dataBase.MessageForShow
 import dataBase.MessageIncoming
 import dataBase.User
 import okhttp3.OkHttpClient
@@ -81,8 +82,8 @@ object ApiClient {
                         "от: ${message.fromUser}, " +
                         "сообщение: ${message.messageText} " +
                         "время: ${message.sentAt}")
-
-                // Обработка входящих сообщений
+                val messageForShow = MessageForShow(messageText = message.messageText, sentAt = message.sentAt)
+                viewModel.addIcomingItem(messageForShow)
             }
 
             override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
