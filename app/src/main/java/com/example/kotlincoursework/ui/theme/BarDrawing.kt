@@ -1,6 +1,7 @@
 package com.example.kotlincoursework.ui.theme
 
 import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.view.View
 import androidx.compose.foundation.Image
@@ -92,7 +93,8 @@ fun BarDrawing(
     authenticationViewModel: AuthenticationViewModel,
     searchViewModel: SearchViewModel,
     settingsViewModel: SettingsViewModel,
-    themeViewModel: ThemeViewModel
+    themeViewModel: ThemeViewModel,
+    context: Context
 ) {
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -184,7 +186,8 @@ fun BarDrawing(
                 authenticationViewModel = authenticationViewModel,
                 searchViewModel = searchViewModel,
                 settingsViewModel = settingsViewModel,
-                themeViewModel = themeViewModel
+                themeViewModel = themeViewModel,
+                context = context
             )
         }
     )
@@ -599,7 +602,8 @@ fun ScreenMainContent(
     authenticationViewModel: AuthenticationViewModel,
     searchViewModel: SearchViewModel,
     settingsViewModel: SettingsViewModel,
-    themeViewModel: ThemeViewModel
+    themeViewModel: ThemeViewModel,
+    context: Context
 ) {
     val color = androidx.compose.material3.MaterialTheme.colorScheme
 
@@ -616,7 +620,8 @@ fun ScreenMainContent(
             authenticationViewModel = authenticationViewModel,
             searchViewModel = searchViewModel,
             settingsViewModel = settingsViewModel,
-            themeViewModel = themeViewModel
+            themeViewModel = themeViewModel,
+            context = context
         )
     }
 }

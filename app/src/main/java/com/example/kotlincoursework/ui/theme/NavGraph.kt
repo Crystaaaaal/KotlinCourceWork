@@ -1,5 +1,6 @@
 package com.example.kotlincoursework.ui.theme
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -27,7 +28,8 @@ fun ScreenNavHost(
     authenticationViewModel: AuthenticationViewModel,
     searchViewModel: SearchViewModel,
     settingsViewModel: SettingsViewModel,
-    themeViewModel: ThemeViewModel
+    themeViewModel: ThemeViewModel,
+    context: Context
 ) {
     NavHost(
         navController = navController,
@@ -48,7 +50,8 @@ fun ScreenNavHost(
         composable("ToEnter") {
             EnterScreen(
                 navController = navController,
-                authenticationViewModel = authenticationViewModel
+                authenticationViewModel = authenticationViewModel,
+                context = context
             )
         }
         composable("ToRegister") {

@@ -1,5 +1,10 @@
 package com.example.kotlincoursework.ui.theme.screens.auth
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -22,6 +27,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
@@ -35,7 +42,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun EnterScreen(
     navController: NavHostController,
-    authenticationViewModel: AuthenticationViewModel
+    authenticationViewModel: AuthenticationViewModel,
+    context: Context
 ) {
     val color = androidx.compose.material3.MaterialTheme.colorScheme
     var message by remember { mutableStateOf("") }
@@ -115,7 +123,7 @@ fun EnterScreen(
         is LoginState.Idle -> {}
         is LoginState.Loading -> {}
         is LoginState.Success -> {
-            loginIsSucces(navController = navController)
+            loginIsSucces(navController = navController, context = context)
             authenticationViewModel.resetLoginState()
         }
 
@@ -164,9 +172,36 @@ fun loginIsError(
     }
 }
 
-fun loginIsSucces(navController: NavController) {
+fun loginIsSucces(navController: NavController,context: Context) {
     Log.d("EnterScreen: loginIsSucces", "переход")
     navController.navigate("toChat")
+    if (!hasNotificationPermission(context)) {
+        requestNotificationPermission(context)
+        return
+    }
+}
 
+private fun hasNotificationPermission(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+    } else {
+        // Для версий ниже Android 13 разрешение не требуется
+        true
+    }
+}
 
+// Запрос разрешения
+private fun requestNotificationPermission(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (context is Activity) {
+            ActivityCompat.requestPermissions(
+                context,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                1001
+            )
+        }
+    }
 }

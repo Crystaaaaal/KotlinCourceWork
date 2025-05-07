@@ -1,7 +1,17 @@
 package com.example.kotlincoursework.API
 
+import android.Manifest
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.kotlincoursework.MainActivity
+import com.example.kotlincoursework.R
 import com.example.kotlincoursework.viewModel.viewModel
 import com.google.gson.Gson
 import dataBase.LoginRecive
@@ -64,7 +74,7 @@ object ApiClient {
 
 
 
-    fun startWebSocket(phoneNumber: String,viewModel: viewModel) {
+    fun startWebSocket(phoneNumber: String,viewModel: viewModel,context:Context) {
         val request = Request.Builder()
             .url("$WS_URL$phoneNumber")
             .build()
@@ -82,6 +92,8 @@ object ApiClient {
                         "от: ${message.fromUser}, " +
                         "сообщение: ${message.messageText} " +
                         "время: ${message.sentAt}")
+                buildNotification(context = context,
+                    messageText = message.messageText)
                 val messageForShow = MessageForShow(messageText = message.messageText, sentAt = message.sentAt)
                 viewModel.addIcomingItem(messageForShow)
             }
@@ -115,6 +127,42 @@ object ApiClient {
         webSocket?.close(1000, "Пользователь вышел")
     }
 
+}
+
+fun buildNotification(context: Context,messageText: String ){
+    val intent = Intent(context, MainActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    }
+    val pendingIntent = PendingIntent.getActivity(
+        context,
+        0,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+
+    // 3. Собираем уведомление
+    val notification = NotificationCompat.Builder(context, "MessengerId")
+        .setSmallIcon(R.drawable.ic_launcher_foreground) // Обязательная иконка
+        .setContentTitle("Новое сообщение")
+        .setContentText(messageText)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setContentIntent(pendingIntent) // Действие при нажатии
+        .setAutoCancel(true) // Закрывается при нажатии
+        .build()
+
+    // 4. Показываем уведомление
+    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+    ) {
+        // TODO: Consider calling
+        //    ActivityCompat#requestPermissions
+        // here to request the missing permissions, and then overriding
+        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        //                                          int[] grantResults)
+        // to handle the case where the user grants the permission. See the documentation
+        // for ActivityCompat#requestPermissions for more details.
+        return
+    }
+    NotificationManagerCompat.from(context).notify(1, notification)
 }
 
 // Закрытие ExecutorService не требуется, так как OkHttpClient управляет
