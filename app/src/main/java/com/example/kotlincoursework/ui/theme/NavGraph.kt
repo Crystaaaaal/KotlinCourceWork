@@ -44,7 +44,8 @@ fun ScreenNavHost(
         composable("ToChat") {
             chatScreen(
                 navController = navController,
-                searchViewModel = searchViewModel
+                searchViewModel = searchViewModel,
+                viewModel = viewModel
             )
         }
         composable("ToEnter") {

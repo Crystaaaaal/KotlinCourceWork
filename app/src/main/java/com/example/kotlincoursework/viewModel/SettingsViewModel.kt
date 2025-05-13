@@ -9,7 +9,7 @@ import com.example.kotlincoursework.API.UserInfoRepository
 import com.example.kotlincoursework.ui.theme.state.GetUserInfoState
 import com.example.kotlincoursework.ui.theme.state.UpdateUserInfoState
 import dataBase.ActiveUser
-import dataBase.LoginRecive
+import dataBase.TokenAndNumberRecive
 import dataBase.UpdateUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -84,14 +84,14 @@ class SettingsViewModel(
         }
     }
 
-    private fun createLoginRecive(): LoginRecive? {
+    private fun createLoginRecive(): TokenAndNumberRecive? {
         val token = sharedPreferences.getString("auth_token", null)
         val phoneNumber = sharedPreferences.getString("auth_phone", null)
         if (token.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
             return null
         }
-        val loginRecive = LoginRecive(token!!, phoneNumber!!)
-        return loginRecive
+        val tokenAndNumberRecive = TokenAndNumberRecive(token!!, phoneNumber!!)
+        return tokenAndNumberRecive
     }
 
 }

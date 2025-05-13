@@ -9,12 +9,11 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.kotlincoursework.MainActivity
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.viewModel.viewModel
 import com.google.gson.Gson
-import dataBase.LoginRecive
+import dataBase.TokenAndNumberRecive
 import dataBase.Message
 import dataBase.MessageForShow
 import dataBase.MessageIncoming
@@ -27,8 +26,6 @@ import okhttp3.WebSocketListener
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 //object ApiClient {
@@ -96,6 +93,7 @@ object ApiClient {
                     messageText = message.messageText)
                 val messageForShow = MessageForShow(messageText = message.messageText, sentAt = message.sentAt)
                 viewModel.addIcomingItem(messageForShow)
+                viewModel.createChatOrUser(message.fromUser)
             }
 
             override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -111,7 +109,7 @@ object ApiClient {
     }
 
     // Функция для отправки сообщений
-    fun sendMessage(forUser:User,fromUser: LoginRecive,text: String, sentAt: String) {
+    fun sendMessage(forUser:User, fromUser: TokenAndNumberRecive, text: String, sentAt: String) {
         val message = Message(
             forUser = forUser,
             fromUser = fromUser,

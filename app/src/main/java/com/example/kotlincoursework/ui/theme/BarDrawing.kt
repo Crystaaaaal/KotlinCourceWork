@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MailOutline
@@ -70,7 +69,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.kotlincoursework.API.ApiClient
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.components.InputMessageTextField
 import com.example.kotlincoursework.ui.theme.components.SearchTextFieldWithPlaceholder
@@ -80,7 +78,6 @@ import com.example.kotlincoursework.viewModel.SearchViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
-import dataBase.LoginRecive
 import dataBase.MessageForShow
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -122,7 +119,7 @@ fun BarDrawing(
 
                 "ToSetting" -> {
                     viewModel.updateTopBarText("Настройки")
-                    ScreenTopBar(viewModel)
+                    ScreenTopBar(viewModel = viewModel)
                 }
 
                 "ToChat", "ToSearchScreen" -> {
@@ -136,7 +133,10 @@ fun BarDrawing(
 
                 "ToUserChat" -> {
                     viewModel.updateTopBarText("Антон Скугарев")
-                    ChatWithUserTopBar(viewModel, navController)
+                    ChatWithUserTopBar(
+                        viewModel = viewModel,
+                        navController = navController,
+                        searchViewModel = searchViewModel)
                 }
             }
         },
@@ -246,7 +246,8 @@ fun SettingsTopBar(
 @Composable
 fun ChatWithUserTopBar(
     viewModel: viewModel,
-    navController: NavController
+    navController: NavController,
+    searchViewModel: SearchViewModel
 ) {
     val color = androidx.compose.material3.MaterialTheme.colorScheme
 
@@ -261,7 +262,11 @@ fun ChatWithUserTopBar(
                 // Кнопка "Назад"
                 IconButton(
                     modifier = Modifier.size(50.dp, 30.dp),
-                    onClick = { navController.navigate("ToChat") }
+                    onClick = {
+                        navController.navigate("ToChat")
+                        viewModel.clearMessagesList()
+                        searchViewModel.resetSearchText()
+                    }
                 ) {
                     Surface(
                         shape = RoundedCornerShape(30.dp),
@@ -402,6 +407,7 @@ fun ChatWithUserBottomBar(
                         )
                         viewModel.buildAndSendMessage(messageText = textForMessage, sentAt = sentAt)
                         viewModel.addItem(message)
+                        viewModel.createChatOrUser(viewModel.User.value)
                         textForMessage = ""
                     }
                 }

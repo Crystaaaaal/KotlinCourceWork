@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,14 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.kotlincoursework.API.ApiClient
+import com.example.kotlincoursework.DB.DatabaseHelper
 import com.example.kotlincoursework.ui.theme.BarDrawing
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
@@ -30,7 +28,6 @@ import com.example.kotlincoursework.viewModel.SearchViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
-import dataBase.LoginRecive
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +39,9 @@ class MainActivity : ComponentActivity() {
             createNotificationChannel()
 
             val applicatonContext = applicationContext
+
+            val dbHelper = DatabaseHelper(applicatonContext)
+            val db = dbHelper.writableDatabase
 
             val navController = rememberNavController()
             val masterKey =
@@ -68,15 +68,19 @@ class MainActivity : ComponentActivity() {
 
             val viewModel = viewModel(
                 applicationContext = applicatonContext,
-                sharedPreferences = sharedPreferences
+                sharedPreferences = sharedPreferences,
+                db = db,
+                dbHelper = dbHelper
             )
             val authenticationViewModel = AuthenticationViewModel(
-                applicationContext = applicatonContext
+                applicationContext = applicatonContext,
+                db = db
             )
 
             val searchViewModel = SearchViewModel(
                 applicationContext = applicatonContext,
-                sharedPreferences = sharedPreferences
+                sharedPreferences = sharedPreferences,
+                db = db
             )
             val settingsViewModel = SettingsViewModel(
                 applicationContext = applicatonContext,

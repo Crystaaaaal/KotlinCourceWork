@@ -7,7 +7,7 @@ import com.example.kotlincoursework.ui.theme.state.GetUserInfoState
 import com.example.kotlincoursework.ui.theme.state.ServerState
 import com.example.kotlincoursework.ui.theme.state.UpdateUserInfoState
 import dataBase.ActiveUser
-import dataBase.LoginRecive
+import dataBase.TokenAndNumberRecive
 import dataBase.ServerResponse
 import dataBase.UpdateUser
 import retrofit2.HttpException
@@ -19,7 +19,7 @@ class UserInfoRepository(
 ) {
     private val apiService = ApiClient.apiService
 
-    suspend fun getUserInfo(user: LoginRecive): GetUserInfoState {
+    suspend fun getUserInfo(user: TokenAndNumberRecive): GetUserInfoState {
         return when (val serverState = ServerStatusRepository().checkServerStatus()) {
             is ServerState.Success -> {
                 if (serverState.isServerOnline) {

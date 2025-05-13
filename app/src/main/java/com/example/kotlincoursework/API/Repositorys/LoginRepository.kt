@@ -8,6 +8,7 @@ import com.example.kotlincoursework.API.ApiClient
 import com.example.kotlincoursework.ui.theme.state.LoginState
 import com.example.kotlincoursework.ui.theme.state.ServerState
 import dataBase.LoginRecive
+import dataBase.TokenAndNumberRecive
 import dataBase.LoginUser
 import retrofit2.HttpException
 import retrofit2.Response
@@ -49,10 +50,10 @@ class LoginRepository(
                                 .putString("auth_token", response.body()!!.token).apply()
                             // Сохраняем номер телефона
                             sharedPreferences.edit()
-                                .putString("auth_phone", response.body()!!.phoneNumber).apply()
+                                .putString("auth_phone", response.body()!!.user.phoneNumber).apply()
 
 
-                            return LoginState.Success(true) // Возвращаем успешный результат
+                            return LoginState.Success(response.body()!!.user) // Возвращаем успешный результат
                         } else {
                             return when (response.code()) {
                                 400 -> {

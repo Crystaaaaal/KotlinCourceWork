@@ -1,21 +1,28 @@
 package com.example.kotlincoursework.viewModel
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kotlincoursework.API.Repositorys.LoginRepository
 import com.example.kotlincoursework.API.Repositorys.RegistrationRepository
+import com.example.kotlincoursework.DB.DAO.UserDao
 import com.example.kotlincoursework.ui.theme.state.LoginState
 import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import dataBase.LoginUser
 import dataBase.RegistrationUserInfo
+import dataBase.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthenticationViewModel(
     private val applicationContext: Context,
+    private val db: SQLiteDatabase
+
 ): ViewModel() {
+    private val userDao by lazy { UserDao(db) }
     // Для номера телефона при авторизации
     private val _isLoginPhoneNumberValid = MutableStateFlow(false)
     val isLoginPhoneNumberValid: StateFlow<Boolean> get() = _isLoginPhoneNumberValid
@@ -256,6 +263,36 @@ class AuthenticationViewModel(
                 resetLoginForm()
             }
         }
+    }
+
+    private val _User = MutableStateFlow(
+        User(
+            phoneNumber = "",
+            hashPassword = "",
+            fullName = "",
+            login = "",
+            profileImage = null,
+            createdAt = ""
+        )
+    )
+    val User: MutableStateFlow<User> get() = _User
+
+
+    fun setUser(User: User) {
+        _User.update { currentUser ->
+            currentUser.copy(
+                phoneNumber = User.phoneNumber,
+                hashPassword = User.hashPassword,
+                fullName = User.fullName,
+                login = User.login,
+                profileImage = User.profileImage,
+                createdAt = User.createdAt
+            )
+        }
+    }
+
+    fun addUser(){
+        userDao.getOrCreateUser(_User.value)
     }
 
 }

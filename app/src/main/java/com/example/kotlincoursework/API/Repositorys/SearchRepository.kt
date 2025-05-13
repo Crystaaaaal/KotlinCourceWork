@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.kotlincoursework.API.ApiClient
 import com.example.kotlincoursework.ui.theme.state.SeacrhState
 import com.example.kotlincoursework.ui.theme.state.ServerState
-import dataBase.LoginRecive
+import dataBase.TokenAndNumberRecive
 import dataBase.PhoneOrLoginRemote
 import dataBase.SearchingResponse
 import retrofit2.HttpException
@@ -14,7 +14,7 @@ import java.io.IOException
 class SearchRepository() {
     private val apiService = ApiClient.apiService
 
-    suspend fun searchUser(phoneOrLogin: String, user: LoginRecive): SeacrhState {
+    suspend fun searchUser(phoneOrLogin: String, user: TokenAndNumberRecive): SeacrhState {
         return when (val serverState = ServerStatusRepository().checkServerStatus()) {
             is ServerState.Success -> {
                 if (serverState.isServerOnline) {

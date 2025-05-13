@@ -31,12 +31,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.kotlincoursework.DB.DAO.UserDao
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
 import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntificationTextFieldsWithText
 import com.example.kotlincoursework.ui.theme.components.Toast
 import com.example.kotlincoursework.ui.theme.state.LoginState
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
+import dataBase.User
 import kotlinx.coroutines.delay
 
 @Composable
@@ -123,7 +125,8 @@ fun EnterScreen(
         is LoginState.Idle -> {}
         is LoginState.Loading -> {}
         is LoginState.Success -> {
-            loginIsSucces(navController = navController, context = context)
+            authenticationViewModel.setUser((state as LoginState.Success).success)
+            loginIsSucces(navController = navController, context = context, authenticationViewModel = authenticationViewModel)
             authenticationViewModel.resetLoginState()
         }
 
@@ -172,9 +175,10 @@ fun loginIsError(
     }
 }
 
-fun loginIsSucces(navController: NavController,context: Context) {
+fun loginIsSucces(navController: NavController,context: Context,authenticationViewModel: AuthenticationViewModel) {
     Log.d("EnterScreen: loginIsSucces", "переход")
     navController.navigate("toChat")
+    authenticationViewModel.addUser()
     if (!hasNotificationPermission(context)) {
         requestNotificationPermission(context)
         return

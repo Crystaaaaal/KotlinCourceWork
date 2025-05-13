@@ -1,9 +1,6 @@
 package dataBase
 
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 @Serializable
 data class SearchingResponse(
@@ -12,11 +9,11 @@ data class SearchingResponse(
 @Serializable
 data class PhoneOrLoginRemote(
     val phoneOrLogin: String,
-    val token: LoginRecive
+    val token: TokenAndNumberRecive
 )
 @Serializable
 data class UpdateUser(
-    val loginRecive: LoginRecive,
+    val tokenAndNumberRecive: TokenAndNumberRecive,
     val activeUser:ActiveUser
 )
 @Serializable
@@ -53,47 +50,25 @@ data class User(
     val login:String,
     val profileImage: ByteArray?,
     val createdAt: String
-){
-    // Переопределяем equals и hashCode для корректного сравнения пользователей
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+)
 
-        other as User
-
-        if (phoneNumber != other.phoneNumber) return false
-        if (login != other.login) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = phoneNumber.hashCode()
-        result = 31 * result + login.hashCode()
-        return result
-    }
-}
+@Serializable
+data class TokenAndNumberRecive(
+    val token: String,
+    val phoneNumber: String
+)
 
 @Serializable
 data class LoginRecive(
     val token: String,
-    val phoneNumber: String
-
+    val user: User
 )
 
-@Serializable
-data class Chat(
-    val id: Int,
-    val createdAt: String
-) {
-    fun createdAtDateTime(): LocalDateTime {
-        return LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    }
-}
 
 @Serializable
 data class Message(
     val forUser: User,
-    val fromUser: LoginRecive,
+    val fromUser: TokenAndNumberRecive,
     val messageText: String,
     val sentAt: String
 )
@@ -101,7 +76,7 @@ data class Message(
 @Serializable
 data class MessageIncoming(
     val forUser: String,
-    val fromUser: String,
+    val fromUser: User,
     val messageText: String,
     val sentAt: String
 )

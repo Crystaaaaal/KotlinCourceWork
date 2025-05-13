@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.room.common.jvm)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -92,6 +93,8 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.4.0")
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.compose.material:material:1.3.2")
+
+    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
