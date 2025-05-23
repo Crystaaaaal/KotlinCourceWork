@@ -3,9 +3,12 @@ package com.example.kotlincoursework.API
 
 
 import dataBase.ActiveUser
+import dataBase.ChatRemote
 import dataBase.LoginRecive
 import dataBase.TokenAndNumberRecive
 import dataBase.LoginUser
+import dataBase.MessagesRecive
+import dataBase.MessagesRemote
 import dataBase.PhoneOrLoginRemote
 import dataBase.RegistrationUserInfo
 import dataBase.SearchingResponse
@@ -35,5 +38,18 @@ interface ApiServer {
 
     @PATCH("/updateUserInfo")
     suspend fun updateUserInfo(@Body updateUser: UpdateUser):Response<ServerResponse>
+
+    @POST("/message")
+    suspend fun getMessages(@Body user: MessagesRecive): Response<MessagesRemote>
+
+    @POST("/Chats")
+    suspend fun getAllChats(@Body user: TokenAndNumberRecive): Response<ChatRemote>
+
+    @POST("/Quit")
+    suspend fun Quit(@Body user: TokenAndNumberRecive)
+
+
+
+
 
 }

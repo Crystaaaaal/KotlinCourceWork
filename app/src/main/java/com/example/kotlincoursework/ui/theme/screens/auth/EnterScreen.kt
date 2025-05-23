@@ -31,6 +31,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.kotlincoursework.API.ApiClient
 import com.example.kotlincoursework.DB.DAO.UserDao
 import com.example.kotlincoursework.ui.theme.components.ButtonThirdColor
 import com.example.kotlincoursework.ui.theme.components.NameAppTextWithExtra
@@ -38,6 +39,7 @@ import com.example.kotlincoursework.ui.theme.components.RegisterAndAuntification
 import com.example.kotlincoursework.ui.theme.components.Toast
 import com.example.kotlincoursework.ui.theme.state.LoginState
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
+import com.example.kotlincoursework.viewModel.viewModel
 import dataBase.User
 import kotlinx.coroutines.delay
 
@@ -45,7 +47,8 @@ import kotlinx.coroutines.delay
 fun EnterScreen(
     navController: NavHostController,
     authenticationViewModel: AuthenticationViewModel,
-    context: Context
+    context: Context,
+    viewModel: viewModel
 ) {
     val color = androidx.compose.material3.MaterialTheme.colorScheme
     var message by remember { mutableStateOf("") }
@@ -126,7 +129,10 @@ fun EnterScreen(
         is LoginState.Loading -> {}
         is LoginState.Success -> {
             authenticationViewModel.setUser((state as LoginState.Success).success)
-            loginIsSucces(navController = navController, context = context, authenticationViewModel = authenticationViewModel)
+            loginIsSucces(navController = navController,
+                context = context,
+                authenticationViewModel = authenticationViewModel,
+                viewModel = viewModel)
             authenticationViewModel.resetLoginState()
         }
 
@@ -175,10 +181,13 @@ fun loginIsError(
     }
 }
 
-fun loginIsSucces(navController: NavController,context: Context,authenticationViewModel: AuthenticationViewModel) {
+fun loginIsSucces(navController: NavController,context: Context,authenticationViewModel: AuthenticationViewModel,viewModel: viewModel) {
     Log.d("EnterScreen: loginIsSucces", "переход")
     navController.navigate("toChat")
-    authenticationViewModel.addUser()
+
+    ApiClient.startWebSocket(phoneNumber = authenticationViewModel.User.value.phoneNumber,viewModel, context = context)
+    //authenticationViewModel.addUser()
+    authenticationViewModel.AddChats()
     if (!hasNotificationPermission(context)) {
         requestNotificationPermission(context)
         return
@@ -209,3 +218,5 @@ private fun requestNotificationPermission(context: Context) {
         }
     }
 }
+
+

@@ -96,6 +96,16 @@ dependencies {
 
     implementation("org.xerial:sqlite-jdbc:3.42.0.0")
 
+    // Koin Core
+    implementation ("io.insert-koin:koin-core:3.4.0")
+// Koin для Android
+    implementation ("io.insert-koin:koin-android:3.4.0")
+// Koin для Jetpack WorkManager
+    implementation ("io.insert-koin:koin-androidx-workmanager:3.4.0")
+// Koin для Jetpack Compose
+    implementation ("io.insert-koin:koin-androidx-compose:3.4.0")
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

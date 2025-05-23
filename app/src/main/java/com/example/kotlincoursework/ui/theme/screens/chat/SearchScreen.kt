@@ -1,5 +1,6 @@
 package com.example.kotlincoursework.ui.theme.screens.chat
 
+import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +45,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlincoursework.DB.DAO.ChatDao
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.classes.SearchHistoryManager
 import com.example.kotlincoursework.classes.rememberUserHistoryManager
@@ -53,6 +55,7 @@ import com.example.kotlincoursework.ui.theme.state.SeacrhState
 import com.example.kotlincoursework.viewModel.SearchViewModel
 import com.example.kotlincoursework.viewModel.viewModel
 import dataBase.User
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun SearchScreen(
@@ -260,6 +263,9 @@ fun showChats(
                         .fillMaxWidth()
                         .clickable {
                             viewModel.setUser(user)
+                            //val chatDao = getKoin().get<ChatDao>()
+                            //chatDao.chatExists(, user.phoneNumber)
+                            viewModel.getMessages()
                             navController.navigate("ToUserChat")
                             historyManager.saveUser(user)
                         }

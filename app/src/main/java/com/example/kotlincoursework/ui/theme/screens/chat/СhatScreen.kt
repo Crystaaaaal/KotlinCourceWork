@@ -64,6 +64,7 @@ fun chatScreen(
                         .fillMaxWidth()
                         .clickable {
                             viewModel.setUser(user)
+                            viewModel.getMessages()
                             navController.navigate("ToUserChat")
                         }
                         .border(

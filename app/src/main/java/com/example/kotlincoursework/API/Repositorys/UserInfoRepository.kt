@@ -1,8 +1,8 @@
-package com.example.kotlincoursework.API
+package com.example.kotlincoursework.API.Repositorys
 
 import android.content.Context
 import android.util.Log
-import com.example.kotlincoursework.API.Repositorys.ServerStatusRepository
+import com.example.kotlincoursework.API.ApiClient
 import com.example.kotlincoursework.ui.theme.state.GetUserInfoState
 import com.example.kotlincoursework.ui.theme.state.ServerState
 import com.example.kotlincoursework.ui.theme.state.UpdateUserInfoState

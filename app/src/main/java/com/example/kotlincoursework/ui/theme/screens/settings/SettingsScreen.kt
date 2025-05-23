@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlincoursework.QuitObj
 import com.example.kotlincoursework.R
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.ui.theme.components.SettingsButton
@@ -61,7 +62,8 @@ import java.io.ByteArrayOutputStream
 @Composable
 fun SettingScreen(
     navController: NavHostController,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    context: Context
 ) {
     val color = androidx.compose.material3.MaterialTheme.colorScheme
     var imageBytes by remember { mutableStateOf<ByteArray?>(null) }
@@ -164,17 +166,22 @@ fun SettingScreen(
                     onClick = { navController.navigate("ToAppearance") }
                 )
             }
-            item {
-                SettingsButton(
-                    buttonText = "Уведомления",
-                    onClick = { navController.navigate("ToNotification") }
-                )
-            }
+//            item {
+//                SettingsButton(
+//                    buttonText = "Уведомления",
+//                    onClick = { navController.navigate("ToNotification") }
+//                )
+//            }
             item {
                 SettingsButton(
                     buttonText = "Выйти из аккаунта",
                     warningColor = true,
-                    onClick = { navController.navigate("ToEnter") }
+                    onClick = {
+                        navController.navigate("ToEnter")
+                        CoroutineScope(Dispatchers.Main).launch {
+                            QuitObj.quit(context)
+                        }
+                    }
                 )
             }
         }

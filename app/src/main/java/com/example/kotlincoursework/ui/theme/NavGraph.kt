@@ -29,16 +29,20 @@ fun ScreenNavHost(
     searchViewModel: SearchViewModel,
     settingsViewModel: SettingsViewModel,
     themeViewModel: ThemeViewModel,
-    context: Context
+    context: Context,
+    startScreen:String
 ) {
+
     NavHost(
         navController = navController,
-        startDestination = "ToChat"
+        startDestination = startScreen
     ) {
         composable("ToSetting") {
+            settingsViewModel.getUserInfo()
             SettingScreen(
                 navController = navController,
-                settingsViewModel = settingsViewModel
+                settingsViewModel = settingsViewModel,
+                context = context
             )
         }
         composable("ToChat") {
@@ -52,7 +56,8 @@ fun ScreenNavHost(
             EnterScreen(
                 navController = navController,
                 authenticationViewModel = authenticationViewModel,
-                context = context
+                context = context,
+                viewModel = viewModel
             )
         }
         composable("ToRegister") {

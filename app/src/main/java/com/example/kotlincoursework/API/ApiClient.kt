@@ -92,7 +92,8 @@ object ApiClient {
                 buildNotification(context = context,
                     messageText = message.messageText)
                 val messageForShow = MessageForShow(messageText = message.messageText, sentAt = message.sentAt)
-                viewModel.addIcomingItem(messageForShow)
+                if (viewModel.User.value.phoneNumber == message.fromUser.phoneNumber){
+                    viewModel.addIcomingItem(messageForShow)}
                 viewModel.createChatOrUser(message.fromUser)
             }
 

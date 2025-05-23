@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kotlincoursework.API.UserInfoRepository
+import com.example.kotlincoursework.API.Repositorys.UserInfoRepository
 import com.example.kotlincoursework.ui.theme.state.GetUserInfoState
 import com.example.kotlincoursework.ui.theme.state.UpdateUserInfoState
 import dataBase.ActiveUser

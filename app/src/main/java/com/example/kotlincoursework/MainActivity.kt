@@ -4,6 +4,7 @@ package com.example.kotlincoursework
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -21,6 +22,8 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.example.kotlincoursework.API.ApiClient
 import com.example.kotlincoursework.DB.DatabaseHelper
+import com.example.kotlincoursework.Di.databaseModule
+import com.example.kotlincoursework.Di.viewModelModule
 import com.example.kotlincoursework.ui.theme.BarDrawing
 import com.example.kotlincoursework.ui.theme.KotlinCourseWorkTheme
 import com.example.kotlincoursework.viewModel.AuthenticationViewModel
@@ -28,6 +31,9 @@ import com.example.kotlincoursework.viewModel.SearchViewModel
 import com.example.kotlincoursework.viewModel.SettingsViewModel
 import com.example.kotlincoursework.viewModel.ThemeViewModel
 import com.example.kotlincoursework.viewModel.viewModel
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.context.GlobalContext.startKoin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +46,16 @@ class MainActivity : ComponentActivity() {
 
             val applicatonContext = applicationContext
 
+            startKoin {
+                androidContext(applicatonContext)
+                modules(
+                    databaseModule,
+                    viewModelModule
+                )
+            }
+
+            val viewModel: viewModel = koinViewModel()
+
             val dbHelper = DatabaseHelper(applicatonContext)
             val db = dbHelper.writableDatabase
 
@@ -47,6 +63,7 @@ class MainActivity : ComponentActivity() {
             val masterKey =
                 MasterKey.Builder(applicationContext, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+
                     .build()
 
             val sharedPreferences = EncryptedSharedPreferences.create(
@@ -66,13 +83,14 @@ class MainActivity : ComponentActivity() {
                 themeViewModel.setTheme(themId)
             }
 
-            val viewModel = viewModel(
-                applicationContext = applicatonContext,
-                sharedPreferences = sharedPreferences,
-                db = db,
-                dbHelper = dbHelper
-            )
+//            val viewModel = viewModel(
+//                applicationContext = applicatonContext,
+//                sharedPreferences = sharedPreferences,
+//                db = db,
+//                dbHelper = dbHelper
+//            )
             val authenticationViewModel = AuthenticationViewModel(
+                sharedPreferences = sharedPreferences,
                 applicationContext = applicatonContext,
                 db = db
             )
@@ -86,13 +104,21 @@ class MainActivity : ComponentActivity() {
                 applicationContext = applicatonContext,
                 sharedPreferences = sharedPreferences
             )
-            settingsViewModel.getUserInfo()
+
 
 
             val phoneNumber = sharedPreferences.getString("auth_phone", null)
-            if (!phoneNumber.isNullOrEmpty()) {
-                ApiClient.startWebSocket(phoneNumber = phoneNumber!!, viewModel = viewModel, context = applicatonContext)
+            val token = sharedPreferences.getString("auth_token", null)
+            val startScreen: String
+            if (!phoneNumber.isNullOrEmpty() && !token.isNullOrEmpty()) {
+                ApiClient.startWebSocket(phoneNumber = phoneNumber!!,viewModel, context = applicatonContext)
+                startScreen = "ToChat"
             }
+            else{
+                startScreen = "ToEnter"
+            }
+
+
 
 
             app(
@@ -103,7 +129,8 @@ class MainActivity : ComponentActivity() {
                 settingsViewModel = settingsViewModel,
                 viewModel = viewModel,
                 sharedPreferences = sharedPreferences,
-                context = applicatonContext
+                context = applicatonContext,
+                startScreen = startScreen
             )
         }
     }
@@ -117,7 +144,8 @@ class MainActivity : ComponentActivity() {
         settingsViewModel: SettingsViewModel,
         viewModel: viewModel,
         sharedPreferences: SharedPreferences,
-        context: Context
+        context: Context,
+        startScreen: String
     ) {
         val currentTheme by themeViewModel.currentTheme.collectAsState()
 
@@ -138,7 +166,8 @@ class MainActivity : ComponentActivity() {
                 searchViewModel = searchViewModel,
                 settingsViewModel = settingsViewModel,
                 themeViewModel = themeViewModel,
-                context = context
+                context = context,
+                startScreen = startScreen
             )
         }
     }

@@ -91,7 +91,8 @@ fun BarDrawing(
     searchViewModel: SearchViewModel,
     settingsViewModel: SettingsViewModel,
     themeViewModel: ThemeViewModel,
-    context: Context
+    context: Context,
+    startScreen: String,
 ) {
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -132,7 +133,7 @@ fun BarDrawing(
                 }
 
                 "ToUserChat" -> {
-                    viewModel.updateTopBarText("Антон Скугарев")
+                    //viewModel.updateTopBarText("Антон Скугарев")
                     ChatWithUserTopBar(
                         viewModel = viewModel,
                         navController = navController,
@@ -187,7 +188,8 @@ fun BarDrawing(
                 searchViewModel = searchViewModel,
                 settingsViewModel = settingsViewModel,
                 themeViewModel = themeViewModel,
-                context = context
+                context = context,
+                startScreen = startScreen
             )
         }
     )
@@ -265,6 +267,7 @@ fun ChatWithUserTopBar(
                     onClick = {
                         navController.navigate("ToChat")
                         viewModel.clearMessagesList()
+                        viewModel.resetGetMessagesState()
                         searchViewModel.resetSearchText()
                     }
                 ) {
@@ -609,7 +612,8 @@ fun ScreenMainContent(
     searchViewModel: SearchViewModel,
     settingsViewModel: SettingsViewModel,
     themeViewModel: ThemeViewModel,
-    context: Context
+    context: Context,
+    startScreen:String
 ) {
     val color = androidx.compose.material3.MaterialTheme.colorScheme
 
@@ -627,7 +631,8 @@ fun ScreenMainContent(
             searchViewModel = searchViewModel,
             settingsViewModel = settingsViewModel,
             themeViewModel = themeViewModel,
-            context = context
+            context = context,
+            startScreen = startScreen
         )
     }
 }

@@ -1,28 +1,38 @@
 package com.example.kotlincoursework.viewModel
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.database.sqlite.SQLiteDatabase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.kotlincoursework.API.Repositorys.GetAllChatsRepository
 import com.example.kotlincoursework.API.Repositorys.LoginRepository
 import com.example.kotlincoursework.API.Repositorys.RegistrationRepository
+import com.example.kotlincoursework.DB.DAO.ChatDao
 import com.example.kotlincoursework.DB.DAO.UserDao
+import com.example.kotlincoursework.ui.theme.state.GetAllChatState
+import com.example.kotlincoursework.ui.theme.state.GetMessagesState
 import com.example.kotlincoursework.ui.theme.state.LoginState
 import com.example.kotlincoursework.ui.theme.state.RegistrationState
 import dataBase.LoginUser
+import dataBase.MessageForShow
 import dataBase.RegistrationUserInfo
+import dataBase.TokenAndNumberRecive
 import dataBase.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.mp.KoinPlatform.getKoin
 
 class AuthenticationViewModel(
+    private val sharedPreferences: SharedPreferences,
     private val applicationContext: Context,
     private val db: SQLiteDatabase
 
 ): ViewModel() {
     private val userDao by lazy { UserDao(db) }
+    private val chatDao by lazy { ChatDao(db) }
     // Для номера телефона при авторизации
     private val _isLoginPhoneNumberValid = MutableStateFlow(false)
     val isLoginPhoneNumberValid: StateFlow<Boolean> get() = _isLoginPhoneNumberValid
@@ -215,8 +225,15 @@ class AuthenticationViewModel(
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> get() = _loginState
 
+    private val _getAllChatState = MutableStateFlow<GetAllChatState>(GetAllChatState.Idle)
+    val getAllChatState: StateFlow<GetAllChatState> get() = _getAllChatState
+
     fun resetLoginState() {
         _loginState.value = LoginState.Idle // Сбрасываем состояние
+    }
+
+    fun resetGetAllChatState() {
+        _getAllChatState.value = GetAllChatState.Idle // Сбрасываем состояние
     }
 
     fun resetRegistrationState() {
@@ -291,8 +308,64 @@ class AuthenticationViewModel(
         }
     }
 
-    fun addUser(){
-        userDao.getOrCreateUser(_User.value)
+//    fun addUser(){
+//        userDao.getOrCreateUser(_User.value)
+//    }
+//    fun createSeflChat(){
+//        chatDao.getOrCreateChat(_User.value.phoneNumber,_User.value.phoneNumber)
+//    }
+
+    fun AddChats(){
+        viewModelScope.launch {
+
+            _getAllChatState.value = GetAllChatState.Loading
+            val tokenAndNumberRecive = createLoginRecive()
+            if (tokenAndNumberRecive == null){
+                return@launch
+            }
+            val result =GetAllChatsRepository().getAllChats(tokenAndNumberRecive)
+            _getAllChatState.value = result
+            handleChatState(_getAllChatState.value)
+        }
+
+    }
+
+    private fun handleChatState(state: GetAllChatState) {
+        when (state) {
+            is GetAllChatState.Success -> {
+                val chatDao = getKoin().get<ChatDao>()
+                chatDao.clearChatsTable()
+                val userDao = getKoin().get<UserDao>()
+                userDao.clearUsersTable()
+                state.success.Users.forEach { user ->
+                    userDao.createUser(user)
+                }
+
+
+                // Добавляем все чаты в базу данных
+                state.success.userChatsRecive.forEach { chat ->
+                    chatDao.createChat(chat.userPhone,chat.contactPhone)
+                }
+            }
+            GetAllChatState.Loading -> {
+                // Можно показать индикатор загрузки
+            }
+            is GetAllChatState.Error -> {
+                // Обработка ошибки, например показать snackbar
+            }
+            GetAllChatState.Idle -> {
+                // Ничего не делаем
+            }
+        }
+    }
+
+    private fun createLoginRecive(): TokenAndNumberRecive? {
+        val token = sharedPreferences.getString("auth_token", null)
+        val phoneNumber = sharedPreferences.getString("auth_phone", null)
+        if (token.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
+            return null
+        }
+        return TokenAndNumberRecive(token!!, phoneNumber!!)
     }
 
 }

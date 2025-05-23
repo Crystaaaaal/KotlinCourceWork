@@ -1,5 +1,6 @@
 package dataBase
 
+import com.example.kotlincoursework.DB.Models.Chat
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -86,16 +87,28 @@ data class MessageForShow(
     val sentAt: String
 )
 
+@Serializable
+data class MessagesRecive(
+    val Chat: ChatRecive,
+    val token: TokenAndNumberRecive
+)
+@Serializable
+data class ChatRecive(
+    val chatId: Int,
+    val userPhone: String,
+    val contactPhone: String,
+    val createdAt: String
+)
+
 
 @Serializable
-data class UserRegistrationRequest(
-    val phoneNumber: String,
-    val passwordHash: String,
-    val fullName: String,
-    val profileImage: ByteArray?
+data class MessagesRemote(
+    val userMessagesRecive: List<MessageIncoming>,
+    val contactMessage:List<MessageIncoming>,
 )
 
 @Serializable
-data class ChatCreationRequest(
-    val createdAt: String
+data class ChatRemote(
+    val userChatsRecive: List<ChatRecive>,
+    val Users: List<User>
 )

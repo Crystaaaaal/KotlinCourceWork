@@ -46,4 +46,9 @@ class UserDao(private val db: SQLiteDatabase) {
         db.insert("users", null, values)
         return user
     }
+
+    // Очистка таблицы
+    fun clearUsersTable(): Int {
+        return db.delete("users", null, null)
+    }
 }
